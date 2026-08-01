@@ -15,18 +15,20 @@
     "start": "next start",
     "type-check": "panda codegen && tsc --noEmit",
     "prepare:packages": "tsc --build ../../tsconfig.json",
-    "//prepare:packages": "engine/rules/db/export declare main:./dist, so they must be COMPILED before Next resolves them. ui and hopper-style are the opposite \u2014 they ship source and are transpiled by Next."
+    "//prepare:packages": "engine/rules/db/export declare main:./dist, so they must be COMPILED before Next resolves them. ui and hopper-style are the opposite — they ship source and are transpiled by Next."
   },
   "dependencies": {
     "@maximus/db": "0.1.0",
     "@maximus/engine": "0.1.0",
     "@maximus/export": "0.1.0",
+    "@maximus/reminders": "0.1.0",
     "@maximus/rules": "2026.8.0",
     "@maximus/ui": "0.1.0",
     "hopper-style": "*",
     "next": "^15.1.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@pandacss/dev": "^1.12.0",

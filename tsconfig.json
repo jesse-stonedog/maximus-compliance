@@ -12,6 +12,9 @@
       "path": "packages/rules"
     },
     {
+      "path": "packages/reminders"
+    },
+    {
       "path": "packages/export"
     },
     {

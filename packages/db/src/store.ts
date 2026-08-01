@@ -8,6 +8,7 @@
 import { DatabaseSync } from "node:sqlite";
 import type { EntityFacts, EntityType, Jurisdiction } from "@maximus/engine";
 import { MIGRATIONS } from "./schema.js";
+import { DocumentStore } from "./documents.js";
 
 /** A stored entity: the engine's facts plus the columns storage adds. */
 export interface StoredEntity extends EntityFacts {
@@ -88,11 +89,24 @@ export interface OpenOptions {
    * real time at its own boundary.
    */
   now: () => string;
+  /**
+   * Id generator for rows this store creates on the caller's behalf, such as a
+   * document's reference fields. Injectable so a test can make them predictable.
+   */
+  newId?: () => string;
 }
 
 export class EntityStore {
   private readonly db: DatabaseSync;
   private readonly now: () => string;
+
+  /**
+   * Documents and user-authored actions.
+   *
+   * Shares this connection deliberately: SQLite allows one writer, and a second
+   * handle to the same file would deadlock under WAL rather than fail cleanly.
+   */
+  readonly documents: DocumentStore;
 
   constructor(options: OpenOptions) {
     this.db = new DatabaseSync(options.path);
@@ -102,6 +116,11 @@ export class EntityStore {
     this.db.exec("PRAGMA foreign_keys = ON");
     if (options.path !== ":memory:") this.db.exec("PRAGMA journal_mode = WAL");
     this.migrate();
+    this.documents = new DocumentStore(
+      this.db,
+      options.now,
+      options.newId ?? (() => globalThis.crypto.randomUUID()),
+    );
   }
 
   /**

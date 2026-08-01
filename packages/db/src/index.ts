@@ -13,3 +13,11 @@
 export { EntityStore } from "./store.js";
 export type { OpenOptions, StoredEntity } from "./store.js";
 export { MIGRATIONS } from "./schema.js";
+export { DocumentStore } from "./documents.js";
+export type {
+  DocumentField,
+  NewAction,
+  NewDocument,
+  StoredAction,
+  StoredDocument,
+} from "./documents.js";

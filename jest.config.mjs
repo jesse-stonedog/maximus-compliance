@@ -29,6 +29,8 @@ export default {
     "^@maximus/engine$": "<rootDir>/packages/engine/src/index.ts",
     "^@maximus/rules$": "<rootDir>/packages/rules/src/index.ts",
     "^@maximus/db$": "<rootDir>/packages/db/src/index.ts",
+    "^server-only$": "<rootDir>/test-support/server-only.cjs",
+    "^@maximus/reminders$": "<rootDir>/packages/reminders/src/index.ts",
     "^@maximus/export$": "<rootDir>/packages/export/src/index.ts",
     // hopper-style is a SUBMODULE shipping TypeScript source, so both entry
     // points map to source too. Its `preset` entry runs in Node at build time

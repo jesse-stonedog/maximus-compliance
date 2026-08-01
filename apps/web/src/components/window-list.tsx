@@ -1,0 +1,177 @@
+/**
+ * Copyright (C) 2026 StoneDogCode L.L.C.
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+import { css } from "styled-system/css";
+import type { Bucketed, DatedItem, WindowName } from "@maximus/reminders";
+import { WINDOW_DEFINITIONS } from "@maximus/reminders";
+import { StyledCheck, StyledStatute, StyledUnverified, StyledWarning } from "@maximus/ui";
+import { formatDate, relativeDue } from "@/lib/format";
+import { toggleActionCompleted } from "@/app/actions/actions";
+
+function Item({ item, asOf }: { item: DatedItem; asOf: string }) {
+  const done = item.completedOn !== undefined;
+  return (
+    <li className={css({ paddingBlock: "2", display: "flex", gap: "3" })}>
+      {/* Only user actions can be ticked off. A rule-derived obligation is a
+          statement about the law, not a task list entry — marking one "done"
+          would imply we know a filing was accepted, which we do not. */}
+      {item.source === "user" ? (
+        <form action={toggleActionCompleted}>
+          <input type="hidden" name="id" value={item.id} />
+          <input type="hidden" name="completed" value={String(done)} />
+          <button
+            type="submit"
+            aria-label={done ? `Reopen ${item.title}` : `Mark ${item.title} done`}
+            className={css({
+              minWidth: "44px",
+              minHeight: "44px",
+              cursor: "pointer",
+              borderRadius: "sm",
+              border: "1px solid",
+              borderColor: "boxBorderSecondary",
+              background: "transparent",
+            })}
+          >
+            {done ? <StyledCheck /> : " "}
+          </button>
+        </form>
+      ) : (
+        <span className={css({ minWidth: "44px" })} aria-hidden="true" />
+      )}
+
+      <div>
+        <div
+          className={css({ fontWeight: "600" })}
+          style={done ? { textDecoration: "line-through", opacity: 0.7 } : undefined}
+        >
+          {item.title}
+          {item.status === "draft" && (
+            <span
+              className={css({ fontSize: "sm", marginLeft: "2" })}
+              style={{ color: "var(--maximus-text-warning-text)" }}
+            >
+              <StyledUnverified title="Unverified" /> unverified
+            </span>
+          )}
+        </div>
+        <div className={css({ fontSize: "sm", color: "boxTextSecondary" })}>
+          {formatDate(item.dueOn)} · {relativeDue(asOf, item.dueOn)}
+          {done ? ` · done ${formatDate(item.completedOn!)}` : ""}
+        </div>
+        {item.detail && <div className={css({ fontSize: "sm" })}>{item.detail}</div>}
+        {/* Provenance, always. A deadline derived from a cited statute and one
+            a person typed are different kinds of claim. */}
+        <div className={css({ fontSize: "xs", color: "boxTextSecondary" })}>
+          {item.source === "rule" ? (
+            <>
+              <StyledStatute /> {item.citation}
+            </>
+          ) : (
+            "Your own action"
+          )}
+        </div>
+      </div>
+    </li>
+  );
+}
+
+export function WindowList({ bucketed, asOf }: { bucketed: Bucketed; asOf: string }) {
+  /*
+   * Each item appears ONCE here, in its tightest window, even though the
+   * windows themselves nest. A digest is a standalone message and repeats
+   * items on purpose; a screen showing the same deadline four times would just
+   * look broken.
+   */
+  const seen = new Set<string>();
+  const sections: { name: WindowName; items: DatedItem[] }[] = (
+    ["day-before", "weekly", "monthly", "quarterly"] as const
+  ).map((name) => {
+    const items = bucketed.windows[name].filter((item) => !seen.has(item.id));
+    items.forEach((item) => seen.add(item.id));
+    return { name, items };
+  });
+
+  const nothingOutstanding =
+    bucketed.overdue.length === 0 &&
+    sections.every((s) => s.items.length === 0) &&
+    bucketed.later.length === 0;
+
+  /*
+   * The completed list renders even when nothing is outstanding.
+   *
+   * Without this, ticking off your only action made it vanish and the screen
+   * said "Nothing is due" — which reads as "I just deleted it", not as "well
+   * done". Anything a user marks complete has to stay visible somewhere, or the
+   * tick feels destructive and they stop using it.
+   */
+  return (
+    <>
+      {nothingOutstanding && (
+        <p className={css({ padding: "6", color: "boxTextSecondary" })}>
+          {bucketed.completed.length > 0
+            ? "Nothing outstanding. Completed items are below."
+            : "Nothing is due. Add an entity to see what the rules say you owe, or add your own action if you would rather track it yourself."}
+        </p>
+      )}
+      {bucketed.overdue.length > 0 && (
+        <section
+          className={css({ marginBottom: "6", padding: "4", borderRadius: "md" })}
+          style={{
+            background: "var(--maximus-box-info-bg)",
+            borderLeft: "4px solid var(--maximus-text-error-text)",
+          }}
+        >
+          <h2 className={css({ fontSize: "lg", marginTop: "0" })}>
+            <StyledWarning title="Overdue" /> Overdue
+          </h2>
+          <ul className={css({ listStyle: "none", padding: "0", margin: "0" })}>
+            {bucketed.overdue.map((item) => (
+              <Item key={item.id} item={item} asOf={asOf} />
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {sections.map(({ name, items }) =>
+        items.length === 0 ? null : (
+          <section key={name} className={css({ marginBottom: "6" })}>
+            <h2 className={css({ fontSize: "lg" })}>{WINDOW_DEFINITIONS[name].label}</h2>
+            <p className={css({ fontSize: "sm", color: "boxTextSecondary", marginTop: "0" })}>
+              {WINDOW_DEFINITIONS[name].heading}
+            </p>
+            <ul className={css({ listStyle: "none", padding: "0", margin: "0" })}>
+              {items.map((item) => (
+                <Item key={item.id} item={item} asOf={asOf} />
+              ))}
+            </ul>
+          </section>
+        ),
+      )}
+
+      {bucketed.later.length > 0 && (
+        <section className={css({ marginBottom: "6" })}>
+          <h2 className={css({ fontSize: "lg" })}>Later</h2>
+          <ul className={css({ listStyle: "none", padding: "0", margin: "0" })}>
+            {bucketed.later.map((item) => (
+              <Item key={item.id} item={item} asOf={asOf} />
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {bucketed.completed.length > 0 && (
+        <details className={css({ marginBottom: "6" })}>
+          <summary className={css({ cursor: "pointer" })}>
+            Completed ({bucketed.completed.length})
+          </summary>
+          <ul className={css({ listStyle: "none", padding: "0" })}>
+            {bucketed.completed.map((item) => (
+              <Item key={item.id} item={item} asOf={asOf} />
+            ))}
+          </ul>
+        </details>
+      )}
+    </>
+  );
+}

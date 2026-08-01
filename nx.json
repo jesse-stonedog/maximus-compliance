@@ -9,7 +9,8 @@
     "ui": "packages/ui",
     "hopper-style": "packages/hopper-style",
     "db": "packages/db",
-    "web": "apps/web"
+    "web": "apps/web",
+    "reminders": "packages/reminders"
   },
   "targetDefaults": {
     "build": {
