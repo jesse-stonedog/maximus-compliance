@@ -1,0 +1,66 @@
+# Copyright (C) 2026 StoneDogCode L.L.C.
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# The CLA gate.
+#
+# This is load-bearing, not paperwork. The commercial model depends on
+# StoneDogCode L.L.C. holding a relicensing grant over 100% of the core, so it
+# can license @maximus/engine and @maximus/rules to the proprietary hosted
+# service without AGPL section 13 attaching. ONE un-CLA'd contribution
+# compromises that argument for the whole service, and collecting a signature
+# retroactively from a stranger who has moved on is close to impossible.
+#
+# Which is why this must be a REQUIRED status check in branch protection.
+# A workflow that merely reports is a gate that is not a gate: this run has to
+# be able to block the merge, or the first busy week defeats it.
+name: CLA
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  actions: write
+  contents: read
+  pull-requests: write
+  statuses: write
+
+jobs:
+  cla:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check or record the CLA signature
+        # Pinned to a release rather than a moving tag: this action can write to
+        # the signature store and comments on PRs from forks, so an unreviewed
+        # upgrade is not something to take automatically.
+        uses: contributor-assistant/github-action@v2.6.1
+        if: >-
+          (github.event.comment.body == 'recheck' ||
+           github.event.comment.body == 'I have read the CLA document and I hereby sign the CLA') ||
+          github.event_name == 'pull_request_target'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # A fine-grained PAT with contents:write on the signature repository
+          # below. It is separate from GITHUB_TOKEN so signatures live outside
+          # this repo and survive anything that happens to it.
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.CLA_SIGNATURES_TOKEN }}
+        with:
+          path-to-signatures: signatures/maximus-compliance.json
+          path-to-document: https://github.com/jesse-stonedog/maximus-compliance/blob/main/CLA.md
+          branch: main
+          remote-organization-name: jesse-stonedog
+          remote-repository-name: cla-signatures
+          custom-notsigned-prcomment: >-
+            Thank you for this contribution.
+
+
+            Before it can be merged, please read the [CLA](https://github.com/jesse-stonedog/maximus-compliance/blob/main/CLA.md)
+            and, if you agree, post the sentence below as a new comment on this pull request.
+            **You keep the copyright in your work** — the CLA is a licence, not an assignment.
+            You only do this once, and it covers everything you contribute here afterwards.
+          custom-pr-sign-comment: 'I have read the CLA document and I hereby sign the CLA'
+          custom-allsigned-prcomment: 'CLA signed — thank you. This will not be asked again.'
+          # Bots cannot agree to anything.
+          allowlist: dependabot[bot],renovate[bot],github-actions[bot]

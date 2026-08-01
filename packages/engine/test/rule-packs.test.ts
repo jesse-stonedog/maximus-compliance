@@ -65,9 +65,20 @@ describe("schema and TypeScript agree", () => {
     // added to one and not the other would let a rule validate and then never
     // match.
     const schema = JSON.parse(readFileSync(schemaPath, "utf8"));
-    const schemaFacts =
-      schema.properties.conditions.items.properties.fact.enum;
+    // Both condition branches — leaf and `anyOf` member — `$ref` this one
+    // definition, so there is a single place the enum can drift, not two.
+    const schemaFacts = schema.definitions.condition.properties.fact.enum;
     expect([...schemaFacts].sort()).toEqual([...CONDITIONABLE_FACTS].sort());
+  });
+
+  it("uses the same condition definition for leaves and for anyOf members", () => {
+    // If the group branch stopped $ref-ing the shared definition, a fact could
+    // become valid inside a group and invalid outside it — and that drift would
+    // only ever surface as a rule that validates and then never matches.
+    const schema = JSON.parse(readFileSync(schemaPath, "utf8"));
+    const [leaf, group] = schema.properties.conditions.items.oneOf;
+    expect(leaf.$ref).toBe("#/definitions/condition");
+    expect(group.properties.anyOf.items.$ref).toBe("#/definitions/condition");
   });
 
   it("allows exactly the entity types the engine knows", () => {

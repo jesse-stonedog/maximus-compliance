@@ -9,6 +9,7 @@ import type { Rule } from "../src/rule.js";
 import {
   CHARITY_WITHOUT_REVENUE,
   DE_CORP,
+  ENDOWED_CHARITY,
   MULTI_STATE_CORP,
   OR_LLC,
   WA_LARGE_CHARITY,
@@ -128,6 +129,25 @@ describe("conditions", () => {
     ]);
   });
 
+  it("stops asking for facts once another condition has settled the matter", () => {
+    // A known-false entry short-circuits the whole set, unknowns included. The
+    // rule cannot apply, so demanding revenue would be asking for data to
+    // settle a question already settled.
+    const solicitingOnly = rule({
+      conditions: [
+        { fact: "solicitsCharitableContributions", op: "eq", value: true },
+        { fact: "grossRevenueMinorUnits", op: "gt", value: 1 },
+      ],
+    });
+    const result = evaluate(
+      { ...CHARITY_WITHOUT_REVENUE, solicitsCharitableContributions: false },
+      [solicitingOnly],
+      { asOf: "2026-01-01" },
+    );
+    expect(result.obligations).toHaveLength(0);
+    expect(result.indeterminate).toHaveLength(0);
+  });
+
   it("requires every condition to hold, not just one", () => {
     const bothRequired = rule({
       conditions: [
@@ -137,6 +157,98 @@ describe("conditions", () => {
     });
     expect(evaluate(WA_SMALL_CHARITY, [bothRequired], { asOf: "2026-01-01" })
       .obligations).toHaveLength(0);
+  });
+});
+
+describe("anyOf condition groups", () => {
+  // The Form 990 shape: receipts >= $200k OR assets >= $500k.
+  const eitherThreshold = rule({
+    conditions: [
+      {
+        anyOf: [
+          { fact: "grossRevenueMinorUnits", op: "gte", value: 20_000_000 },
+          { fact: "totalAssetsMinorUnits", op: "gte", value: 50_000_000 },
+        ],
+      },
+    ],
+  });
+
+  it("applies when only the second alternative holds", () => {
+    // THE REGRESSION. Under the receipts threshold, far over the assets one.
+    // With AND-only conditions this entity was told it owed nothing — a false
+    // negative, where the user sees a clean calendar and misses a filing.
+    expect(
+      evaluate(ENDOWED_CHARITY, [eitherThreshold], { asOf: "2026-01-01" })
+        .obligations,
+    ).toHaveLength(1);
+  });
+
+  it("applies when only the first alternative holds", () => {
+    expect(
+      evaluate(WA_LARGE_CHARITY, [eitherThreshold], { asOf: "2026-01-01" })
+        .obligations,
+    ).toHaveLength(1);
+  });
+
+  it("does not apply when neither holds", () => {
+    expect(
+      evaluate(WA_SMALL_CHARITY, [eitherThreshold], { asOf: "2026-01-01" })
+        .obligations,
+    ).toHaveLength(0);
+  });
+
+  it("does not ask for a fact it no longer needs", () => {
+    // $3.1M of receipts settles it. Asking for total assets as well would be
+    // noise, and the whole reason a known-true beats an unknown in a group.
+    const noAssets = { ...WA_LARGE_CHARITY };
+    delete noAssets.totalAssetsMinorUnits;
+    const result = evaluate(noAssets, [eitherThreshold], { asOf: "2026-01-01" });
+    expect(result.obligations).toHaveLength(1);
+    expect(result.indeterminate).toHaveLength(0);
+  });
+
+  it("is indeterminate when no alternative is known true and one is unknown", () => {
+    const partial = { ...WA_SMALL_CHARITY };
+    delete partial.totalAssetsMinorUnits;
+    // Receipts are known and below the line; assets are unknown and could be
+    // over it. Neither "applies" nor "does not apply" is honest here.
+    const result = evaluate(partial, [eitherThreshold], { asOf: "2026-01-01" });
+    expect(result.obligations).toHaveLength(0);
+    expect(result.indeterminate[0]?.missingFacts).toEqual([
+      "totalAssetsMinorUnits",
+    ]);
+  });
+
+  it("does not apply when every alternative is known false", () => {
+    const result = evaluate(WA_SMALL_CHARITY, [eitherThreshold], {
+      asOf: "2026-01-01",
+    });
+    expect(result.obligations).toHaveLength(0);
+    expect(result.indeterminate).toHaveLength(0);
+  });
+
+  it("combines a group with a plain condition as an AND", () => {
+    const groupAndPlain = rule({
+      conditions: [
+        { fact: "solicitsCharitableContributions", op: "eq", value: true },
+        {
+          anyOf: [
+            { fact: "grossRevenueMinorUnits", op: "gte", value: 20_000_000 },
+            { fact: "totalAssetsMinorUnits", op: "gte", value: 50_000_000 },
+          ],
+        },
+      ],
+    });
+    // ENDOWED_CHARITY passes the group but does not solicit.
+    expect(
+      evaluate(ENDOWED_CHARITY, [groupAndPlain], { asOf: "2026-01-01" })
+        .obligations,
+    ).toHaveLength(0);
+    // WA_LARGE_CHARITY passes both.
+    expect(
+      evaluate(WA_LARGE_CHARITY, [groupAndPlain], { asOf: "2026-01-01" })
+        .obligations,
+    ).toHaveLength(1);
   });
 });
 

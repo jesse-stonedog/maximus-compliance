@@ -68,15 +68,49 @@ export type ConditionOperator = "lt" | "lte" | "gt" | "gte" | "eq";
 /**
  * A predicate over one entity fact.
  *
- * A rule with conditions applies only when **all** of them hold. When a
- * condition tests a fact the entity has not supplied, the rule is neither
- * applied nor dropped — it is reported as indeterminate, so the user is told
- * what they need to answer rather than quietly given an incomplete calendar.
+ * When a condition tests a fact the entity has not supplied, the rule is
+ * neither applied nor dropped — it is reported as indeterminate, so the user is
+ * told what they need to answer rather than quietly given an incomplete
+ * calendar.
  */
 export interface RuleCondition {
   fact: ConditionableFact;
   op: ConditionOperator;
   value: number | boolean;
+}
+
+/**
+ * A group that holds when **any** member holds.
+ *
+ * Real thresholds are not all conjunctions. Form 990 is required when gross
+ * receipts are at least $200,000 **or** total assets are at least $500,000, and
+ * with only AND available the rule could express one half — which told a
+ * well-endowed organisation with modest receipts that it owed nothing. A false
+ * negative is this product's worst failure mode: the user sees a clean calendar
+ * and misses a filing.
+ *
+ * Deliberately **one level deep**, not a general expression tree. Every real
+ * rule seen so far is a conjunction of simple tests plus at most one
+ * disjunction, and a nested boolean grammar would be markedly harder for a CPA
+ * to author by hand or for a reviewer to check against a statute — which is the
+ * whole crowdsourcing thesis. Add nesting when a statute demands it, not before.
+ */
+export interface RuleConditionGroup {
+  anyOf: readonly RuleCondition[];
+}
+
+/**
+ * One entry in a rule's `conditions`.
+ *
+ * The top level is always an AND — every entry must hold. An entry is either a
+ * single test or an `anyOf` group.
+ */
+export type RuleConditionNode = RuleCondition | RuleConditionGroup;
+
+export function isConditionGroup(
+  node: RuleConditionNode,
+): node is RuleConditionGroup {
+  return "anyOf" in node;
 }
 
 /**
@@ -97,10 +131,11 @@ export interface Rule {
   title: string;
   /** The body it is filed with. "Washington Secretary of State". */
   agency: string;
-  entityTypes: EntityType[];
+  entityTypes: readonly EntityType[];
   cadence: Cadence;
   fee?: Fee;
-  conditions?: RuleCondition[];
+  /** All entries must hold. An entry may be an `anyOf` group. */
+  conditions?: readonly RuleConditionNode[];
   /** Form number or name, where the agency uses one. */
   form?: string;
   /** The statute, regulation, or agency page this came from. Required. */

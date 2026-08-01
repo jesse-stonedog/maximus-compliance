@@ -80,9 +80,18 @@ export const ALL_RULES: readonly Rule[] = [
     "form": "990",
     "conditions": [
       {
-        "fact": "grossRevenueMinorUnits",
-        "op": "gte",
-        "value": 20000000
+        "anyOf": [
+          {
+            "fact": "grossRevenueMinorUnits",
+            "op": "gte",
+            "value": 20000000
+          },
+          {
+            "fact": "totalAssetsMinorUnits",
+            "op": "gte",
+            "value": 50000000
+          }
+        ]
       }
     ],
     "citation": "26 U.S.C. 6033; IRS Instructions for Form 990",
@@ -90,7 +99,7 @@ export const ALL_RULES: readonly Rule[] = [
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "Due the 15th day of the 5th month after the fiscal year ends — 15 May for a calendar-year filer. INCOMPLETE: the real threshold is gross receipts >= $200k OR total assets >= $500k, and conditions are AND-only, so an organisation with low receipts but large assets is currently missed. See the OR-conditions issue before promoting to active."
+    "notes": "Due the 15th day of the 5th month after the fiscal year ends — 15 May for a calendar-year filer. The threshold is gross receipts >= $200k OR total assets >= $500k: an organisation meeting EITHER files the full return, which is why this uses an anyOf group. Still draft — the cadence and both thresholds need checking against the current IRS instructions before promotion."
   },
   // us/federal/form-990-ez.json
   {

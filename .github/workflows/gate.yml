@@ -1,0 +1,49 @@
+# Copyright (C) 2026 StoneDogCode L.L.C.
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# The merge gate: exactly what `npm run gate` runs locally, so a green local run
+# and a green CI run mean the same thing. If these ever diverge, fix the
+# divergence rather than adding a CI-only step.
+name: Gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # Rule validation and barrel freshness run FIRST. A schema-invalid or
+      # unregenerated rule produces confusing failures further down, and these
+      # two name the actual problem.
+      - run: npm run rules:validate
+      - run: npm run rules:barrel:check
+      - run: npm run type-check
+      - run: npm run lint
+      - run: npm test
+
+  staleness:
+    # Reports; never fails the build. A rule going stale is a fact about the
+    # calendar, not about this change, and a gate that goes red on the passage
+    # of time gets disabled within a month — at which point the signal is gone.
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run rules:staleness

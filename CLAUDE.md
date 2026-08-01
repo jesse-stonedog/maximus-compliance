@@ -197,7 +197,25 @@ math changes.
 Every bug fix starts with a failing fixture that reproduces it (per
 `~/.claude/CLAUDE.md`).
 
-`npm run gate` — typecheck, lint, rule validation, tests — is the merge bar.
+`npm run gate` — rule validation, barrel freshness, typecheck, lint, tests — is
+the merge bar.
+
+### In a worktree, run a real `npm install`
+
+**Do not symlink `node_modules` to the canonical checkout here.** That works for
+a single-package repo, but this is an npm workspace: the canonical
+`node_modules/@maximus/engine` links to the *canonical* `packages/engine`, so a
+worktree borrowing it type-checks your edits against **whatever branch the
+canonical checkout happens to be on**.
+
+The failure is thoroughly misleading. `tsc` reports a type error in
+`packages/rules/src/generated.ts` about a field you just added and can see
+plainly in the source — because the `.d.ts` it is reading belongs to another
+branch. Nothing in the message points at the symlink, and the obvious next moves
+(regenerate the barrel, tweak the type) all fail for reasons that look unrelated.
+
+`npm install` in the worktree takes seconds and links `@maximus/*` to that
+worktree's own packages.
 
 ## Public API surface & versioning
 

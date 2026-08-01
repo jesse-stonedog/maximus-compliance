@@ -13,9 +13,15 @@
 export default {
   preset: "ts-jest",
   testEnvironment: "node",
-  roots: ["<rootDir>/packages"],
+  roots: ["<rootDir>/packages", "<rootDir>/apps"],
   testMatch: ["**/test/**/*.test.ts"],
   moduleNameMapper: {
+    // Workspace packages resolve to SOURCE, not to dist. An app's tests must
+    // not depend on a build step having run first, or a clean checkout fails
+    // its own suite in a way that looks like a code error.
+    "^@maximus/engine$": "<rootDir>/packages/engine/src/index.ts",
+    "^@maximus/rules$": "<rootDir>/packages/rules/src/index.ts",
+    "^@maximus/export$": "<rootDir>/packages/export/src/index.ts",
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
   transform: {
