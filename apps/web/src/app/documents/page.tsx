@@ -136,7 +136,8 @@ export default async function DocumentsPage({
                 <p className={css({ fontSize: "sm", marginTop: "2" })}>
                   <Link href={`/actions/new?documentId=${document.id}`}>
                     Add an action for this document
-                  </Link>
+                  </Link>{" "}
+                  · <Link href={`/documents/${document.id}/delete`}>Delete</Link>
                 </p>
               </li>
             );

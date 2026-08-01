@@ -6,6 +6,7 @@ import { css } from "styled-system/css";
 import type { Bucketed, DatedItem, WindowName } from "@maximus/reminders";
 import { WINDOW_DEFINITIONS } from "@maximus/reminders";
 import { StyledCheck, StyledStatute, StyledUnverified, StyledWarning } from "@maximus/ui";
+import Link from "next/link";
 import { formatDate, relativeDue } from "@/lib/format";
 import { toggleActionCompleted } from "@/app/actions/actions";
 
@@ -84,6 +85,8 @@ function Item({ item, asOf }: { item: DatedItem; asOf: string }) {
             <>
               Your own action
               {item.repeatAnnually && !done && " · repeats yearly"}
+              {" · "}
+              <Link href={`/actions/${item.id}/edit`}>Edit</Link>
               {/* Said before the click, not after. Someone who does not expect
                   a new row appearing reads it as a duplicate. */}
               {item.repeatAnnually && !done && (
