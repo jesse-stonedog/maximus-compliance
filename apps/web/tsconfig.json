@@ -45,5 +45,5 @@
     ".next",
     "styled-system"
   ],
-  "//strictness": "exactOptionalPropertyTypes and noUncheckedIndexedAccess are relaxed HERE ONLY, and not by choice. hopper-style ships TypeScript SOURCE so Panda can parse it, which means this app type-checks the LIBRARY's code under THIS config rather than the library's own \u2014 and it is authored without either flag. The packages that emit dist (engine, rules, db, export) keep the strict settings from tsconfig.base.json, so the code that matters most is unaffected. Tracked upstream as NEH-212; remove these two lines when hopper-style compiles cleanly under them."
+  "//strictness": "exactOptionalPropertyTypes and noUncheckedIndexedAccess are relaxed HERE ONLY, and not by choice. hopper-style ships TypeScript SOURCE so Panda can parse it, which means this app type-checks the LIBRARY's code under THIS config rather than the library's own \u2014 and it is authored without either flag. The packages that emit dist (engine, rules, db, export) keep the strict settings from tsconfig.base.json, so the code that matters most is unaffected. Tracked upstream as NEH-218; remove these two lines when hopper-style compiles cleanly under them."
 }
