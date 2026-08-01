@@ -32,6 +32,7 @@ const schemaPath = join(packageRoot, "schema", "rule.v1.json");
 const CONDITIONABLE_FACTS = [
   "grossRevenueMinorUnits",
   "totalAssetsMinorUnits",
+  "charitableAssetsMinorUnits",
   "employeeCount",
   "solicitsCharitableContributions",
 ];

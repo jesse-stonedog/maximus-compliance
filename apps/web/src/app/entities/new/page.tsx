@@ -135,6 +135,23 @@ export default async function NewEntityPage({
           <input className={input} type="number" name="totalAssets" min="0" step="0.01" />
         </label>
 
+        <label className={field}>
+          <span className={label}>Charitable assets (optional)</span>
+          <input
+            className={input}
+            type="number"
+            name="charitableAssets"
+            min="0"
+            step="0.01"
+          />
+          <span className={hint}>
+            The portion held for charitable purposes — <strong>not the same as
+            total assets</strong>. Several states require charity registration
+            above a threshold on this figure alone, even for an organisation
+            that never asks the public for money.
+          </span>
+        </label>
+
         <label className={css({ display: "block", marginBottom: "6" })}>
           <input type="checkbox" name="solicits" value="true" /> This
           organisation solicits charitable contributions

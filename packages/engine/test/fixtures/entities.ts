@@ -84,6 +84,26 @@ export const ENDOWED_CHARITY: EntityFacts = {
   solicitsCharitableContributions: false,
 };
 
+/**
+ * Endowed, but does not solicit.
+ *
+ * The organisation the WA charity rule used to miss entirely: it takes no
+ * donations from the public, so the soliciting test is a firm NO, but it holds
+ * far more than $250,000 in charitable assets and must register anyway.
+ */
+export const ENDOWED_NON_SOLICITING_CHARITY: EntityFacts = {
+  name: "Example Skagit Conservancy Endowment",
+  entityTypes: ["501c3", "nonprofit-corp"],
+  formedOn: "2008-04-10",
+  homeJurisdiction: "US-WA",
+  jurisdictions: ["US", "US-WA"],
+  fiscalYearEnd: "12-31",
+  grossRevenueMinorUnits: 3_000_000,
+  totalAssetsMinorUnits: 900_000_000,
+  charitableAssetsMinorUnits: 800_000_000, // $8M, far over the $250k line
+  solicitsCharitableContributions: false,
+};
+
 /** A charity that has not told us its revenue. Drives the indeterminate path. */
 export const CHARITY_WITHOUT_REVENUE: EntityFacts = {
   name: "Example Olympic Literacy Project",

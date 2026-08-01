@@ -104,6 +104,19 @@ export interface EntityFacts {
   /** Total assets in **integer minor units** (cents). */
   totalAssetsMinorUnits?: number;
 
+  /**
+   * Assets held for charitable purposes, in **integer minor units**.
+   *
+   * **Deliberately not the same as `totalAssetsMinorUnits`.** Several state
+   * charity-registration thresholds are written against charitable assets
+   * specifically, and an organisation can hold substantial non-charitable
+   * assets — an endowment restricted to a non-charitable purpose, a trading
+   * subsidiary — that do not count toward them. Reusing total assets would
+   * over-trigger registration for exactly those organisations, and telling
+   * someone to register when they need not is a real cost in fees and filings.
+   */
+  charitableAssetsMinorUnits?: number;
+
   /** Headcount, for rules with an employee threshold. */
   employeeCount?: number;
 
@@ -119,6 +132,7 @@ export interface EntityFacts {
 export const CONDITIONABLE_FACTS = [
   "grossRevenueMinorUnits",
   "totalAssetsMinorUnits",
+  "charitableAssetsMinorUnits",
   "employeeCount",
   "solicitsCharitableContributions",
 ] as const;
