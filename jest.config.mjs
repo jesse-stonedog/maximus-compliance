@@ -14,6 +14,13 @@ export default {
   preset: "ts-jest",
   testEnvironment: "node",
   roots: ["<rootDir>/packages", "<rootDir>/apps"],
+  /**
+   * Next's `standalone` output traces a COPY of every workspace package into
+   * .next/. Jest's module map then finds two packages claiming the name
+   * `@maximus/engine` and refuses to resolve either — a failure that reads as a
+   * broken import and is actually a stale build artifact.
+   */
+  modulePathIgnorePatterns: ["<rootDir>/apps/web/.next/", "<rootDir>/apps/web/styled-system/"],
   testMatch: ["**/test/**/*.test.ts"],
   moduleNameMapper: {
     // Workspace packages resolve to SOURCE, not to dist. An app's tests must

@@ -1,0 +1,31 @@
+/*
+ * Copyright (C) 2026 StoneDogCode L.L.C.
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+@layer reset, base, tokens, recipes, utilities;
+
+html {
+  /* rem everywhere else keys off this, so it stays at the browser default and
+     is never overridden — that setting is the accessibility affordance users
+     with low vision actually reach for. */
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  background: var(--maximus-box-main-bg);
+  color: var(--maximus-box-main-text);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: var(--font-sizes-md);
+  line-height: 1.5;
+}
+
+a { color: var(--maximus-text-pop-text); }
+
+/* WCAG 2.2: a visible focus indicator on everything reachable by keyboard.
+   Never remove this without replacing it — keyboard users lose their place
+   entirely, and it is invisible to anyone testing with a mouse. */
+:focus-visible {
+  outline: 3px solid var(--maximus-box-accent-bg);
+  outline-offset: 2px;
+}
