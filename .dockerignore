@@ -1,0 +1,12 @@
+node_modules
+**/node_modules
+**/dist
+**/.next
+**/styled-system
+**/*.tsbuildinfo
+.git
+.github
+coverage
+*.sqlite
+*.sqlite3
+data

@@ -8,7 +8,8 @@
     "export": "packages/export",
     "ui": "packages/ui",
     "hopper-style": "packages/hopper-style",
-    "db": "packages/db"
+    "db": "packages/db",
+    "web": "apps/web"
   },
   "targetDefaults": {
     "build": {
