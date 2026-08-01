@@ -293,3 +293,110 @@ describe("reference numbers are findable however they are remembered", () => {
     store.close();
   });
 });
+
+describe("recurring actions", () => {
+  const repeating = { title: "File an Annual Report", dueOn: "2027-03-31", repeatAnnually: true };
+
+  it("does not repeat unless asked", () => {
+    const store = open();
+    store.documents.createAction({ title: "One off", dueOn: "2027-03-31" }, "a1");
+    store.documents.setActionCompleted("a1", "2027-03-20");
+    expect(store.documents.listActions()).toHaveLength(1);
+    store.close();
+  });
+
+  it("creates next year's occurrence when completed", () => {
+    // Without this, someone tracking their own dates re-adds every filing each
+    // year, and the year they forget is the year they miss it.
+    const store = open();
+    store.documents.createAction(repeating, "a1");
+    store.documents.setActionCompleted("a1", "2027-03-20");
+
+    const all = store.documents.listActions();
+    expect(all).toHaveLength(2);
+    const next = all.find((a) => a.id !== "a1")!;
+    expect(next.dueOn).toBe("2028-03-31");
+    expect(next.completedOn).toBeUndefined();
+    expect(next.repeatAnnually).toBe(true);
+    store.close();
+  });
+
+  it("carries the detail and attachments onto the successor", () => {
+    // The notes are what the user wants in front of them on the day; making
+    // them retype next year defeats the point.
+    const store = open();
+    store.documents.createDocument(doc, "d1");
+    store.create(facts, "e1");
+    store.documents.createAction(
+      { ...repeating, detail: "File online, login in 1Password", documentId: "d1", entityId: "e1" },
+      "a1",
+    );
+    store.documents.setActionCompleted("a1", "2027-03-20");
+
+    const next = store.documents.listActions().find((a) => a.id !== "a1")!;
+    expect(next.detail).toBe("File online, login in 1Password");
+    expect(next.documentId).toBe("d1");
+    expect(next.entityId).toBe("e1");
+    store.close();
+  });
+
+  it("does NOT spawn twice across reopen and recomplete", () => {
+    // The normal path when an agency rejects a filing. Spawning again would
+    // duplicate a deadline, which erodes trust in every other row on the page.
+    const store = open();
+    store.documents.createAction(repeating, "a1");
+    store.documents.setActionCompleted("a1", "2027-03-20");
+    store.documents.setActionCompleted("a1", undefined);
+    store.documents.setActionCompleted("a1", "2027-03-25");
+
+    expect(store.documents.listActions()).toHaveLength(2);
+    store.close();
+  });
+
+  it("keeps the successor when the original is reopened", () => {
+    // Next year's filing is still legitimately due, whatever happened to this
+    // year's.
+    const store = open();
+    store.documents.createAction(repeating, "a1");
+    store.documents.setActionCompleted("a1", "2027-03-20");
+    store.documents.setActionCompleted("a1", undefined);
+
+    const all = store.documents.listActions();
+    expect(all).toHaveLength(2);
+    expect(all.find((a) => a.id !== "a1")!.dueOn).toBe("2028-03-31");
+    store.close();
+  });
+
+  it("clamps a leap-day due date rather than sliding into March", () => {
+    const store = open();
+    store.documents.createAction(
+      { title: "Leap filing", dueOn: "2028-02-29", repeatAnnually: true },
+      "a1",
+    );
+    store.documents.setActionCompleted("a1", "2028-02-20");
+    const next = store.documents.listActions().find((a) => a.id !== "a1")!;
+    expect(next.dueOn).toBe("2029-02-28");
+    store.close();
+  });
+
+  it("chains: completing the successor spawns the one after", () => {
+    const store = open();
+    store.documents.createAction(repeating, "a1");
+    store.documents.setActionCompleted("a1", "2027-03-20");
+    const second = store.documents.listActions().find((a) => a.id !== "a1")!;
+    store.documents.setActionCompleted(second.id, "2028-03-20");
+
+    const dates = store.documents.listActions().map((a) => a.dueOn).sort();
+    expect(dates).toEqual(["2027-03-31", "2028-03-31", "2029-03-31"]);
+    store.close();
+  });
+
+  it("can be turned off later without affecting what already exists", () => {
+    const store = open();
+    store.documents.createAction(repeating, "a1");
+    store.documents.updateAction("a1", { ...repeating, repeatAnnually: false });
+    store.documents.setActionCompleted("a1", "2027-03-20");
+    expect(store.documents.listActions()).toHaveLength(1);
+    store.close();
+  });
+});

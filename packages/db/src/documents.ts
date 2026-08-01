@@ -5,6 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import { addYears } from "@maximus/engine";
 import type { DatabaseSync } from "node:sqlite";
 
 export interface DocumentField {
@@ -47,6 +48,10 @@ export interface StoredAction {
   detail?: string;
   dueOn: string;
   completedOn?: string;
+  /** Whether completing this spawns next year's occurrence. */
+  repeatAnnually: boolean;
+  /** Whether it already has. Guards reopen-then-recomplete. */
+  successorSpawned: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -57,6 +62,7 @@ export interface NewAction {
   title: string;
   detail?: string;
   dueOn: string;
+  repeatAnnually?: boolean;
 }
 
 /**
@@ -218,8 +224,8 @@ export class DocumentStore {
     this.db
       .prepare(
         `INSERT INTO actions (id, entity_id, document_id, title, detail, due_on,
-           completed_on, created_at, updated_at)
-         VALUES (?,?,?,?,?,?,NULL,?,?)`,
+           completed_on, repeat_annually, successor_spawned, created_at, updated_at)
+         VALUES (?,?,?,?,?,?,NULL,?,0,?,?)`,
       )
       .run(
         id,
@@ -228,6 +234,7 @@ export class DocumentStore {
         input.title,
         input.detail ?? null,
         input.dueOn,
+        input.repeatAnnually ? 1 : 0,
         timestamp,
         timestamp,
       );
@@ -249,6 +256,8 @@ export class DocumentStore {
       ...(optional(row.completed_on) === undefined
         ? {}
         : { completedOn: row.completed_on as string }),
+      repeatAnnually: Number(row.repeat_annually) === 1,
+      successorSpawned: Number(row.successor_spawned) === 1,
       createdAt: row.created_at as string,
       updatedAt: row.updated_at as string,
     };
@@ -278,10 +287,40 @@ export class DocumentStore {
    * reminder at exactly the moment it needs to be loudest.
    */
   setActionCompleted(id: string, completedOn: string | undefined): StoredAction | undefined {
-    if (!this.getAction(id)) return undefined;
+    const existing = this.getAction(id);
+    if (!existing) return undefined;
+
     this.db
       .prepare("UPDATE actions SET completed_on = ?, updated_at = ? WHERE id = ?")
       .run(completedOn ?? null, this.now(), id);
+
+    // Completing a repeating action creates next year's occurrence, ONCE.
+    //
+    // `successorSpawned` is recorded rather than inferred because
+    // reopen-then-recomplete is a normal path — an agency rejects a filing, the
+    // user reopens it, files again, ticks it off again — and inferring would
+    // mean guessing whether some similar-looking future action was ours or
+    // theirs. Guessing wrong duplicates a deadline, which erodes trust in every
+    // other row on the page.
+    if (completedOn !== undefined && existing.repeatAnnually && !existing.successorSpawned) {
+      this.db
+        .prepare("UPDATE actions SET successor_spawned = 1 WHERE id = ?")
+        .run(id);
+      this.createAction(
+        {
+          title: existing.title,
+          // addYears clamps, so a 29 February deadline becomes 28 February
+          // rather than sliding into March.
+          dueOn: addYears(existing.dueOn, 1),
+          repeatAnnually: true,
+          ...(existing.detail === undefined ? {} : { detail: existing.detail }),
+          ...(existing.entityId === undefined ? {} : { entityId: existing.entityId }),
+          ...(existing.documentId === undefined ? {} : { documentId: existing.documentId }),
+        },
+        this.newId(),
+      );
+    }
+
     return this.getAction(id);
   }
 
@@ -290,7 +329,7 @@ export class DocumentStore {
     this.db
       .prepare(
         `UPDATE actions SET entity_id = ?, document_id = ?, title = ?, detail = ?,
-           due_on = ?, updated_at = ? WHERE id = ?`,
+           due_on = ?, repeat_annually = ?, updated_at = ? WHERE id = ?`,
       )
       .run(
         input.entityId ?? null,
@@ -298,6 +337,7 @@ export class DocumentStore {
         input.title,
         input.detail ?? null,
         input.dueOn,
+        input.repeatAnnually ? 1 : 0,
         this.now(),
         id,
       );

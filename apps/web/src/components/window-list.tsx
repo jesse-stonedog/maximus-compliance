@@ -22,7 +22,20 @@ function Item({ item, asOf }: { item: DatedItem; asOf: string }) {
           <input type="hidden" name="completed" value={String(done)} />
           <button
             type="submit"
-            aria-label={done ? `Reopen ${item.title}` : `Mark ${item.title} done`}
+            /*
+             * The DATE is part of the name, not decoration.
+             *
+             * A recurring action puts two rows with the same title on the page
+             * — this year's and next year's — and identically-named buttons
+             * leave a screen-reader user no way to tell which one they are
+             * about to tick off. Found by a test runner refusing to click an
+             * ambiguous selector, which is the same ambiguity a person hears.
+             */
+            aria-label={
+              done
+                ? `Reopen ${item.title}, due ${formatDate(item.dueOn)}`
+                : `Mark ${item.title}, due ${formatDate(item.dueOn)}, done`
+            }
             className={css({
               minWidth: "44px",
               minHeight: "44px",
@@ -68,7 +81,17 @@ function Item({ item, asOf }: { item: DatedItem; asOf: string }) {
               <StyledStatute /> {item.citation}
             </>
           ) : (
-            "Your own action"
+            <>
+              Your own action
+              {item.repeatAnnually && !done && " · repeats yearly"}
+              {/* Said before the click, not after. Someone who does not expect
+                  a new row appearing reads it as a duplicate. */}
+              {item.repeatAnnually && !done && (
+                <span className={css({ display: "block" })}>
+                  Marking this done will create next year&apos;s.
+                </span>
+              )}
+            </>
           )}
         </div>
       </div>

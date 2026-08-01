@@ -46,6 +46,7 @@ export function allDatedItems(asOf: string = today()): DatedItem[] {
       ...(a.completedOn === undefined ? {} : { completedOn: a.completedOn }),
       ...(a.entityId === undefined ? {} : { entityId: a.entityId }),
       ...(a.documentId === undefined ? {} : { documentId: a.documentId }),
+      ...(a.repeatAnnually ? { repeatAnnually: true } : {}),
     }));
 
   return [...fromRules, ...fromUser];

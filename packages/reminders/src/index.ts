@@ -43,6 +43,8 @@ export interface DatedItem {
   entityId?: string;
   documentId?: string;
   detail?: string;
+  /** User items only. Completing it creates next year's occurrence. */
+  repeatAnnually?: boolean;
 }
 
 /**

@@ -62,6 +62,7 @@ export async function uploadDocument(form: FormData): Promise<void> {
       {
         title: actionTitle,
         dueOn,
+        repeatAnnually: form.get("repeatAnnually") === "true",
         documentId,
         ...(entityId ? { entityId } : {}),
         ...(actionDetail ? { detail: actionDetail } : {}),

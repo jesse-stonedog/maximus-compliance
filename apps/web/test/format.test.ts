@@ -137,3 +137,13 @@ describe("labels", () => {
     expect(entityTypeLabel("co-op")).toBe("co-op");
   });
 });
+
+describe("accessible names for repeated items", () => {
+  it("distinguishes two occurrences of the same action by date", () => {
+    // A recurring action puts this year's and next year's on the page at once.
+    // Buttons named only by title are indistinguishable to a screen reader —
+    // and the labels are built from formatDate, so this is the piece that has
+    // to stay unambiguous.
+    expect(formatDate("2026-08-10")).not.toBe(formatDate("2027-08-10"));
+  });
+});
