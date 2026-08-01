@@ -44,6 +44,9 @@ export function getStore(): EntityStore {
     });
     if (process.env.NODE_ENV !== "test") {
       console.info(`[maximus] database: ${DB_PATH}`);
+      // Registered here rather than at module load: this is the moment a
+      // database handle actually exists to be checkpointed.
+      void import("./shutdown").then((m) => m.wireShutdown());
     }
   }
   return globalForStore.maximusStore;

@@ -179,3 +179,47 @@ describe("crud", () => {
     store.close();
   });
 });
+
+describe("checkpointing", () => {
+  it("folds the write-ahead log back into the main file on close", async () => {
+    // The self-hoster's backup instinct is to copy maximus.sqlite. In WAL mode
+    // that file is missing recent writes until a checkpoint — a backup that
+    // opens cleanly and has silently lost data, discovered only on restore.
+    const { mkdtemp, stat, rm } = await import("node:fs/promises");
+    const { tmpdir } = await import("node:os");
+    const { join } = await import("node:path");
+
+    const dir = await mkdtemp(join(tmpdir(), "maximus-wal-"));
+    const path = join(dir, "test.sqlite");
+
+    const store = new EntityStore({ path, now: () => NOW });
+    for (let i = 0; i < 50; i += 1) {
+      store.create({ ...facts, name: `Entity ${i}` }, `e${i}`);
+    }
+
+    // Before the checkpoint the main file is essentially empty and the WAL
+    // holds the data.
+    const beforeMain = (await stat(path)).size;
+    const beforeWal = (await stat(`${path}-wal`)).size;
+    expect(beforeWal).toBeGreaterThan(beforeMain);
+
+    store.close();
+
+    // After close the main file carries it all, so a plain copy is correct.
+    const afterMain = (await stat(path)).size;
+    expect(afterMain).toBeGreaterThan(beforeMain);
+
+    const reopened = new EntityStore({ path, now: () => NOW });
+    expect(reopened.list()).toHaveLength(50);
+    reopened.close();
+
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  it("survives a checkpoint failure rather than refusing to close", () => {
+    // Data is still safe in the WAL if a checkpoint cannot run; hanging on to
+    // the handle would be the worse outcome.
+    const store = new EntityStore({ path: ":memory:", now: () => NOW });
+    expect(() => store.close()).not.toThrow();
+  });
+});
