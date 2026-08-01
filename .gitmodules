@@ -1,0 +1,3 @@
+[submodule "packages/hopper-style"]
+	path = packages/hopper-style
+	url = git@github.com:jesse-stonedog/hopper-style.git

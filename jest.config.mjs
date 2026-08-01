@@ -21,7 +21,13 @@ export default {
     // its own suite in a way that looks like a code error.
     "^@maximus/engine$": "<rootDir>/packages/engine/src/index.ts",
     "^@maximus/rules$": "<rootDir>/packages/rules/src/index.ts",
+    "^@maximus/db$": "<rootDir>/packages/db/src/index.ts",
     "^@maximus/export$": "<rootDir>/packages/export/src/index.ts",
+    // hopper-style is a SUBMODULE shipping TypeScript source, so both entry
+    // points map to source too. Its `preset` entry runs in Node at build time
+    // and is what the theme-completeness test reads.
+    "^hopper-style/preset$": "<rootDir>/packages/hopper-style/src/preset/index.ts",
+    "^hopper-style$": "<rootDir>/packages/hopper-style/src/index.ts",
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
   transform: {
