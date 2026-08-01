@@ -253,7 +253,32 @@ export class EntityStore {
     return result.changes > 0;
   }
 
+  /**
+   * Fold the write-ahead log back into the main database file.
+   *
+   * WAL mode keeps recent writes in `maximus.sqlite-wal` until SQLite decides
+   * to checkpoint. That is right for a running server and a trap for a
+   * self-hoster: copying `maximus.sqlite` — the obvious backup instinct —
+   * yields a file that **opens cleanly and is silently missing everything
+   * recent**. A backup that looks like it worked is worse than none, because
+   * the discovery happens during a restore.
+   *
+   * TRUNCATE rather than PASSIVE: PASSIVE gives up if a reader is active, and
+   * "usually checkpoints" is not a property a backup can rely on.
+   */
+  checkpoint(): void {
+    this.db.exec("PRAGMA wal_checkpoint(TRUNCATE)");
+  }
+
   close(): void {
+    // Always checkpoint on the way out, so a stopped container leaves a
+    // complete .sqlite file behind and the naive copy is correct.
+    try {
+      this.checkpoint();
+    } catch {
+      // A checkpoint failure must not stop the handle being released — the
+      // data is still safe in the WAL, and refusing to close would be worse.
+    }
     this.db.close();
   }
 }

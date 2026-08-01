@@ -31,14 +31,11 @@ To see unverified ones as well:
 Every such row is marked *unverified* in the UI, and a banner says so. Treat
 them as a prompt to go and check the statute, not as fact.
 
-## Backing up — copy the whole volume, not just the database file
+## Backing up
 
-The database runs in **WAL mode**, so recent writes live in `maximus.sqlite-wal`
-until SQLite folds them into the main file. Copying only `maximus.sqlite` gives
-you a file that opens cleanly and is **silently missing your most recent
-changes** — the worst kind of backup, because it looks like it worked.
-
-Copy all of `/data`, with the container stopped:
+**Stop the container first.** On shutdown the app folds its write-ahead log back
+into `maximus.sqlite`, so a stopped container leaves a complete, copyable
+database file.
 
 ```bash
 docker stop maximus
@@ -47,10 +44,19 @@ docker run --rm -v maximus-data:/data -v "$PWD:/backup" alpine \
 docker start maximus
 ```
 
-`/data` holds the database, its `-wal` and `-shm` companions, and the `documents/`
-directory with your uploaded files. All four matter.
+`/data` holds the database and the `documents/` directory with your uploaded
+files. **Both matter** — the database records what a document is and where its
+reference numbers are; the directory holds the file itself.
 
 To restore, stop the container and untar into an empty volume.
+
+### If you must copy while it is running
+
+Take the whole directory, not just `maximus.sqlite`. While the app is running,
+recent writes live in `maximus.sqlite-wal` and the main file alone is
+**incomplete** — it will open without complaint and silently be missing your
+latest changes, which is the worst kind of backup. Stopping first avoids the
+question entirely.
 
 ## Upgrading
 
