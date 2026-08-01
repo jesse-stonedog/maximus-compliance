@@ -1,0 +1,83 @@
+name: A deadline or fee changed
+description: Tell us a filing rule is wrong or out of date. No coding required.
+title: "[rule] "
+labels: ["rule-data"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you — this is the most valuable thing anyone can contribute.
+
+        You do **not** need to know how to code, and you do not need to open a
+        pull request. Fill this in and we will turn it into a rule.
+
+        The one thing we genuinely cannot do without is the **source**. A
+        deadline nobody can check is a rumour, and we will not publish it.
+  - type: input
+    id: jurisdiction
+    attributes:
+      label: Which jurisdiction?
+      description: State, or "federal". A city is fine too.
+      placeholder: Washington
+    validations:
+      required: true
+  - type: input
+    id: filing
+    attributes:
+      label: Which filing?
+      placeholder: Nonprofit Corporation Annual Report
+    validations:
+      required: true
+  - type: dropdown
+    id: entity-types
+    attributes:
+      label: Which kinds of entity does it apply to?
+      multiple: true
+      options:
+        - 501(c)(3)
+        - Nonprofit corporation
+        - LLC
+        - S-Corp
+        - C-Corp
+        - B-Corp
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: whats-wrong
+    attributes:
+      label: What is wrong, or what changed?
+      description: The due date, the fee, who it applies to — whatever is off. If you know what it used to be as well as what it is now, say both.
+      placeholder: |
+        The fee went from $60 to $70. The due date is unchanged.
+    validations:
+      required: true
+  - type: input
+    id: effective-date
+    attributes:
+      label: When did the change take effect?
+      description: Approximate is fine. We keep old rules so past years stay answerable.
+      placeholder: 2026-07-01
+  - type: textarea
+    id: citation
+    attributes:
+      label: Where did you find this?
+      description: |
+        **Required.** A statute, a rule number, a form number, or a link to the
+        agency's own page.
+
+        Please do not cite another compliance vendor's website — they are wrong
+        often enough that copying them would import their errors into a dataset
+        other people rely on.
+      placeholder: |
+        RCW 24.03A.1010
+        https://www.sos.wa.gov/corporations-charities/...
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirm
+      options:
+        - label: I read the source I cited above, rather than repeating it from somewhere else.
+          required: true

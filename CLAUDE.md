@@ -1,0 +1,263 @@
+# maximus-compliance — the open-source core (AGPLv3)
+
+**Repo tier.** Project-wide context (the open-core boundary, ownership and the
+CLA, the rule contract, the design system, cross-repo ordering) is in
+`~/src/maximus-compliance/CLAUDE.md`. Machine-wide conventions are in
+`~/.claude/CLAUDE.md`. This file covers only what's true inside this repo.
+
+**This repo is public.** Every commit, comment, and branch name is visible to
+the world, permanently, from the moment it's pushed. Never commit a real EIN,
+customer name, filing document, credential, or internal pricing discussion here.
+Test fixtures use obviously-fake entities.
+
+Copyright is **StoneDogCode L.L.C.** — in the AGPL headers, in every
+`package.json` `author`, and as the CLA's assignee.
+
+## Layout
+
+Nx + npm workspaces (`packages/*`, `apps/*`), the same arrangement HopperGuard
+uses.
+
+```
+packages/
+  engine/        @maximus/engine  — pure TS evaluator, zero runtime deps
+  rules/         @maximus/rules   — rule packs + JSON Schema, published as data
+  db/            @maximus/db      — SQLite persistence for self-host
+  ui/            @maximus/ui      — the Lucide icon set + app primitives
+  hopper-style/  SUBMODULE → jesse-stonedog/hopper-style (Apache-2.0)
+apps/
+  web/                            — self-host dashboard, single-tenant
+  cli/                            — `maximus check`, rule linting, imports
+docker/                           — the one-container self-host image
+```
+
+`engine` is the crown jewel and the thing the SaaS imports. Keep it **pure**: no
+filesystem, no network, no database, no `process.env`. Rules and entities go in,
+obligations come out. That purity is what makes it testable against thousands of
+fixture cases, embeddable in a browser, and safe to expose as the B2B API.
+
+Dependency direction is one-way: `web`/`cli` → `db` → `engine` ← `rules`, and
+`web` → `ui` → `hopper-style`. **`engine` imports nothing from the others.**
+
+`packages/hopper-style` is a submodule, so a change to it is a PR in *that* repo
+followed by a pointer bump here — never an edit in place. It has three consumers;
+see the project file.
+
+## Design system & icons
+
+Primitives come from `hopper-style`. Wiring is four steps and two of them get
+missed — read hopper-style's CLAUDE.md, but the short version: add
+`hopperStylePreset()` to `presets` **alongside** `@pandacss/preset-base` and
+`@pandacss/preset-panda` (listing `presets` replaces Panda's defaults rather than
+extending them, and the loss is silent), add
+`./packages/hopper-style/src/**/*.tsx` to the Panda `include` globs, and define
+the `--hopper-*` custom properties.
+
+**No Font Awesome. Ever.** `hopper-icons` vendors licensed Pro artwork and this
+repo is public and ships a public Docker image — see the project file. Icons here
+are Lucide, wrapped one line each through hopper-style's seam in
+`packages/ui/src/icons/`:
+
+```tsx
+import { CalendarClock } from "lucide-react";
+export const StyledCalendar = createIconFromComponent("StyledCalendar", CalendarClock);
+```
+
+**Keep the exported names identical to the SaaS's** so a screen ports between
+the repos without icon edits.
+
+**Standard sizing, not HopperGuard's.** Set it once, at the provider:
+
+```tsx
+<HopperStyleProvider fontSizeProfile="md" iconSize="md" variant="solid">
+```
+
+plus a standard `--font-sizes-*` scale (`md` = 1rem) in the theme CSS, which
+overrides hopper-style's elder-audience fallbacks. Never pass `size` at an icon
+call site to compensate — that's how an app ends up with three icon scales and
+no way to retune any of them.
+
+## The fact model comes first
+
+`packages/engine/src/facts.ts` defines what the system knows about an entity —
+formation date, fiscal year end, entity type, jurisdictions registered in,
+revenue and asset bands, employee count, charitable-solicitation status. **A rule
+may only reference a fact that exists there.**
+
+This ordering is load-bearing. Write rules first and you discover each missing
+fact one rule at a time, versioning the schema repeatedly in a month; every
+version is a migration for self-hosters and a breaking change for the B2B API.
+Adding a fact is cheap, changing what one *means* is not.
+
+## Rule packs — the heart of the project
+
+Rules live at `packages/rules/us/<state>/<slug>.json`, e.g.
+`packages/rules/us/wa/nonprofit-annual-report.json`. Federal rules go under
+`packages/rules/us/federal/`.
+
+**Organised by jurisdiction, not by entity type**, because `entityTypes` is a
+list — one Washington annual report covers `s-corp`, `c-corp` and `b-corp`, and
+a directory per entity type would have to pick one or duplicate the rule.
+
+```json
+{
+  "$schema": "../../schema/rule.v1.json",
+  "id": "us-wa-sos-nonprofit-annual-report",
+  "jurisdiction": "US-WA",
+  "title": "Nonprofit Corporation Annual Report",
+  "agency": "Washington Secretary of State",
+  "entityTypes": ["501c3", "nonprofit-corp"],
+  "cadence": { "type": "annual", "anchor": "formation-month", "dayOfMonth": "last" },
+  "fee": { "amountMinorUnits": 6000, "currency": "USD" },
+  "citation": "RCW 24.03A.1010",
+  "lastVerified": "2026-08-01",
+  "status": "draft",
+  "effectiveFrom": "2022-01-01"
+}
+```
+
+`src/generated.ts` inlines every rule into a TypeScript module, because the
+engine is pure and must run in a browser — a consumer that had to read a file
+could not. It is **committed and generated**: run `npm run rules:barrel` after
+adding a rule, and `rules:barrel:check` in the gate fails when it is stale, so a
+rule added without regenerating is caught at merge rather than going silently
+missing from everyone's calendar.
+
+### `status`: draft vs active
+
+**`draft` is not a lesser form of `active` to be tidied up later.** It is the
+honest state for a rule written from general knowledge rather than from reading
+the statute, and it exists so that contributing a rule you are unsure about is
+possible without asserting something false. Promotion to `active` means a person
+read the primary source.
+
+`evaluate()` **excludes drafts by default.** The default protects the consumer
+who did not think about it; a caller that wants them passes `includeDraft` and
+gets `status` on every obligation so it can label them.
+
+**The entire seed set is currently `draft`** — see the seeding note in the README
+and NEH-194. Nothing in it should be shown to a user as fact until a human has
+worked through it.
+
+**Money is integer minor units.** `6000` is $60.00. Never a float, anywhere in
+this repo — a rounding error in a fee is a support ticket and a credibility hit.
+
+**Dates are the whole product; treat them accordingly.**
+- Store and compare as plain calendar dates (`YYYY-MM-DD`), never `Date` objects
+  carrying a time or a zone. A due date is a civil date in the filing
+  jurisdiction, not an instant.
+- The engine is **deterministic and clock-free**: every entry point takes an
+  explicit "as of" date. Nothing in `engine` calls `Date.now()`. This is what
+  makes results reproducible, cacheable, and testable — and it's what lets a
+  user ask "what was due in 2024".
+- Weekend/holiday rolling is a rule property, not a global assumption — states
+  differ on whether a due date rolls forward.
+
+**Every rule needs a citation.** Statute, form number, or the agency page it came
+from. CI rejects a rule without one, and reviewers reject one whose citation
+doesn't say what the rule says.
+
+**Every rule needs `lastVerified`** — the date a human last checked it against
+the primary source. `npm run rules:staleness` reports rules unverified for over
+twelve months, and that report is a work queue, not a warning to scroll past.
+Bumping the date without re-reading the statute is worse than leaving it stale,
+because it converts an honest "unknown" into a false "checked".
+
+**Superseding, not editing.** When a fee or deadline changes, set `effectiveTo`
+on the old rule and add a new one. Overwriting destroys the historical answer
+and hides the change from review. The only edits in place are corrections of
+rules that were *always* wrong.
+
+### Adding or changing a rule
+
+1. Verify against the primary source — the statute or the agency's own page, not
+   a blog or another compliance vendor. Vendor sites are wrong often enough that
+   copying them imports their errors and their liability. If you have not done
+   this, the rule is `status: "draft"` — say so rather than guessing.
+2. Add the JSON, with `citation`, `effectiveFrom`, `lastVerified`, and `status`.
+3. `npm run rules:barrel` to regenerate `src/generated.ts`, and commit it.
+4. Add fixture cases in `packages/engine/test/` — at minimum one entity that
+   triggers it and one nearby entity that doesn't. Boundary cases (formation on
+   the 31st, leap day, a fiscal year that isn't calendar) are where this engine
+   will actually break, and all three are already in the fixture entities.
+5. `npm run gate` — validation, barrel freshness, typecheck, lint, tests.
+
+## Testing
+
+Rule data has no compiler to catch it, so **the fixture suite is the only thing
+standing between a schema-valid rule and a wrong deadline in someone's
+calendar.** A rule PR without fixtures is not mergeable, however obvious the
+rule looks.
+
+Prefer table-driven fixtures (entity + as-of date → expected obligations) over
+hand-written assertions. They're what a non-developer contributor can actually
+read and extend, and they double as the regression corpus when the engine's date
+math changes.
+
+Every bug fix starts with a failing fixture that reproduces it (per
+`~/.claude/CLAUDE.md`).
+
+`npm run gate` — typecheck, lint, rule validation, tests — is the merge bar.
+
+## Public API surface & versioning
+
+- `@maximus/engine` — **semver, strictly.** Third parties and the SaaS build on
+  it. Anything exported from the package root is a promise; keep internals
+  behind `src/internal/` and out of the entry point.
+- `@maximus/rules` — **date-versioned** `YYYY.M.PATCH` (`2026.7.0`). It's data;
+  it changes weekly and semver doesn't describe it. A *schema* change is what
+  bumps `rule.v1.json` to `v2`, and v1 rules keep working.
+- **Rule ids are permanent public identifiers.** Never rename one — customers,
+  the B2B API, and downstream integrations key off them. Supersede instead.
+
+Publishing is what the SaaS consumes; see the project file for the mandatory
+OSS-first ordering.
+
+## Self-host container
+
+One container, `docker run`, SQLite on a mounted volume, no external services
+required. That constraint is the product for this tier — the moment self-hosting
+needs Postgres plus Redis plus an SMTP relay, the audience it exists for stops
+installing it.
+
+Follows the house Docker conventions from `~/.claude/CLAUDE.md` where they
+apply, but note this image is **published for the public to run**, not deployed
+to a Lightsail service. Build multi-arch (`amd64` + `arm64`) — a meaningful share
+of self-hosters are on ARM boxes and Pis.
+
+## Contributions from outside
+
+- **CLA before the first outside PR, and before the repo gets attention.** The
+  bot must be green on every external PR. See the project file for why this is
+  load-bearing rather than paperwork.
+- The target contributor is a **CPA or attorney who knows the statute but may
+  not know git.** The highest-leverage file in the repo is the structured
+  **"a deadline or fee changed" issue template** — jurisdiction, what changed,
+  citation. Someone who will never open a PR will happily fill out a form, and
+  converting that to JSON is five minutes.
+- For those who do open PRs: optimize the authoring guide for copy-paste — take
+  a neighbouring rule, change three fields, submit. Any friction here is friction
+  on the one thing the project can't buy.
+- Review rule PRs on **the citation and the dates**, not on style. A formatter
+  handles style; only a human can check that RCW 24.03A.075 says what the JSON
+  claims.
+
+## Not legal advice
+
+The README, the dashboard, and the CLI all carry it, and it is not a footer
+afterthought — this software tells people when to file with the government.
+See the project file.
+
+## AGPL hygiene
+
+- Keep `LICENSE` (AGPLv3) at the root, unmodified.
+- New source files carry the standard AGPL header with **StoneDogCode L.L.C.**
+  as the copyright holder; rule JSON files don't (no comments in JSON, and the
+  repo-level licence covers them).
+- **Never paste code in from the SaaS repo.** The proprietary tree may only
+  *depend* on this one, and any leak in the other direction muddies the licence
+  story that the whole business model rests on.
+- **Nothing licensed-but-not-redistributable may land here** — Font Awesome Pro
+  above all. `packages/hopper-style` is Apache-2.0 and safe; `hopper-icons` is
+  not and must never appear in this repo's dependency tree, submodules, or
+  Docker image.

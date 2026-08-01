@@ -1,0 +1,43 @@
+{
+  "name": "maximus-compliance",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Open-source compliance calendar: rules engine and crowd-maintained rule packs for US business entities.",
+  "license": "AGPL-3.0-only",
+  "author": "StoneDogCode L.L.C.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jesse-stonedog/maximus-compliance.git"
+  },
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "type-check": "tsc --build --force",
+    "lint": "eslint . --ext ts,tsx",
+    "test": "jest",
+    "rules:barrel": "node packages/rules/scripts/build-barrel.mjs",
+    "rules:barrel:check": "node packages/rules/scripts/build-barrel.mjs --check",
+    "rules:validate": "node packages/rules/scripts/validate.mjs",
+    "rules:staleness": "node packages/rules/scripts/staleness.mjs",
+    "//gate": "The merge bar. rules:validate and the barrel check run BEFORE typecheck and tests on purpose: a schema-invalid or unregenerated rule produces confusing downstream failures, and these two name the actual problem.",
+    "gate": "npm run rules:validate && npm run rules:barrel:check && npm run type-check && npm run lint && npm run test"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^24.13.2",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "eslint": "^8.57.1",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.11",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

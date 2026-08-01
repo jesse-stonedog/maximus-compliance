@@ -1,0 +1,16 @@
+{
+  "$schema": "../../schema/rule.v1.json",
+  "id": "us-wa-sos-llc-annual-report",
+  "jurisdiction": "US-WA",
+  "title": "Limited Liability Company Annual Report",
+  "agency": "Washington Secretary of State",
+  "entityTypes": ["llc"],
+  "cadence": { "type": "annual", "anchor": "formation-month", "dayOfMonth": "last" },
+  "fee": { "amountMinorUnits": 6000, "currency": "USD" },
+  "citation": "RCW 25.15.106",
+  "citationUrl": "https://app.leg.wa.gov/rcw/default.aspx?cite=25.15",
+  "lastVerified": "2026-08-01",
+  "status": "draft",
+  "effectiveFrom": "2020-01-01",
+  "notes": "Due by the end of the month the LLC was formed in. Verify the section and fee against the SOS fee schedule."
+}

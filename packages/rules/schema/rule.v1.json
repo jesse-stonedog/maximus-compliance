@@ -1,0 +1,193 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://maximuscompliance.com/schema/rule.v1.json",
+  "title": "Maximus compliance rule, v1",
+  "description": "One filing obligation in one jurisdiction. See docs/rule-authoring.md — you can usually copy a neighbouring rule and change three fields.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "jurisdiction",
+    "title",
+    "agency",
+    "entityTypes",
+    "cadence",
+    "citation",
+    "lastVerified",
+    "status",
+    "effectiveFrom"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Relative path to this schema. Gives editors autocomplete and inline validation."
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Stable, kebab-case, jurisdiction-prefixed: us-wa-sos-annual-report. A PERMANENT PUBLIC IDENTIFIER — the B2B API and customer integrations key off it. Never rename one; supersede it instead."
+    },
+    "jurisdiction": {
+      "type": "string",
+      "pattern": "^(US|US-[A-Z]{2}(/[a-z0-9-]+)?)$",
+      "description": "US for federal, ISO 3166-2 for states (US-WA), US-WA/seattle for a municipality."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 3,
+      "description": "What the filer sees. 'Annual Report', not the rule id."
+    },
+    "agency": {
+      "type": "string",
+      "minLength": 3,
+      "description": "The body it is filed with, spelled out: 'Washington Secretary of State'."
+    },
+    "entityTypes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["501c3", "nonprofit-corp", "llc", "s-corp", "c-corp", "b-corp"]
+      },
+      "description": "Every legal form this rule applies to. A rule applies if the entity holds ANY of them."
+    },
+    "cadence": {
+      "description": "How often it recurs and what the due date is anchored to.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "anchor", "dayOfMonth"],
+          "properties": {
+            "type": { "enum": ["annual", "biennial"] },
+            "anchor": { "const": "formation-month" },
+            "dayOfMonth": {
+              "oneOf": [
+                { "type": "integer", "minimum": 1, "maximum": 31 },
+                { "const": "last" }
+              ],
+              "description": "A day past the end of the month clamps to the last day; it does not roll into the next one."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "anchor", "month", "day"],
+          "properties": {
+            "type": { "enum": ["annual", "biennial"] },
+            "anchor": { "const": "calendar" },
+            "month": { "type": "integer", "minimum": 1, "maximum": 12 },
+            "day": { "type": "integer", "minimum": 1, "maximum": 31 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "anchor", "offsetMonths", "dayOfMonth"],
+          "properties": {
+            "type": { "const": "annual" },
+            "anchor": { "const": "fiscal-year-end" },
+            "offsetMonths": { "type": "integer", "minimum": 0, "maximum": 24 },
+            "dayOfMonth": {
+              "oneOf": [
+                { "type": "integer", "minimum": 1, "maximum": 31 },
+                { "const": "last" }
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "anchor", "offsetDays"],
+          "properties": {
+            "type": { "const": "one-time" },
+            "anchor": { "const": "formation" },
+            "offsetDays": { "type": "integer", "minimum": 0 }
+          }
+        }
+      ]
+    },
+    "fee": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["amountMinorUnits", "currency"],
+      "properties": {
+        "amountMinorUnits": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "INTEGER MINOR UNITS. 6000 is $60.00. Never a float — a rounding error in a fee is a support ticket and a credibility hit."
+        },
+        "currency": { "const": "USD" }
+      }
+    },
+    "conditions": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The rule applies only when ALL conditions hold. A condition may only test a fact the entity fact model defines; rules:validate enforces that.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fact", "op", "value"],
+        "properties": {
+          "fact": {
+            "enum": [
+              "grossRevenueMinorUnits",
+              "totalAssetsMinorUnits",
+              "employeeCount",
+              "solicitsCharitableContributions"
+            ]
+          },
+          "op": { "enum": ["lt", "lte", "gt", "gte", "eq"] },
+          "value": { "type": ["integer", "boolean"] }
+        }
+      }
+    },
+    "form": {
+      "type": "string",
+      "description": "Form number or name, where the agency uses one."
+    },
+    "citation": {
+      "type": "string",
+      "minLength": 4,
+      "description": "REQUIRED. The statute, regulation, or agency page this came from — 'RCW 24.03A.075'. A rule without a citation is unreviewable. Cite the primary source, never another compliance vendor: they are wrong often enough that copying them imports their errors."
+    },
+    "citationUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Direct link to the statute or agency page, where one exists."
+    },
+    "lastVerified": {
+      "type": "string",
+      "format": "date",
+      "description": "The date a human last read the primary source and confirmed this rule. Bumping it without re-reading is worse than leaving it stale — it converts an honest 'unknown' into a false 'checked'."
+    },
+    "status": {
+      "enum": ["draft", "active"],
+      "description": "'draft' means written but NOT yet checked against the primary source by a human. It is the honest state for a rule you are unsure about, not a lesser form of 'active' — contribute a draft rather than asserting something you have not verified. Promotion to 'active' means someone read the statute."
+    },
+    "effectiveFrom": {
+      "type": "string",
+      "format": "date",
+      "description": "First date this version of the rule governs."
+    },
+    "effectiveTo": {
+      "type": "string",
+      "format": "date",
+      "description": "Last date it governs. Absent means still in force. When a fee or deadline changes, set this and add a NEW rule — never edit in place, or the historical answer is destroyed and the change escapes review."
+    },
+    "supersededBy": {
+      "type": "string",
+      "description": "Id of the rule that replaced this one."
+    },
+    "weekendRule": {
+      "const": "roll-forward",
+      "description": "Opt in only where the statute or agency actually says a weekend deadline moves. Rolling by default would invent a legal position the rule never claimed."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Anything a reviewer needs — a quirk, an ambiguity, what was checked."
+    }
+  }
+}

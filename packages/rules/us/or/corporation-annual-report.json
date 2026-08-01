@@ -1,0 +1,16 @@
+{
+  "$schema": "../../schema/rule.v1.json",
+  "id": "us-or-sos-corporation-annual-report",
+  "jurisdiction": "US-OR",
+  "title": "Business Corporation Annual Report",
+  "agency": "Oregon Secretary of State, Corporation Division",
+  "entityTypes": ["s-corp", "c-corp", "b-corp"],
+  "cadence": { "type": "annual", "anchor": "formation-month", "dayOfMonth": "last" },
+  "fee": { "amountMinorUnits": 10000, "currency": "USD" },
+  "citation": "ORS 60.787",
+  "citationUrl": "https://www.oregonlegislature.gov/bills_laws/ors/ors060.html",
+  "lastVerified": "2026-08-01",
+  "status": "draft",
+  "effectiveFrom": "2020-01-01",
+  "notes": "Same anniversary-date question — verify before promoting."
+}
