@@ -40,12 +40,15 @@ export type {
   MonthDay,
 } from "./facts.js";
 
+export { isConditionGroup } from "./rule.js";
 export type {
   Cadence,
   ConditionOperator,
   Fee,
   Rule,
   RuleCondition,
+  RuleConditionGroup,
+  RuleConditionNode,
   RuleStatus,
 } from "./rule.js";
 

@@ -80,10 +80,23 @@ for (const { rule, file } of rules) {
     );
   }
 
-  for (const condition of rule.conditions ?? []) {
-    if (!CONDITIONABLE_FACTS.includes(condition.fact)) {
+  // Flattened, so a fact inside an `anyOf` group is checked too. A group whose
+  // member tested an undefined fact would otherwise validate and then never
+  // match — a silent false negative, the failure mode this product can least
+  // afford.
+  for (const node of rule.conditions ?? []) {
+    for (const condition of node.anyOf ?? [node]) {
+      if (!CONDITIONABLE_FACTS.includes(condition.fact)) {
+        errors.push(
+          `${where}: condition tests "${condition.fact}", which the entity fact model does not define`,
+        );
+      }
+    }
+    // A one-member group is an AND entry in disguise, and reads as though an
+    // alternative was dropped by mistake. Say so rather than quietly accepting it.
+    if (node.anyOf && node.anyOf.length < 2) {
       errors.push(
-        `${where}: condition tests "${condition.fact}", which the entity fact model does not define`,
+        `${where}: an "anyOf" group needs at least two alternatives (got ${node.anyOf.length})`,
       );
     }
   }

@@ -1,4 +1,8 @@
+# Both forms. The trailing-slash pattern does NOT match a `node_modules`
+# SYMLINK, which is what a git worktree gets when you link it to the canonical
+# checkout's modules — and `git add -A` will then happily stage it.
 node_modules/
+node_modules
 dist/
 *.tsbuildinfo
 coverage/

@@ -17,7 +17,14 @@ import {
   rollForwardOffWeekend,
 } from "./calendar.js";
 import type { CalendarDate, EntityFacts } from "./facts.js";
-import type { Cadence, Rule, RuleCondition, RuleStatus } from "./rule.js";
+import { isConditionGroup } from "./rule.js";
+import type {
+  Cadence,
+  Rule,
+  RuleCondition,
+  RuleConditionGroup,
+  RuleStatus,
+} from "./rule.js";
 
 /** One thing the entity owes, on one date. */
 export interface Obligation {
@@ -96,17 +103,17 @@ export function evaluate(
     if (!appliesToJurisdiction(entity, rule)) continue;
     if (!appliesToEntityType(entity, rule)) continue;
 
-    const missingFacts = missingConditionFacts(entity, rule);
-    if (missingFacts.length > 0) {
+    const conditions = resolveConditions(entity, rule);
+    if (conditions.truth === "false") continue;
+    if (conditions.truth === "unknown") {
       indeterminate.push({
         ruleId: rule.id,
         title: rule.title,
         jurisdiction: rule.jurisdiction,
-        missingFacts,
+        missingFacts: conditions.missing,
       });
       continue;
     }
-    if (!conditionsHold(entity, rule)) continue;
 
     for (const dueOn of dueDatesInWindow(entity, rule, asOf, horizonEnd)) {
       // The rule's own effective window is checked against the DUE date, not
@@ -172,30 +179,90 @@ function factValue(
   return entity[fact];
 }
 
-function missingConditionFacts(entity: EntityFacts, rule: Rule): string[] {
-  const missing = (rule.conditions ?? [])
-    .filter((condition) => factValue(entity, condition.fact) === undefined)
-    .map((condition) => condition.fact);
-  return [...new Set(missing)];
+/**
+ * Three-valued, because "we do not know" is a distinct and useful answer.
+ *
+ * Collapsing `unknown` into `false` is the tempting simplification and it is
+ * wrong: it silently turns "you have not told us your revenue" into "you do not
+ * owe a Form 990".
+ */
+type Truth = "true" | "false" | "unknown";
+
+function testCondition(entity: EntityFacts, condition: RuleCondition): Truth {
+  const actual = factValue(entity, condition.fact);
+  if (actual === undefined) return "unknown";
+  switch (condition.op) {
+    case "eq":
+      return actual === condition.value ? "true" : "false";
+    case "lt":
+      return actual < condition.value ? "true" : "false";
+    case "lte":
+      return actual <= condition.value ? "true" : "false";
+    case "gt":
+      return actual > condition.value ? "true" : "false";
+    case "gte":
+      return actual >= condition.value ? "true" : "false";
+  }
 }
 
-function conditionsHold(entity: EntityFacts, rule: Rule): boolean {
-  return (rule.conditions ?? []).every((condition) => {
-    const actual = factValue(entity, condition.fact);
-    if (actual === undefined) return false;
-    switch (condition.op) {
-      case "eq":
-        return actual === condition.value;
-      case "lt":
-        return actual < condition.value;
-      case "lte":
-        return actual <= condition.value;
-      case "gt":
-        return actual > condition.value;
-      case "gte":
-        return actual >= condition.value;
+/**
+ * A group holds if any member does — and a **known true beats an unknown**.
+ *
+ * That precedence is the point of doing this properly. An organisation with
+ * $3M of receipts owes Form 990 whether or not it has told us its total assets,
+ * so asking for assets it does not need to supply would be noise. Only when
+ * nothing is known-true does an unknown member make the group undecidable.
+ */
+function testGroup(
+  entity: EntityFacts,
+  group: RuleConditionGroup,
+): { truth: Truth; missing: string[] } {
+  const results = group.anyOf.map((condition) => ({
+    truth: testCondition(entity, condition),
+    fact: condition.fact,
+  }));
+
+  if (results.some((r) => r.truth === "true")) {
+    return { truth: "true", missing: [] };
+  }
+  const unknown = results.filter((r) => r.truth === "unknown");
+  if (unknown.length > 0) {
+    return { truth: "unknown", missing: unknown.map((r) => r.fact) };
+  }
+  return { truth: "false", missing: [] };
+}
+
+/**
+ * Resolve a rule's whole condition set against an entity.
+ *
+ * The top level is an AND, and **a known-false entry short-circuits everything
+ * else** — including unknowns. If a rule requires the entity to solicit
+ * contributions and it demonstrably does not, the rule does not apply, and
+ * demanding its revenue first would be asking for data to settle a question
+ * already settled.
+ */
+function resolveConditions(
+  entity: EntityFacts,
+  rule: Rule,
+): { truth: Truth; missing: string[] } {
+  const missing: string[] = [];
+  let sawUnknown = false;
+
+  for (const node of rule.conditions ?? []) {
+    const result = isConditionGroup(node)
+      ? testGroup(entity, node)
+      : { truth: testCondition(entity, node), missing: [node.fact] };
+
+    if (result.truth === "false") return { truth: "false", missing: [] };
+    if (result.truth === "unknown") {
+      sawUnknown = true;
+      missing.push(...result.missing);
     }
-  });
+  }
+
+  return sawUnknown
+    ? { truth: "unknown", missing: [...new Set(missing)] }
+    : { truth: "true", missing: [] };
 }
 
 // ---------------------------------------------------------------------------

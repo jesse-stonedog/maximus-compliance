@@ -64,6 +64,26 @@ export const MULTI_STATE_CORP: EntityFacts = {
   registeredOn: { "US-WA": "2023-04-01" },
 };
 
+/**
+ * Modest receipts, large endowment.
+ *
+ * The entity the AND-only condition grammar got wrong: under the receipts
+ * threshold, far over the assets one, and so owing a full Form 990 while being
+ * told it owed nothing. A false negative — the user sees a clean calendar and
+ * misses a filing.
+ */
+export const ENDOWED_CHARITY: EntityFacts = {
+  name: "Example Kitsap Heritage Endowment",
+  entityTypes: ["501c3", "nonprofit-corp"],
+  formedOn: "2010-05-20",
+  homeJurisdiction: "US-WA",
+  jurisdictions: ["US", "US-WA"],
+  fiscalYearEnd: "12-31",
+  grossRevenueMinorUnits: 8_000_000, // $80,000 — under the $200k receipts test
+  totalAssetsMinorUnits: 1_200_000_000, // $12M — far over the $500k assets test
+  solicitsCharitableContributions: false,
+};
+
 /** A charity that has not told us its revenue. Drives the indeterminate path. */
 export const CHARITY_WITHOUT_REVENUE: EntityFacts = {
   name: "Example Olympic Literacy Project",

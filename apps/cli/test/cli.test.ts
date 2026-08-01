@@ -1,0 +1,238 @@
+/**
+ * Copyright (C) 2026 StoneDogCode L.L.C.
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+import { parseArgs, todayUtc } from "../src/args.js";
+import { DISCLAIMER, formatMoney, renderResult } from "../src/format.js";
+import type { EvaluationResult } from "@maximus/engine";
+
+describe("parseArgs", () => {
+  it("requires an entity file", () => {
+    expect(parseArgs(["check"])).toEqual({
+      kind: "error",
+      message: "--entity is required",
+    });
+  });
+
+  it("defaults the horizon and the draft setting", () => {
+    const parsed = parseArgs(["check", "--entity", "e.json", "--as-of", "2026-01-01"]);
+    expect(parsed).toMatchObject({
+      kind: "check",
+      options: {
+        horizonMonths: 12,
+        includeDraft: false,
+        format: "text",
+        reminderDaysBefore: [],
+      },
+    });
+  });
+
+  it("treats --json as shorthand for --format json", () => {
+    // Kept because it shipped before --format existed and scripts may use it.
+    expect(parseArgs(["check", "--entity", "e.json", "--json"])).toMatchObject({
+      kind: "check",
+      options: { format: "json" },
+    });
+  });
+
+  it.each(["yaml", "pdf", "ical", ""])(
+    "rejects the unsupported --format value %s",
+    (value) => {
+      expect(
+        parseArgs(["check", "--entity", "e.json", "--format", value]),
+      ).toMatchObject({ kind: "error" });
+    },
+  );
+
+  it.each(["-1", "1.5", "400", "thirty", "30,x"])(
+    "rejects the malformed --remind value %s",
+    (value) => {
+      expect(
+        parseArgs(["check", "--entity", "e.json", "--remind", value]),
+      ).toMatchObject({ kind: "error" });
+    },
+  );
+
+  it("parses a comma-separated reminder list", () => {
+    expect(
+      parseArgs(["check", "--entity", "e.json", "--remind", "30, 7"]),
+    ).toMatchObject({ kind: "check", options: { reminderDaysBefore: [30, 7] } });
+  });
+
+  it("defaults asOf to today rather than leaving it unset", () => {
+    // The engine is clock-free by design, so something has to supply the date.
+    // That something is the process boundary, and nowhere further in.
+    const parsed = parseArgs(["check", "--entity", "e.json"]);
+    expect(parsed.kind).toBe("check");
+    if (parsed.kind !== "check") return;
+    expect(parsed.options.asOf).toBe(todayUtc());
+  });
+
+  it.each(["2026-1-1", "01-01-2026", "tomorrow", "2026/01/01"])(
+    "rejects the malformed --as-of value %s",
+    (value) => {
+      expect(parseArgs(["check", "--entity", "e.json", "--as-of", value])).toMatchObject(
+        { kind: "error" },
+      );
+    },
+  );
+
+  it.each(["0", "-3", "1.5", "601", "many"])(
+    "rejects the out-of-range --months value %s",
+    (value) => {
+      expect(parseArgs(["check", "--entity", "e.json", "--months", value])).toMatchObject(
+        { kind: "error" },
+      );
+    },
+  );
+
+  it("rejects an unknown option rather than ignoring it", () => {
+    // Silently ignoring a typo like --include-drafts would produce an answer
+    // the user believes includes drafts and does not.
+    expect(
+      parseArgs(["check", "--entity", "e.json", "--include-drafts"]),
+    ).toMatchObject({ kind: "error", message: "Unknown option: --include-drafts" });
+  });
+
+  it("treats no arguments as help, not as an error", () => {
+    expect(parseArgs([])).toEqual({ kind: "help" });
+  });
+});
+
+describe("formatMoney", () => {
+  it.each([
+    [6000, "$60.00"],
+    [30000, "$300.00"],
+    [5, "$0.05"],
+    [0, "$0.00"],
+    [123456789, "$1,234,567.89"],
+  ])("renders %d minor units as %s", (minor, expected) => {
+    expect(formatMoney(minor)).toBe(expected);
+  });
+
+  it("never loses a cent to floating point", () => {
+    // The reason the whole codebase carries integer minor units. 1999 / 100 in
+    // float arithmetic is where "$19.99" quietly becomes "$19.990000000000002".
+    for (let cents = 0; cents < 1000; cents += 1) {
+      expect(formatMoney(cents)).toMatch(/^\$\d+\.\d{2}$/);
+    }
+  });
+});
+
+const emptyResult: EvaluationResult = { obligations: [], indeterminate: [] };
+
+const baseObligation = {
+  ruleId: "us-wa-sos-nonprofit-annual-report",
+  title: "Nonprofit Corporation Annual Report",
+  agency: "Washington Secretary of State",
+  jurisdiction: "US-WA",
+  dueOn: "2026-03-31",
+  citation: "RCW 24.03A.1010",
+  lastVerified: "2026-08-01",
+} as const;
+
+const render = (result: EvaluationResult) =>
+  renderResult(result, {
+    entityName: "Example Cascade Trails Association",
+    asOf: "2026-01-01",
+    horizonMonths: 12,
+  });
+
+describe("renderResult", () => {
+  it("always carries the disclaimer", () => {
+    // Not behind --help. This tool tells people when to file with a government
+    // and a missed deadline costs real money, so the caveat belongs where the
+    // answer is, every single time.
+    expect(render(emptyResult)).toContain(DISCLAIMER);
+  });
+
+  it("says so plainly when nothing is due", () => {
+    expect(render(emptyResult)).toContain("Nothing due in this window.");
+  });
+
+  it("shows the due date, jurisdiction, fee, and citation", () => {
+    const output = render({
+      obligations: [
+        { ...baseObligation, status: "active", feeMinorUnits: 6000, currency: "USD" },
+      ],
+      indeterminate: [],
+    });
+    expect(output).toContain("2026-03-31");
+    expect(output).toContain("US-WA");
+    expect(output).toContain("$60.00");
+    expect(output).toContain("RCW 24.03A.1010");
+  });
+
+  it('shows an em dash, never "$0.00", when no fee is recorded', () => {
+    // Reporting zero would claim the filing is free. What we actually know is
+    // that nobody recorded a fee.
+    const output = render({
+      obligations: [{ ...baseObligation, status: "active" }],
+      indeterminate: [],
+    });
+    expect(output).toContain("—");
+    expect(output).not.toContain("$0.00");
+  });
+
+  it("marks every draft line and explains what draft means", () => {
+    const output = render({
+      obligations: [{ ...baseObligation, status: "draft", feeMinorUnits: 6000 }],
+      indeterminate: [],
+    });
+    expect(output).toContain("[DRAFT]");
+    expect(output).toContain("NOT yet checked against");
+  });
+
+  it("does not warn about drafts when there are none", () => {
+    const output = render({
+      obligations: [{ ...baseObligation, status: "active" }],
+      indeterminate: [],
+    });
+    expect(output).not.toContain("[DRAFT]");
+  });
+
+  it("reports indeterminate rules and names the missing facts", () => {
+    // An incomplete calendar presented as complete is this product's worst
+    // failure. The user can usually fix it by supplying one number.
+    const output = render({
+      obligations: [],
+      indeterminate: [
+        {
+          ruleId: "us-federal-form-990",
+          title: "Form 990",
+          jurisdiction: "US",
+          missingFacts: ["grossRevenueMinorUnits"],
+        },
+      ],
+    });
+    expect(output).toContain("Cannot tell yet");
+    expect(output).toContain("Form 990");
+    expect(output).toContain("grossRevenueMinorUnits");
+  });
+
+  it("keeps columns aligned when titles differ in length", () => {
+    const output = render({
+      obligations: [
+        { ...baseObligation, status: "active", dueOn: "2026-03-31" },
+        {
+          ...baseObligation,
+          ruleId: "us-federal-form-990-n",
+          title: "Form 990-N (e-Postcard)",
+          agency: "Internal Revenue Service",
+          jurisdiction: "US",
+          dueOn: "2026-05-15",
+          status: "active",
+        },
+      ],
+      indeterminate: [],
+    });
+    const dueLines = output
+      .split("\n")
+      .filter((line) => /^\s+20\d\d-\d\d-\d\d/.test(line));
+    expect(dueLines).toHaveLength(2);
+    // Every row's WHERE column starts at the same offset.
+    const offsets = dueLines.map((line) => line.indexOf("US"));
+    expect(new Set(offsets).size).toBe(1);
+  });
+});
