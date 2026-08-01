@@ -85,6 +85,7 @@ export function parseEntityForm(form: FormData): ParseResult {
 
   const grossRevenueMinorUnits = dollarsToMinorUnits(text("grossRevenue"));
   const totalAssetsMinorUnits = dollarsToMinorUnits(text("totalAssets"));
+  const charitableAssetsMinorUnits = dollarsToMinorUnits(text("charitableAssets"));
 
   return {
     ok: true,
@@ -100,6 +101,9 @@ export function parseEntityForm(form: FormData): ParseResult {
       // qualify a large charity for the postcard return.
       ...(grossRevenueMinorUnits !== undefined ? { grossRevenueMinorUnits } : {}),
       ...(totalAssetsMinorUnits !== undefined ? { totalAssetsMinorUnits } : {}),
+      ...(charitableAssetsMinorUnits !== undefined
+        ? { charitableAssetsMinorUnits }
+        : {}),
       // An unticked box is genuinely "no", not "unknown" — the checkbox is
       // always present in the submission.
       solicitsCharitableContributions: form.get("solicits") === "true",

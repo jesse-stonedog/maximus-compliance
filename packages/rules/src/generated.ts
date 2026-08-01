@@ -271,9 +271,18 @@ export const ALL_RULES: readonly Rule[] = [
     },
     "conditions": [
       {
-        "fact": "solicitsCharitableContributions",
-        "op": "eq",
-        "value": true
+        "anyOf": [
+          {
+            "fact": "solicitsCharitableContributions",
+            "op": "eq",
+            "value": true
+          },
+          {
+            "fact": "charitableAssetsMinorUnits",
+            "op": "gte",
+            "value": 25000000
+          }
+        ]
       }
     ],
     "citation": "RCW 19.09.075; RCW 19.09.097",
@@ -281,7 +290,7 @@ export const ALL_RULES: readonly Rule[] = [
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "SEPARATE from the corporate annual report, and the one most often missed — an organisation can be in good standing as a corporation while unregistered to solicit. Verify the renewal deadline: it is tied to the fiscal year end rather than to formation, and the exact offset needs checking against the Charities Program."
+    "notes": "SEPARATE from the corporate annual report, and the one most often missed — an organisation can be in good standing as a corporation while unregistered to solicit. The trigger is soliciting donations OR holding $250,000+ in charitable assets, per the WA SOS formation letter; an endowed nonprofit that does not actively solicit is caught by the second half. Still draft: the letter is a form letter, not the statute, so the exact threshold, the renewal deadline (the fiscal-year-end offset here is a guess) and the fee all need checking against RCW 19.09 and the Charities Program directly."
   },
   // us/wa/corporation-annual-report.json
   {

@@ -17,6 +17,7 @@ import { CONDITIONABLE_FACTS } from "../src/facts.js";
 import type { Rule } from "../src/rule.js";
 import {
   DE_CORP,
+  ENDOWED_NON_SOLICITING_CHARITY,
   OR_LLC,
   WA_LARGE_CHARITY,
   WA_SMALL_CHARITY,
@@ -210,6 +211,42 @@ describe("a Delaware corporation", () => {
   it("does not owe the LLC tax", () => {
     expect(result.obligations.map((o) => o.ruleId)).not.toContain(
       "us-de-llc-annual-tax",
+    );
+  });
+});
+
+describe("an endowed Washington charity that does not solicit", () => {
+  const result = evaluate(ENDOWED_NON_SOLICITING_CHARITY, RULES, {
+    asOf: "2026-01-01",
+    horizonMonths: 12,
+    includeDraft: true,
+  });
+
+  it("must still register with the Charities Program", () => {
+    // THE REGRESSION (NEH-228). The trigger is soliciting donations OR holding
+    // $250k+ in charitable assets. With only the soliciting half expressed,
+    // this organisation was told it owed nothing — a false negative, where a
+    // clean calendar hides a filing.
+    expect(result.obligations.map((o) => o.ruleId)).toContain(
+      "us-wa-charitable-solicitation-registration",
+    );
+  });
+
+  it("is not caught merely by having large TOTAL assets", () => {
+    // Guards the distinction the fact model exists to preserve: an
+    // organisation with big non-charitable holdings and little charitable
+    // property must NOT be pushed into registering.
+    const nonCharitable = {
+      ...ENDOWED_NON_SOLICITING_CHARITY,
+      charitableAssetsMinorUnits: 1_000_00, // $1,000 — well under the line
+    };
+    const narrow = evaluate(nonCharitable, RULES, {
+      asOf: "2026-01-01",
+      horizonMonths: 12,
+      includeDraft: true,
+    });
+    expect(narrow.obligations.map((o) => o.ruleId)).not.toContain(
+      "us-wa-charitable-solicitation-registration",
     );
   });
 });
