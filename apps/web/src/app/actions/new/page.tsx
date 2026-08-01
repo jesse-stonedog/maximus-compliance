@@ -70,6 +70,15 @@ export default async function NewActionPage({
           <input className={inputClass} type="date" name="dueOn" required />
         </label>
 
+        <label className={css({ display: "block", marginBottom: "4" })}>
+          <input type="checkbox" name="repeatAnnually" value="true" /> Repeats
+          every year
+          <span className={hintClass}>
+            Most compliance filings do. When you mark this done, next year's is
+            created for you with the same notes.
+          </span>
+        </label>
+
         <label className={fieldClass}>
           <span className={labelClass}>Notes (optional)</span>
           <textarea className={inputClass} name="detail" rows={3} />

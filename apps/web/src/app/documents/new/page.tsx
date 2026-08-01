@@ -121,6 +121,11 @@ export default async function NewDocumentPage({
             <input className={inputClass} type="date" name="dueOn" />
           </label>
 
+          <label className={css({ display: "block", marginBottom: "3" })}>
+            <input type="checkbox" name="repeatAnnually" value="true" /> Repeats
+            every year
+          </label>
+
           <label className={css({ display: "block" })}>
             <span className={labelClass}>Notes for the action (optional)</span>
             <textarea className={inputClass} name="actionDetail" rows={2} />

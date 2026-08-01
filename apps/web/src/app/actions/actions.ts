@@ -27,6 +27,7 @@ export async function createStandaloneAction(form: FormData): Promise<void> {
     {
       title,
       dueOn,
+      repeatAnnually: form.get("repeatAnnually") === "true",
       ...(detail ? { detail } : {}),
       ...(entityId ? { entityId } : {}),
       ...(documentId ? { documentId } : {}),

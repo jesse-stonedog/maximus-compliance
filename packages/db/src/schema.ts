@@ -120,4 +120,20 @@ export const MIGRATIONS: readonly { id: number; name: string; sql: string }[] = 
       CREATE INDEX idx_actions_document  ON actions (document_id);
     `,
   },
+  {
+    id: 3,
+    name: "recurring_actions",
+    sql: `
+      -- Nearly every compliance obligation is annual. Without this, someone
+      -- tracking their own dates must re-add each filing every year, and the
+      -- year they forget is the year they miss it.
+      ALTER TABLE actions ADD COLUMN repeat_annually INTEGER NOT NULL DEFAULT 0;
+
+      -- Records that the successor has been created, so reopen-then-recomplete
+      -- — a normal path, when an agency rejects a filing — does not spawn a
+      -- second copy. Inferring this from the data would mean guessing whether a
+      -- similar-looking future action was ours or the user's.
+      ALTER TABLE actions ADD COLUMN successor_spawned INTEGER NOT NULL DEFAULT 0;
+    `,
+  },
 ];
