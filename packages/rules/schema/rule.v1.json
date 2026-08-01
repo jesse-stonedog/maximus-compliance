@@ -3,6 +3,25 @@
   "$id": "https://maximuscompliance.com/schema/rule.v1.json",
   "title": "Maximus compliance rule, v1",
   "description": "One filing obligation in one jurisdiction. See docs/rule-authoring.md — you can usually copy a neighbouring rule and change three fields.",
+  "definitions": {
+    "condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fact", "op", "value"],
+      "properties": {
+        "fact": {
+          "enum": [
+            "grossRevenueMinorUnits",
+            "totalAssetsMinorUnits",
+            "employeeCount",
+            "solicitsCharitableContributions"
+          ]
+        },
+        "op": { "enum": ["lt", "lte", "gt", "gte", "eq"] },
+        "value": { "type": ["integer", "boolean"] }
+      }
+    }
+  },
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -125,23 +144,24 @@
     "conditions": {
       "type": "array",
       "minItems": 1,
-      "description": "The rule applies only when ALL conditions hold. A condition may only test a fact the entity fact model defines; rules:validate enforces that.",
+      "description": "The rule applies only when ALL entries hold. An entry is either a single test, or an {\"anyOf\": [...]} group that holds when ANY of its members does — for a threshold the statute writes as 'X or Y', such as Form 990's receipts-or-assets test. A condition may only test a fact the entity fact model defines; rules:validate enforces that.",
       "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["fact", "op", "value"],
-        "properties": {
-          "fact": {
-            "enum": [
-              "grossRevenueMinorUnits",
-              "totalAssetsMinorUnits",
-              "employeeCount",
-              "solicitsCharitableContributions"
-            ]
-          },
-          "op": { "enum": ["lt", "lte", "gt", "gte", "eq"] },
-          "value": { "type": ["integer", "boolean"] }
-        }
+        "oneOf": [
+          { "$ref": "#/definitions/condition" },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["anyOf"],
+            "properties": {
+              "anyOf": {
+                "type": "array",
+                "minItems": 2,
+                "description": "Holds when any member holds. One level deep only — a group may not contain another group. Nesting would make rules markedly harder for a non-developer to author and for a reviewer to check against a statute, which is the point of the format.",
+                "items": { "$ref": "#/definitions/condition" }
+              }
+            }
+          }
+        ]
       }
     },
     "form": {
