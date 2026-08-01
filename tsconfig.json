@@ -6,6 +6,9 @@
       "path": "packages/engine"
     },
     {
+      "path": "packages/db"
+    },
+    {
       "path": "packages/rules"
     },
     {

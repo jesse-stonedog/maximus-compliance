@@ -13,12 +13,19 @@
       "jest",
       "node"
     ],
-    "verbatimModuleSyntax": false
+    "verbatimModuleSyntax": false,
+    "jsx": "react-jsx",
+    "lib": [
+      "ES2022",
+      "DOM"
+    ]
   },
   "include": [
     "packages/*/src/**/*.ts",
     "packages/*/test/**/*.ts",
     "apps/*/src/**/*.ts",
-    "apps/*/test/**/*.ts"
+    "apps/*/test/**/*.ts",
+    "packages/ui/src/**/*.tsx",
+    "packages/ui/test/**/*.ts"
   ]
 }

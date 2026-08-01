@@ -5,7 +5,10 @@
     "engine": "packages/engine",
     "rules": "packages/rules",
     "cli": "apps/cli",
-    "export": "packages/export"
+    "export": "packages/export",
+    "ui": "packages/ui",
+    "hopper-style": "packages/hopper-style",
+    "db": "packages/db"
   },
   "targetDefaults": {
     "build": {
