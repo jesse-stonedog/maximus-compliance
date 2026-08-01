@@ -3,14 +3,19 @@
   "defaultBase": "main",
   "projects": {
     "engine": "packages/engine",
-    "rules": "packages/rules"
+    "rules": "packages/rules",
+    "cli": "apps/cli"
   },
   "targetDefaults": {
     "build": {
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "test": {
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     }
   }
 }

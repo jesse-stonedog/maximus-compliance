@@ -1,0 +1,11 @@
+{
+  "name": "Example Cascade Trails Association",
+  "entityTypes": ["501c3", "nonprofit-corp"],
+  "formedOn": "2021-03-15",
+  "homeJurisdiction": "US-WA",
+  "jurisdictions": ["US", "US-WA"],
+  "fiscalYearEnd": "12-31",
+  "grossRevenueMinorUnits": 4200000,
+  "totalAssetsMinorUnits": 1100000,
+  "solicitsCharitableContributions": true
+}

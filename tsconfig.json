@@ -2,7 +2,14 @@
   "//": "Solution-style root. `tsc --build` walks the references; each package owns its own compilerOptions.",
   "files": [],
   "references": [
-    { "path": "packages/engine" },
-    { "path": "packages/rules" }
+    {
+      "path": "packages/engine"
+    },
+    {
+      "path": "packages/rules"
+    },
+    {
+      "path": "apps/cli"
+    }
   ]
 }
