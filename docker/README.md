@@ -31,6 +31,27 @@ To see unverified ones as well:
 Every such row is marked *unverified* in the UI, and a banner says so. Treat
 them as a prompt to go and check the statute, not as fact.
 
+## Backing up — copy the whole volume, not just the database file
+
+The database runs in **WAL mode**, so recent writes live in `maximus.sqlite-wal`
+until SQLite folds them into the main file. Copying only `maximus.sqlite` gives
+you a file that opens cleanly and is **silently missing your most recent
+changes** — the worst kind of backup, because it looks like it worked.
+
+Copy all of `/data`, with the container stopped:
+
+```bash
+docker stop maximus
+docker run --rm -v maximus-data:/data -v "$PWD:/backup" alpine \
+  tar czf /backup/maximus-backup.tar.gz -C /data .
+docker start maximus
+```
+
+`/data` holds the database, its `-wal` and `-shm` companions, and the `documents/`
+directory with your uploaded files. All four matter.
+
+To restore, stop the container and untar into an empty volume.
+
 ## Upgrading
 
 Pull the new image and recreate the container. Migrations run automatically on

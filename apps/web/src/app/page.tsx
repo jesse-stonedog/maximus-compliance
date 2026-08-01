@@ -4,18 +4,21 @@
  */
 import Link from "next/link";
 import { css } from "styled-system/css";
-import { StyledCalendar, StyledEntity } from "@maximus/ui";
-import { allCalendars, includeDraft, today } from "@/lib/server";
-import { ObligationTable } from "@/components/obligation-table";
+import { StyledCalendar, StyledEntity, StyledForm } from "@maximus/ui";
+import { getStore, includeDraft, today } from "@/lib/server";
+import { mergedCalendar } from "@/lib/calendar";
+import { WindowList } from "@/components/window-list";
 import { Disclaimer } from "@/components/disclaimer";
 import { DraftBanner } from "@/components/draft-banner";
-import { entityTypeLabel } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
 export default function HomePage() {
   const asOf = today();
-  const calendars = allCalendars(asOf);
+  const bucketed = mergedCalendar(asOf);
+  const store = getStore();
+  const entityCount = store.list().length;
+  const documentCount = store.documents.listDocuments().length;
 
   return (
     <main className={css({ maxWidth: "5xl", margin: "0 auto", padding: "6" })}>
@@ -24,40 +27,25 @@ export default function HomePage() {
           <StyledCalendar /> Compliance calendar
         </h1>
         <p className={css({ color: "boxTextSecondary", marginTop: "1" })}>
-          What your entities owe, as of {asOf}.
+          Everything with a date, as of {asOf} — what the rules say you owe, and
+          whatever you are tracking yourself.
         </p>
+        <nav className={css({ marginTop: "2", fontSize: "sm" })}>
+          <Link href="/actions/new">Add an action</Link> ·{" "}
+          <Link href="/documents/new">Upload a document</Link> ·{" "}
+          <Link href="/documents">
+            <StyledForm /> Documents ({documentCount})
+          </Link>{" "}
+          ·{" "}
+          <Link href="/entities/new">
+            <StyledEntity /> Add an entity ({entityCount})
+          </Link>
+        </nav>
       </header>
 
       {includeDraft() && <DraftBanner />}
 
-      {calendars.length === 0 ? (
-        <section className={css({ padding: "8", textAlign: "center" })}>
-          <p className={css({ fontSize: "lg" })}>No entities yet.</p>
-          <p className={css({ color: "boxTextSecondary" })}>
-            Add one to see what it owes and when.
-          </p>
-          <Link href="/entities/new">Add an entity</Link>
-        </section>
-      ) : (
-        calendars.map(({ entity, result }) => (
-          <section key={entity.id} className={css({ marginBottom: "8" })}>
-            <h2 className={css({ fontSize: "xl", marginBottom: "1" })}>
-              <StyledEntity /> {entity.name}
-            </h2>
-            <p
-              className={css({
-                fontSize: "sm",
-                color: "boxTextSecondary",
-                marginTop: "0",
-              })}
-            >
-              {entity.entityTypes.map(entityTypeLabel).join(" · ")} · formed{" "}
-              {entity.formedOn}
-            </p>
-            <ObligationTable result={result} asOf={asOf} />
-          </section>
-        ))
-      )}
+      <WindowList bucketed={bucketed} asOf={asOf} />
 
       <Disclaimer />
     </main>

@@ -51,4 +51,73 @@ export const MIGRATIONS: readonly { id: number; name: string; sql: string }[] = 
       CREATE INDEX idx_entities_name ON entities (name);
     `,
   },
+  {
+    id: 2,
+    name: "documents_and_actions",
+    sql: `
+      -- A document may belong to no entity. Someone filing their first
+      -- paperwork often has the letter before they have modelled the entity,
+      -- and refusing the upload until they do would lose the document.
+      CREATE TABLE documents (
+        id           TEXT PRIMARY KEY,
+        entity_id    TEXT REFERENCES entities(id) ON DELETE SET NULL,
+        title        TEXT NOT NULL,
+        -- The name the user's file had. NOT a path: see storage_key.
+        original_filename TEXT NOT NULL,
+        content_type TEXT NOT NULL,
+        byte_size    INTEGER NOT NULL,
+        -- Opaque, generated, and the ONLY thing used to build a filesystem
+        -- path. A user-supplied filename reaching the filesystem is how
+        -- "../../etc/passwd" becomes a write primitive.
+        storage_key  TEXT NOT NULL UNIQUE,
+        notes        TEXT,
+        created_at   TEXT NOT NULL,
+        updated_at   TEXT NOT NULL
+      );
+
+      CREATE INDEX idx_documents_entity ON documents (entity_id);
+      CREATE INDEX idx_documents_title  ON documents (title);
+
+      -- Reference numbers pulled out of a document so they are searchable
+      -- rather than buried in a PDF: UBI, DUNS, EIN, account numbers.
+      CREATE TABLE document_fields (
+        id          TEXT PRIMARY KEY,
+        document_id TEXT NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+        label       TEXT NOT NULL,
+        -- As written on the document, so it can be matched by eye against the
+        -- paper: "604 123 456".
+        value       TEXT NOT NULL,
+        -- Lowercased, alphanumeric only. Exists because people type reference
+        -- numbers from memory WITHOUT the separators the agency printed —
+        -- searching "604123456" must find "604 123 456", or the whole
+        -- find-my-UBI use case fails at the first attempt.
+        value_normalized TEXT NOT NULL
+      );
+
+      CREATE INDEX idx_document_fields_document   ON document_fields (document_id);
+      CREATE INDEX idx_document_fields_value      ON document_fields (value);
+      CREATE INDEX idx_document_fields_normalized ON document_fields (value_normalized);
+
+      -- A user-authored obligation. Deliberately NOT derived from a rule:
+      -- this is the escape hatch for everything the engine does not cover,
+      -- and for users who would rather keep their own dates.
+      CREATE TABLE actions (
+        id           TEXT PRIMARY KEY,
+        entity_id    TEXT REFERENCES entities(id) ON DELETE CASCADE,
+        document_id  TEXT REFERENCES documents(id) ON DELETE SET NULL,
+        title        TEXT NOT NULL,
+        detail       TEXT,
+        due_on       TEXT NOT NULL,
+        -- NULL means outstanding. A date, not a boolean, because "when did we
+        -- file it" is the question asked afterwards.
+        completed_on TEXT,
+        created_at   TEXT NOT NULL,
+        updated_at   TEXT NOT NULL
+      );
+
+      CREATE INDEX idx_actions_due       ON actions (due_on);
+      CREATE INDEX idx_actions_entity    ON actions (entity_id);
+      CREATE INDEX idx_actions_document  ON actions (document_id);
+    `,
+  },
 ];
