@@ -31,8 +31,7 @@
       ]
     },
     "esModuleInterop": true,
-    "exactOptionalPropertyTypes": false,
-    "noUncheckedIndexedAccess": false
+    "exactOptionalPropertyTypes": false
   },
   "include": [
     "next-env.d.ts",
@@ -45,5 +44,5 @@
     ".next",
     "styled-system"
   ],
-  "//strictness": "exactOptionalPropertyTypes and noUncheckedIndexedAccess are relaxed HERE ONLY, and not by choice. hopper-style ships TypeScript SOURCE so Panda can parse it, which means this app type-checks the LIBRARY's code under THIS config rather than the library's own \u2014 and it is authored without either flag. The packages that emit dist (engine, rules, db, export) keep the strict settings from tsconfig.base.json, so the code that matters most is unaffected. Tracked upstream as NEH-218; remove these two lines when hopper-style compiles cleanly under them."
+  "//strictness": "exactOptionalPropertyTypes is relaxed HERE ONLY, and not by choice. hopper-style ships TypeScript SOURCE so Panda can parse it, which means this app type-checks the LIBRARY's code under THIS config \u2014 and it is authored without that flag. noUncheckedIndexedAccess was relaxed for the same reason and is now BACK ON, since hopper-style adopted it in #12. The remaining flag needs hopper-style's pass-through prop interfaces widened to accept explicit undefined, which is a real API change; NEH-218 tracks it. Remove this line when that lands. The packages that emit dist keep both flags throughout."
 }
