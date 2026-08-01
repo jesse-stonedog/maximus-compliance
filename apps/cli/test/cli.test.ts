@@ -19,8 +19,45 @@ describe("parseArgs", () => {
     const parsed = parseArgs(["check", "--entity", "e.json", "--as-of", "2026-01-01"]);
     expect(parsed).toMatchObject({
       kind: "check",
-      options: { horizonMonths: 12, includeDraft: false, json: false },
+      options: {
+        horizonMonths: 12,
+        includeDraft: false,
+        format: "text",
+        reminderDaysBefore: [],
+      },
     });
+  });
+
+  it("treats --json as shorthand for --format json", () => {
+    // Kept because it shipped before --format existed and scripts may use it.
+    expect(parseArgs(["check", "--entity", "e.json", "--json"])).toMatchObject({
+      kind: "check",
+      options: { format: "json" },
+    });
+  });
+
+  it.each(["yaml", "pdf", "ical", ""])(
+    "rejects the unsupported --format value %s",
+    (value) => {
+      expect(
+        parseArgs(["check", "--entity", "e.json", "--format", value]),
+      ).toMatchObject({ kind: "error" });
+    },
+  );
+
+  it.each(["-1", "1.5", "400", "thirty", "30,x"])(
+    "rejects the malformed --remind value %s",
+    (value) => {
+      expect(
+        parseArgs(["check", "--entity", "e.json", "--remind", value]),
+      ).toMatchObject({ kind: "error" });
+    },
+  );
+
+  it("parses a comma-separated reminder list", () => {
+    expect(
+      parseArgs(["check", "--entity", "e.json", "--remind", "30, 7"]),
+    ).toMatchObject({ kind: "check", options: { reminderDaysBefore: [30, 7] } });
   });
 
   it("defaults asOf to today rather than leaving it unset", () => {

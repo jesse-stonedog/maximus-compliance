@@ -4,7 +4,8 @@
   "projects": {
     "engine": "packages/engine",
     "rules": "packages/rules",
-    "cli": "apps/cli"
+    "cli": "apps/cli",
+    "export": "packages/export"
   },
   "targetDefaults": {
     "build": {

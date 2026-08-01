@@ -9,6 +9,7 @@
 import { readFileSync } from "node:fs";
 import { evaluate, type EntityFacts } from "@maximus/engine";
 import { ALL_RULES } from "@maximus/rules";
+import { toCsv, toICalendar } from "@maximus/export";
 import { parseArgs, USAGE } from "./args.js";
 import { renderResult } from "./format.js";
 
@@ -74,7 +75,8 @@ switch (parsed.kind) {
     process.exit(2);
     break;
   case "check": {
-    const { entityPath, asOf, horizonMonths, includeDraft, json } = parsed.options;
+    const { entityPath, asOf, horizonMonths, includeDraft, format, reminderDaysBefore } =
+      parsed.options;
     const entity = loadEntity(entityPath);
 
     let result;
@@ -87,11 +89,44 @@ switch (parsed.kind) {
       fail(`Could not evaluate: ${(error as Error).message}`);
     }
 
-    if (json) {
-      process.stdout.write(`${JSON.stringify({ asOf, horizonMonths, ...result }, null, 2)}\n`);
-    } else {
-      process.stdout.write(
-        `${renderResult(result, { entityName: entity.name, asOf, horizonMonths })}\n`,
+    switch (format) {
+      case "json":
+        process.stdout.write(
+          `${JSON.stringify({ asOf, horizonMonths, ...result }, null, 2)}\n`,
+        );
+        break;
+      case "ics":
+        process.stdout.write(
+          toICalendar(result.obligations, {
+            // asOf, not the clock. Re-exporting the same calendar for the same
+            // date produces a byte-identical file, so it can be diffed and
+            // committed — and the engine's determinism is not undone at the
+            // last step.
+            dtstamp: `${asOf.replaceAll("-", "")}T000000Z`,
+            calendarName: `${entity.name} — compliance`,
+            ...(reminderDaysBefore.length > 0
+              ? { reminderDaysBefore }
+              : {}),
+          }),
+        );
+        break;
+      case "csv":
+        process.stdout.write(toCsv(result.obligations));
+        break;
+      case "text":
+        process.stdout.write(
+          `${renderResult(result, { entityName: entity.name, asOf, horizonMonths })}\n`,
+        );
+        break;
+    }
+
+    // Indeterminate rules never reach a calendar or a spreadsheet — there is no
+    // date to put them on. Saying so on stderr keeps stdout clean for piping
+    // while still telling the user their export is not the whole picture.
+    if (format !== "text" && format !== "json" && result.indeterminate.length > 0) {
+      process.stderr.write(
+        `Note: ${result.indeterminate.length} rule(s) could not be decided and are not in this export. ` +
+          `Run without --format to see what facts are missing.\n`,
       );
     }
     break;

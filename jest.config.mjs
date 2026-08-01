@@ -21,6 +21,7 @@ export default {
     // its own suite in a way that looks like a code error.
     "^@maximus/engine$": "<rootDir>/packages/engine/src/index.ts",
     "^@maximus/rules$": "<rootDir>/packages/rules/src/index.ts",
+    "^@maximus/export$": "<rootDir>/packages/export/src/index.ts",
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
   transform: {

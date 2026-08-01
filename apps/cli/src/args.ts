@@ -6,12 +6,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+export const OUTPUT_FORMATS = ["text", "json", "ics", "csv"] as const;
+export type OutputFormat = (typeof OUTPUT_FORMATS)[number];
+
 export interface CheckOptions {
   entityPath: string;
   asOf: string;
   horizonMonths: number;
   includeDraft: boolean;
-  json: boolean;
+  format: OutputFormat;
+  /** Days before each due date to fire a calendar alarm. `ics` only. */
+  reminderDaysBefore: number[];
 }
 
 export type ParseResult =
@@ -32,8 +37,16 @@ OPTIONS
   --include-draft     Include rules not yet verified against their statute.
                       Excluded by default: an unverified deadline shown as fact
                       is worse than no answer.
-  --json              Machine-readable output. Omits the disclaimer, which
-                      becomes the caller's responsibility.
+  --format <fmt>      text (default) | json | ics | csv
+                      ics writes an iCalendar file for import into Google
+                      Calendar, Outlook, or Apple Calendar. csv opens in a
+                      spreadsheet. Both omit the disclaimer as prose, so it
+                      travels inside the events and the caller inherits it.
+  --json              Shorthand for --format json.
+  --remind <days>     Comma-separated lead times for calendar alarms, e.g.
+                      30,7. Applies to --format ics only. A deadline you hear
+                      about on the day is nearly useless — most filings take
+                      longer than that to prepare.
   -h, --help
   -v, --version
 
@@ -69,7 +82,8 @@ export function parseArgs(argv: readonly string[]): ParseResult {
   let asOf: string | undefined;
   let horizonMonths = 12;
   let includeDraft = false;
-  let json = false;
+  let format: OutputFormat = "text";
+  let reminderDaysBefore: number[] = [];
 
   for (let i = 0; i < rest.length; i += 1) {
     const flag = rest[i];
@@ -97,8 +111,31 @@ export function parseArgs(argv: readonly string[]): ParseResult {
         includeDraft = true;
         break;
       case "--json":
-        json = true;
+        format = "json";
         break;
+      case "--format": {
+        const raw = rest[++i];
+        if (!raw || !OUTPUT_FORMATS.includes(raw as OutputFormat)) {
+          return {
+            kind: "error",
+            message: `--format must be one of: ${OUTPUT_FORMATS.join(", ")}`,
+          };
+        }
+        format = raw as OutputFormat;
+        break;
+      }
+      case "--remind": {
+        const raw = rest[++i];
+        const days = (raw ?? "").split(",").map((part) => Number(part.trim()));
+        if (!raw || days.some((d) => !Number.isInteger(d) || d < 0 || d > 365)) {
+          return {
+            kind: "error",
+            message: "--remind needs comma-separated whole days from 0 to 365, e.g. 30,7",
+          };
+        }
+        reminderDaysBefore = days;
+        break;
+      }
       default:
         return { kind: "error", message: `Unknown option: ${flag}` };
     }
@@ -118,7 +155,8 @@ export function parseArgs(argv: readonly string[]): ParseResult {
       asOf: asOf ?? todayUtc(),
       horizonMonths,
       includeDraft,
-      json,
+      format,
+      reminderDaysBefore,
     },
   };
 }

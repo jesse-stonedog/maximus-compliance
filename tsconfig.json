@@ -9,6 +9,9 @@
       "path": "packages/rules"
     },
     {
+      "path": "packages/export"
+    },
+    {
       "path": "apps/cli"
     }
   ]
