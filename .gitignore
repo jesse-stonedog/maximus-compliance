@@ -1,0 +1,13 @@
+node_modules/
+dist/
+*.tsbuildinfo
+coverage/
+.nx/
+.DS_Store
+*.log
+
+# Self-host data. A committed SQLite file would carry someone's real EIN and
+# filing history into a public repo.
+*.sqlite
+*.sqlite3
+data/

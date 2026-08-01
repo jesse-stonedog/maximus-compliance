@@ -1,0 +1,16 @@
+{
+  "$schema": "../../schema/rule.v1.json",
+  "id": "us-wa-sos-nonprofit-annual-report",
+  "jurisdiction": "US-WA",
+  "title": "Nonprofit Corporation Annual Report",
+  "agency": "Washington Secretary of State",
+  "entityTypes": ["501c3", "nonprofit-corp"],
+  "cadence": { "type": "annual", "anchor": "formation-month", "dayOfMonth": "last" },
+  "fee": { "amountMinorUnits": 6000, "currency": "USD" },
+  "citation": "RCW 24.03A.1010",
+  "citationUrl": "https://app.leg.wa.gov/rcw/default.aspx?cite=24.03A",
+  "lastVerified": "2026-08-01",
+  "status": "draft",
+  "effectiveFrom": "2022-01-01",
+  "notes": "Washington replaced the old Nonprofit Corporation Act with RCW 24.03A effective 1 Jan 2022. Verify BOTH the exact RCW section and the current fee against the SOS fee schedule before promoting to active."
+}

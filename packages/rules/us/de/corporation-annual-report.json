@@ -1,0 +1,16 @@
+{
+  "$schema": "../../schema/rule.v1.json",
+  "id": "us-de-corporation-annual-report",
+  "jurisdiction": "US-DE",
+  "title": "Corporation Annual Report and Franchise Tax",
+  "agency": "Delaware Division of Corporations",
+  "entityTypes": ["s-corp", "c-corp", "b-corp"],
+  "cadence": { "type": "annual", "anchor": "calendar", "month": 3, "day": 1 },
+  "fee": { "amountMinorUnits": 5000, "currency": "USD" },
+  "citation": "8 Del. C. 502",
+  "citationUrl": "https://delcode.delaware.gov/title8/c001/sc15/index.html",
+  "lastVerified": "2026-08-01",
+  "status": "draft",
+  "effectiveFrom": "2020-01-01",
+  "notes": "FEE IS THE REPORT FEE ONLY. Delaware franchise tax is calculated separately (authorised-shares or assumed-par-value method) and is usually far larger than this. The schema has no way to express a computed fee — presenting $50 as the total cost would badly understate it. Do not promote to active until either the schema supports computed fees or the notes are surfaced in the UI."
+}

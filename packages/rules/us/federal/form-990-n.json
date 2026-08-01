@@ -1,0 +1,19 @@
+{
+  "$schema": "../../schema/rule.v1.json",
+  "id": "us-federal-form-990-n",
+  "jurisdiction": "US",
+  "title": "Form 990-N (e-Postcard)",
+  "agency": "Internal Revenue Service",
+  "entityTypes": ["501c3"],
+  "cadence": { "type": "annual", "anchor": "fiscal-year-end", "offsetMonths": 5, "dayOfMonth": 15 },
+  "form": "990-N",
+  "conditions": [
+    { "fact": "grossRevenueMinorUnits", "op": "lte", "value": 5000000 }
+  ],
+  "citation": "26 U.S.C. 6033(i); IRS Annual Electronic Filing Requirement for Small Exempt Organizations",
+  "citationUrl": "https://www.irs.gov/charities-non-profits/annual-electronic-filing-requirement-for-small-exempt-organizations-form-990-n-e-postcard",
+  "lastVerified": "2026-08-01",
+  "status": "draft",
+  "effectiveFrom": "2020-01-01",
+  "notes": "Failing to file for three consecutive years revokes exempt status automatically. Worth surfacing prominently in the UI — it is the single most consequential missed deadline for a small nonprofit."
+}

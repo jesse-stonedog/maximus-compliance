@@ -1,0 +1,16 @@
+{
+  "$schema": "../../schema/rule.v1.json",
+  "id": "us-or-sos-nonprofit-annual-report",
+  "jurisdiction": "US-OR",
+  "title": "Nonprofit Corporation Annual Report",
+  "agency": "Oregon Secretary of State, Corporation Division",
+  "entityTypes": ["501c3", "nonprofit-corp"],
+  "cadence": { "type": "annual", "anchor": "formation-month", "dayOfMonth": "last" },
+  "fee": { "amountMinorUnits": 5000, "currency": "USD" },
+  "citation": "ORS 65.787",
+  "citationUrl": "https://www.oregonlegislature.gov/bills_laws/ors/ors065.html",
+  "lastVerified": "2026-08-01",
+  "status": "draft",
+  "effectiveFrom": "2020-01-01",
+  "notes": "Oregon anniversary-based annual report. Verify whether the deadline is the anniversary DATE rather than the end of the anniversary month — this rule currently assumes end of month, which would be wrong by up to 30 days if Oregon uses the exact date."
+}

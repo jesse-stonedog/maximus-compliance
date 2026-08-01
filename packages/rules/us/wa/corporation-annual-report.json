@@ -1,0 +1,16 @@
+{
+  "$schema": "../../schema/rule.v1.json",
+  "id": "us-wa-sos-corporation-annual-report",
+  "jurisdiction": "US-WA",
+  "title": "Profit Corporation Annual Report",
+  "agency": "Washington Secretary of State",
+  "entityTypes": ["s-corp", "c-corp", "b-corp"],
+  "cadence": { "type": "annual", "anchor": "formation-month", "dayOfMonth": "last" },
+  "fee": { "amountMinorUnits": 6000, "currency": "USD" },
+  "citation": "RCW 23.95.255",
+  "citationUrl": "https://app.leg.wa.gov/rcw/default.aspx?cite=23.95",
+  "lastVerified": "2026-08-01",
+  "status": "draft",
+  "effectiveFrom": "2020-01-01",
+  "notes": "RCW 23.95 is the Washington Uniform Business Organizations Code, which carries the annual report requirement for several entity forms. Verify the section and fee."
+}

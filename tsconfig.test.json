@@ -1,0 +1,16 @@
+{
+  "//": "ts-jest only. Tests compile to CommonJS so Jest can evaluate them directly: the ESM path needs --experimental-vm-modules and buys nothing here, since the only ESM-specific thing the tests wanted was import.meta.url for locating fixtures, and __dirname does that in CJS. The package tsconfigs are for emit and are unaffected — the shipped packages are ESM.",
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "types": ["jest", "node"],
+    "verbatimModuleSyntax": false
+  },
+  "include": ["packages/*/src/**/*.ts", "packages/*/test/**/*.ts"]
+}

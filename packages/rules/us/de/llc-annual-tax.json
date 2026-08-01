@@ -1,0 +1,16 @@
+{
+  "$schema": "../../schema/rule.v1.json",
+  "id": "us-de-llc-annual-tax",
+  "jurisdiction": "US-DE",
+  "title": "Limited Liability Company Annual Tax",
+  "agency": "Delaware Division of Corporations",
+  "entityTypes": ["llc"],
+  "cadence": { "type": "annual", "anchor": "calendar", "month": 6, "day": 1 },
+  "fee": { "amountMinorUnits": 30000, "currency": "USD" },
+  "citation": "6 Del. C. 18-1107",
+  "citationUrl": "https://delcode.delaware.gov/title6/c018/sc10/index.html",
+  "lastVerified": "2026-08-01",
+  "status": "draft",
+  "effectiveFrom": "2020-01-01",
+  "notes": "Delaware LLCs pay a flat annual tax and file no annual report. Fixed calendar date, not an anniversary. Verify the current amount — it has been $300 for some years but is set by statute and can change."
+}

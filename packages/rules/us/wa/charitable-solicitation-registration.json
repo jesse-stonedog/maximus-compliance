@@ -1,0 +1,19 @@
+{
+  "$schema": "../../schema/rule.v1.json",
+  "id": "us-wa-charitable-solicitation-registration",
+  "jurisdiction": "US-WA",
+  "title": "Charitable Organization Registration Renewal",
+  "agency": "Washington Secretary of State, Charities Program",
+  "entityTypes": ["501c3", "nonprofit-corp"],
+  "cadence": { "type": "annual", "anchor": "fiscal-year-end", "offsetMonths": 11, "dayOfMonth": "last" },
+  "fee": { "amountMinorUnits": 6000, "currency": "USD" },
+  "conditions": [
+    { "fact": "solicitsCharitableContributions", "op": "eq", "value": true }
+  ],
+  "citation": "RCW 19.09.075; RCW 19.09.097",
+  "citationUrl": "https://app.leg.wa.gov/rcw/default.aspx?cite=19.09",
+  "lastVerified": "2026-08-01",
+  "status": "draft",
+  "effectiveFrom": "2020-01-01",
+  "notes": "SEPARATE from the corporate annual report, and the one most often missed — an organisation can be in good standing as a corporation while unregistered to solicit. Verify the renewal deadline: it is tied to the fiscal year end rather than to formation, and the exact offset needs checking against the Charities Program."
+}

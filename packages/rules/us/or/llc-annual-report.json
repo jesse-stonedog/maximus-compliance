@@ -1,0 +1,16 @@
+{
+  "$schema": "../../schema/rule.v1.json",
+  "id": "us-or-sos-llc-annual-report",
+  "jurisdiction": "US-OR",
+  "title": "Limited Liability Company Annual Report",
+  "agency": "Oregon Secretary of State, Corporation Division",
+  "entityTypes": ["llc"],
+  "cadence": { "type": "annual", "anchor": "formation-month", "dayOfMonth": "last" },
+  "fee": { "amountMinorUnits": 10000, "currency": "USD" },
+  "citation": "ORS 63.787",
+  "citationUrl": "https://www.oregonlegislature.gov/bills_laws/ors/ors063.html",
+  "lastVerified": "2026-08-01",
+  "status": "draft",
+  "effectiveFrom": "2020-01-01",
+  "notes": "Same anniversary-date question as the nonprofit report — verify before promoting."
+}
