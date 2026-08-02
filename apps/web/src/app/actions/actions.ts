@@ -59,3 +59,45 @@ export async function deleteAction(form: FormData): Promise<void> {
   revalidatePath("/");
   revalidatePath("/documents");
 }
+
+export async function updateActionById(form: FormData): Promise<void> {
+  const id = String(form.get("id") ?? "");
+  const title = String(form.get("title") ?? "").trim();
+  const dueOn = String(form.get("dueOn") ?? "").trim();
+  const detail = String(form.get("detail") ?? "").trim();
+  const entityId = String(form.get("entityId") ?? "").trim();
+
+  if (!title) {
+    redirect(`/actions/${id}/edit?error=` + encodeURIComponent("Describe what needs doing."));
+  }
+  if (!DATE.test(dueOn)) {
+    redirect(`/actions/${id}/edit?error=` + encodeURIComponent("Give a due date."));
+  }
+
+  const store = getStore();
+  const existing = store.documents.getAction(id);
+  if (!existing) redirect("/");
+
+  store.documents.updateAction(id, {
+    title,
+    dueOn,
+    repeatAnnually: form.get("repeatAnnually") === "true",
+    ...(detail ? { detail } : {}),
+    ...(entityId ? { entityId } : {}),
+    // Preserved rather than taken from the form: the edit page has no document
+    // picker, and dropping it here would silently detach an action from the
+    // letter it came from.
+    ...(existing.documentId === undefined ? {} : { documentId: existing.documentId }),
+  });
+
+  revalidatePath("/");
+  revalidatePath("/documents");
+  redirect("/");
+}
+
+export async function deleteActionById(form: FormData): Promise<void> {
+  getStore().documents.deleteAction(String(form.get("id") ?? ""));
+  revalidatePath("/");
+  revalidatePath("/documents");
+  redirect("/");
+}

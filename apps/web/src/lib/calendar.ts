@@ -6,6 +6,7 @@ import "server-only";
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import type { IndeterminateRule } from "@maximus/engine";
 import type { DatedItem } from "@maximus/reminders";
 import { bucket, type Bucketed } from "@maximus/reminders";
 import { allCalendars, getStore, today } from "./server";
@@ -52,6 +53,23 @@ export function allDatedItems(asOf: string = today()): DatedItem[] {
   return [...fromRules, ...fromUser];
 }
 
-export function mergedCalendar(asOf: string = today()): Bucketed {
-  return bucket(allDatedItems(asOf), asOf);
+export interface MergedCalendar {
+  bucketed: Bucketed;
+  /**
+   * Rules that cannot be decided because the entity is missing a fact.
+   *
+   * Carried alongside the buckets rather than folded into them: an
+   * indeterminate rule has NO due date, so it cannot sit in a window — and
+   * dropping it for that reason is exactly how a calendar comes to look
+   * complete when it is not. This was lost when the dashboard moved to
+   * reminder windows and had to be put back.
+   */
+  indeterminate: (IndeterminateRule & { entityName: string })[];
+}
+
+export function mergedCalendar(asOf: string = today()): MergedCalendar {
+  const indeterminate = allCalendars(asOf, 36).flatMap(({ entity, result }) =>
+    result.indeterminate.map((rule) => ({ ...rule, entityName: entity.name })),
+  );
+  return { bucketed: bucket(allDatedItems(asOf), asOf), indeterminate };
 }

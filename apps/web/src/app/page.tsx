@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 
 export default function HomePage() {
   const asOf = today();
-  const bucketed = mergedCalendar(asOf);
+  const { bucketed, indeterminate } = mergedCalendar(asOf);
   const store = getStore();
   const entityCount = store.list().length;
   const documentCount = store.documents.listDocuments().length;
@@ -46,6 +46,44 @@ export default function HomePage() {
       {includeDraft() && <DraftBanner />}
 
       <WindowList bucketed={bucketed} asOf={asOf} />
+
+      {indeterminate.length > 0 && (
+        <section
+          className={css({ marginTop: "6", padding: "4", borderRadius: "md" })}
+          style={{ background: "var(--maximus-box-info-bg)" }}
+        >
+          <h2 className={css({ fontSize: "lg", marginTop: "0" })}>Cannot tell yet</h2>
+          <p className={css({ fontSize: "sm", marginTop: "1" })}>
+            These rules depend on facts an entity has not recorded. They have no
+            date, so they cannot appear above — but they are not ruled out either.
+          </p>
+          <ul className={css({ fontSize: "sm" })}>
+            {indeterminate.map((rule) => (
+              <li key={`${rule.entityName}-${rule.ruleId}`}>
+                <strong>{rule.title}</strong> ({rule.jurisdiction}) for{" "}
+                {rule.entityName} — needs {rule.missingFacts.join(", ")}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {store.list().length > 0 && (
+        <section className={css({ marginTop: "8" })}>
+          <h2 className={css({ fontSize: "lg" })}>Entities</h2>
+          <ul className={css({ listStyle: "none", padding: "0" })}>
+            {store.list().map((entity) => (
+              <li key={entity.id} className={css({ paddingBlock: "1" })}>
+                <StyledEntity /> {entity.name}{" "}
+                <span className={css({ fontSize: "sm", color: "boxTextSecondary" })}>
+                  formed {entity.formedOn}
+                </span>{" "}
+                <Link href={`/entities/${entity.id}/edit`}>Edit</Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <Disclaimer />
     </main>
