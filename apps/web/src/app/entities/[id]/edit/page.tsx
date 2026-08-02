@@ -30,7 +30,7 @@ export default async function EditEntityPage({
       <h1 className={css({ fontSize: "2xl" })}>Edit {entity.name}</h1>
 
       {error && (
-        <p role="alert" style={{ color: "var(--maximus-text-error-text)" }}>
+        <p role="alert" style={{ color: "var(--optima-text-error-text)" }}>
           {error}
         </p>
       )}

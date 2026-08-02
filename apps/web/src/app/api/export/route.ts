@@ -18,7 +18,7 @@ export function GET(request: Request) {
     return new Response(toCsv(obligations), {
       headers: {
         "content-type": "text/csv; charset=utf-8",
-        "content-disposition": `attachment; filename="maximus-${asOf}.csv"`,
+        "content-disposition": `attachment; filename="optima-${asOf}.csv"`,
       },
     });
   }
@@ -30,13 +30,13 @@ export function GET(request: Request) {
       // user's events rather than duplicating them; a moving DTSTAMP would not
       // break that, but a stable file is easier to reason about and to diff.
       dtstamp: `${asOf.replaceAll("-", "")}T000000Z`,
-      calendarName: "Maximus compliance",
+      calendarName: "Optima compliance",
       reminderDaysBefore: [30, 7],
     }),
     {
       headers: {
         "content-type": "text/calendar; charset=utf-8",
-        "content-disposition": `attachment; filename="maximus-${asOf}.ics"`,
+        "content-disposition": `attachment; filename="optima-${asOf}.ics"`,
       },
     },
   );

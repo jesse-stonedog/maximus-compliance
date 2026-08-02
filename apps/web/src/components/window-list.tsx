@@ -63,7 +63,7 @@ function Item({ item, asOf }: { item: DatedItem; asOf: string }) {
           {item.status === "draft" && (
             <span
               className={css({ fontSize: "sm", marginLeft: "2" })}
-              style={{ color: "var(--maximus-text-warning-text)" }}
+              style={{ color: "var(--optima-text-warning-text)" }}
             >
               <StyledUnverified title="Unverified" /> unverified
             </span>
@@ -144,8 +144,8 @@ export function WindowList({ bucketed, asOf }: { bucketed: Bucketed; asOf: strin
         <section
           className={css({ marginBottom: "6", padding: "4", borderRadius: "md" })}
           style={{
-            background: "var(--maximus-box-info-bg)",
-            borderLeft: "4px solid var(--maximus-text-error-text)",
+            background: "var(--optima-box-info-bg)",
+            borderLeft: "4px solid var(--optima-text-error-text)",
           }}
         >
           <h2 className={css({ fontSize: "lg", marginTop: "0" })}>

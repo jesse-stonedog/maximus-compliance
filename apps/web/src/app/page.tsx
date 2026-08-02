@@ -50,7 +50,7 @@ export default function HomePage() {
       {indeterminate.length > 0 && (
         <section
           className={css({ marginTop: "6", padding: "4", borderRadius: "md" })}
-          style={{ background: "var(--maximus-box-info-bg)" }}
+          style={{ background: "var(--optima-box-info-bg)" }}
         >
           <h2 className={css({ fontSize: "lg", marginTop: "0" })}>Cannot tell yet</h2>
           <p className={css({ fontSize: "sm", marginTop: "1" })}>

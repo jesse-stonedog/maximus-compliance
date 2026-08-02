@@ -1,8 +1,8 @@
-# maximus-compliance — the open-source core (AGPLv3)
+# optima-filings — the open-source core (AGPLv3)
 
 **Repo tier.** Project-wide context (the open-core boundary, ownership and the
 CLA, the rule contract, the design system, cross-repo ordering) is in
-`~/src/maximus-compliance/CLAUDE.md`. Machine-wide conventions are in
+`~/src/optima/CLAUDE.md`. Machine-wide conventions are in
 `~/.claude/CLAUDE.md`. This file covers only what's true inside this repo.
 
 **This repo is public.** Every commit, comment, and branch name is visible to
@@ -27,7 +27,7 @@ packages/
   hopper-style/  SUBMODULE → jesse-stonedog/hopper-style (Apache-2.0)
 apps/
   web/                            — self-host dashboard, single-tenant
-  cli/                            — `maximus check`, rule linting, imports
+  cli/                            — `optima check`, rule linting, imports
 docker/                           — the one-container self-host image
 ```
 

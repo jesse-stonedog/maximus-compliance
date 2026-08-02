@@ -1,12 +1,12 @@
 /**
- * The Maximus theme.
+ * The Optima theme.
  *
  * Copyright (C) 2026 StoneDogCode L.L.C.
  * SPDX-License-Identifier: AGPL-3.0-only
  *
  * hopper-style ships **no colours**: every one of its tokens resolves to a bare
  * CSS custom property that the host defines. This file is that definition for
- * Maximus, under our own `--maximus-*` namespace (NEH-170) rather than the
+ * Optima, under our own `--optima-*` namespace (NEH-170) rather than the
  * default `--hopper-*`.
  *
  * **A token with no matching custom property renders as nothing.** There is no
@@ -22,9 +22,9 @@
  * compliance product a red row has to mean something.
  */
 
-export const CSS_VAR_PREFIX = "maximus";
+export const CSS_VAR_PREFIX = "optima";
 
-/** Property suffix → colour. Keys are everything after `--maximus-`. */
+/** Property suffix → colour. Keys are everything after `--optima-`. */
 export type ThemeTokens = Record<string, string>;
 
 export const LIGHT_THEME: ThemeTokens = {
@@ -148,7 +148,7 @@ export const DARK_THEME: ThemeTokens = {
  *
  * hopper-style's own fallbacks are deliberately large — it came from a product
  * for an often-elderly, sometimes cognitively-impaired audience, where `md` is
- * 1.375rem (~22px). Maximus is a business tool for a general audience, so it
+ * 1.375rem (~22px). Optima is a business tool for a general audience, so it
  * supplies a conventional scale here. **rem throughout, never px**, so the
  * whole UI still responds to the browser's own font-size setting, which is the
  * accessibility affordance users with low vision actually reach for.

@@ -41,7 +41,7 @@ export default async function NewActionPage({
       </p>
 
       {error && (
-        <p role="alert" style={{ color: "var(--maximus-text-error-text)" }}>
+        <p role="alert" style={{ color: "var(--optima-text-error-text)" }}>
           {error}
         </p>
       )}
@@ -139,8 +139,8 @@ export default async function NewActionPage({
             minHeight: "44px",
           })}
           style={{
-            background: "var(--maximus-button-primary-bg)",
-            color: "var(--maximus-button-primary-text)",
+            background: "var(--optima-button-primary-bg)",
+            color: "var(--optima-button-primary-text)",
           }}
         >
           Add action

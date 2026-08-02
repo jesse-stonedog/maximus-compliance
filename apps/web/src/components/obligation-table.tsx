@@ -15,9 +15,9 @@ import {
 } from "@/lib/format";
 
 const URGENCY_COLOR = {
-  overdue: "var(--maximus-text-error-text)",
-  "due-soon": "var(--maximus-text-warning-text)",
-  upcoming: "var(--maximus-box-secondary-text)",
+  overdue: "var(--optima-text-error-text)",
+  "due-soon": "var(--optima-text-warning-text)",
+  upcoming: "var(--optima-box-secondary-text)",
 } as const;
 
 function DueCell({ asOf, obligation }: { asOf: string; obligation: Obligation }) {
@@ -103,7 +103,7 @@ export function ObligationTable({
                       {obligation.status === "draft" && (
                         <span
                           className={css({ fontSize: "sm", marginLeft: "2" })}
-                          style={{ color: "var(--maximus-text-warning-text)" }}
+                          style={{ color: "var(--optima-text-warning-text)" }}
                         >
                           <StyledUnverified title="Unverified" /> unverified
                         </span>
@@ -154,7 +154,7 @@ export function ObligationTable({
       {result.indeterminate.length > 0 && (
         <section
           className={css({ marginTop: "6", padding: "4", borderRadius: "md" })}
-          style={{ background: "var(--maximus-box-info-bg)" }}
+          style={{ background: "var(--optima-box-info-bg)" }}
         >
           <h3 className={css({ margin: "0", fontSize: "md" })}>
             Cannot tell yet

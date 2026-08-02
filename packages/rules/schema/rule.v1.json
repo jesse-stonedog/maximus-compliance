@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://maximuscompliance.com/schema/rule.v1.json",
-  "title": "Maximus compliance rule, v1",
+  "$id": "https://optimafilings.com/schema/rule.v1.json",
+  "title": "Optima Filings rule, v1",
   "description": "One filing obligation in one jurisdiction. See docs/rule-authoring.md — you can usually copy a neighbouring rule and change three fields.",
   "definitions": {
     "condition": {

@@ -1,6 +1,6 @@
 "use client";
 /**
- * The Maximus icon set.
+ * The Optima icon set.
  *
  * Copyright (C) 2026 StoneDogCode L.L.C.
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -12,7 +12,7 @@
  * exists precisely for this case: same sizing, theming and accessibility, from
  * a permissive set, one line per glyph.
  *
- * **Keep these names identical to maximus-cloud-saas's set.** The SaaS builds
+ * **Keep these names identical to optima-cloud-saas's set.** The SaaS builds
  * the same names on Font Awesome, so a screen ported between the repos needs no
  * icon edits. A name that exists in one and not the other is what makes porting
  * a rewrite.

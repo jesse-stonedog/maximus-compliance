@@ -13,19 +13,19 @@ html {
 
 body {
   margin: 0;
-  background: var(--maximus-box-main-bg);
-  color: var(--maximus-box-main-text);
+  background: var(--optima-box-main-bg);
+  color: var(--optima-box-main-text);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   font-size: var(--font-sizes-md);
   line-height: 1.5;
 }
 
-a { color: var(--maximus-text-pop-text); }
+a { color: var(--optima-text-pop-text); }
 
 /* WCAG 2.2: a visible focus indicator on everything reachable by keyboard.
    Never remove this without replacing it — keyboard users lose their place
    entirely, and it is invisible to anyone testing with a mouse. */
 :focus-visible {
-  outline: 3px solid var(--maximus-box-accent-bg);
+  outline: 3px solid var(--optima-box-accent-bg);
   outline-offset: 2px;
 }

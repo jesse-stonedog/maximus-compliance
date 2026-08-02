@@ -1,18 +1,18 @@
-# Running Maximus Compliance yourself
+# Running Optima Filings yourself
 
 ```bash
 docker run -d \
-  --name maximus \
+  --name optima \
   -p 3000:3000 \
-  -v maximus-data:/data \
-  ghcr.io/jesse-stonedog/maximus-compliance:latest
+  -v optima-data:/data \
+  ghcr.io/jesse-stonedog/optima-filings:latest
 ```
 
 Then open <http://localhost:3000>.
 
 ## The volume is not optional
 
-`-v maximus-data:/data` is where the SQLite database lives. Without it the
+`-v optima-data:/data` is where the SQLite database lives. Without it the
 database is written **inside** the container and is destroyed the next time you
 recreate it. The app logs its database path on startup — check that line if you
 are unsure where your data went.
@@ -25,7 +25,7 @@ statute they cite**. The rule set is young, so this may well be empty.
 To see unverified ones as well:
 
 ```bash
--e MAXIMUS_INCLUDE_DRAFT=true
+-e OPTIMA_INCLUDE_DRAFT=true
 ```
 
 Every such row is marked *unverified* in the UI, and a banner says so. Treat
@@ -34,14 +34,14 @@ them as a prompt to go and check the statute, not as fact.
 ## Backing up
 
 **Stop the container first.** On shutdown the app folds its write-ahead log back
-into `maximus.sqlite`, so a stopped container leaves a complete, copyable
+into `optima.sqlite`, so a stopped container leaves a complete, copyable
 database file.
 
 ```bash
-docker stop maximus
-docker run --rm -v maximus-data:/data -v "$PWD:/backup" alpine \
-  tar czf /backup/maximus-backup.tar.gz -C /data .
-docker start maximus
+docker stop optima
+docker run --rm -v optima-data:/data -v "$PWD:/backup" alpine \
+  tar czf /backup/optima-backup.tar.gz -C /data .
+docker start optima
 ```
 
 `/data` holds the database and the `documents/` directory with your uploaded
@@ -52,8 +52,8 @@ To restore, stop the container and untar into an empty volume.
 
 ### If you must copy while it is running
 
-Take the whole directory, not just `maximus.sqlite`. While the app is running,
-recent writes live in `maximus.sqlite-wal` and the main file alone is
+Take the whole directory, not just `optima.sqlite`. While the app is running,
+recent writes live in `optima.sqlite-wal` and the main file alone is
 **incomplete** — it will open without complaint and silently be missing your
 latest changes, which is the worst kind of backup. Stopping first avoids the
 question entirely.
@@ -65,19 +65,55 @@ startup — there is no separate migrate command, on purpose, because "pull and
 restart" is the whole upgrade workflow for this tier.
 
 ```bash
-docker pull ghcr.io/jesse-stonedog/maximus-compliance:latest
-docker rm -f maximus && docker run -d ... # same flags as above
+docker pull ghcr.io/jesse-stonedog/optima-filings:latest
+docker rm -f optima && docker run -d ... # same flags as above
 ```
 
 Your data is on the volume, not in the container.
+
+### Upgrading from Maximus Compliance
+
+The product used to be called Maximus Compliance, and the image, the variables
+and the database filename all changed with the name. **Keep pointing at the
+volume you already have** — everything else is handled for you:
+
+```bash
+docker run -d \
+  --name optima \
+  -p 3000:3000 \
+  -v maximus-data:/data \        # your existing volume, not a new one
+  ghcr.io/jesse-stonedog/optima-filings:latest
+```
+
+On first start the app renames `maximus.sqlite` (and its write-ahead log) to
+`optima.sqlite` on the volume, and logs the move. `MAXIMUS_*` variables are still
+read, with a warning naming their `OPTIMA_*` replacement.
+
+**The one thing to get right is the volume.** Copying the `-v optima-data:/data`
+line from the top of this page instead of naming your own volume gives you an
+empty database and a working app with nothing in it — your data is untouched on
+the old volume, but nothing on screen would tell you that.
+
+If you would rather move to a volume named for the new product, do it while the
+container is stopped:
+
+```bash
+docker volume create optima-data
+docker run --rm -v maximus-data:/from -v optima-data:/to alpine \
+  sh -c 'cp -a /from/. /to/'
+```
 
 ## Environment
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `MAXIMUS_DB_PATH` | `/data/maximus.sqlite` | Where the database file lives |
-| `MAXIMUS_INCLUDE_DRAFT` | unset (off) | Show rules not yet verified against a statute |
+| `OPTIMA_DB_PATH` | `/data/optima.sqlite` | Where the database file lives |
+| `OPTIMA_INCLUDE_DRAFT` | unset (off) | Show rules not yet verified against a statute |
+| `OPTIMA_DOCUMENTS_DIR` | `documents/` beside the database | Where uploaded files are stored |
 | `PORT` | `3000` | Listen port |
+
+The `MAXIMUS_*` spellings of these still work and warn on startup. They will be
+removed in a future release.
 
 ## This is not legal or tax advice
 

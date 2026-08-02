@@ -1,4 +1,4 @@
-# Maximus Compliance
+# Optima Filings
 
 **Know what your business owes, and when.**
 
@@ -7,7 +7,7 @@ due, when, to whom, and for how much — annual reports, franchise taxes, charit
 registrations, federal returns.
 
 Free and self-hostable. A paid cloud service at
-[maximuscompliance.com](https://maximuscompliance.com) adds reminders, filing
+[optimafilings.com](https://optimafilings.com) adds reminders, filing
 integrations and document storage, but **the rules and the engine are open, and
 every rule is the same on both sides.**
 

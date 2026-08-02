@@ -182,14 +182,14 @@ describe("crud", () => {
 
 describe("checkpointing", () => {
   it("folds the write-ahead log back into the main file on close", async () => {
-    // The self-hoster's backup instinct is to copy maximus.sqlite. In WAL mode
+    // The self-hoster's backup instinct is to copy optima.sqlite. In WAL mode
     // that file is missing recent writes until a checkpoint — a backup that
     // opens cleanly and has silently lost data, discovered only on restore.
     const { mkdtemp, stat, rm } = await import("node:fs/promises");
     const { tmpdir } = await import("node:os");
     const { join } = await import("node:path");
 
-    const dir = await mkdtemp(join(tmpdir(), "maximus-wal-"));
+    const dir = await mkdtemp(join(tmpdir(), "optima-wal-"));
     const path = join(dir, "test.sqlite");
 
     const store = new EntityStore({ path, now: () => NOW });

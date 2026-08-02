@@ -25,10 +25,10 @@ export type ParseResult =
   | { kind: "version" }
   | { kind: "error"; message: string };
 
-export const USAGE = `maximus — compliance calendar
+export const USAGE = `optima — compliance calendar
 
 USAGE
-  maximus check --entity <file.json> [options]
+  optima check --entity <file.json> [options]
 
 OPTIONS
   --entity <path>     Entity facts as JSON. Required.

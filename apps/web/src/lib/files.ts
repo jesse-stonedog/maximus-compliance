@@ -13,10 +13,11 @@ import "server-only";
 import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
+import { renamedEnv } from "./upgrade";
 
 const DOCUMENTS_DIR =
-  process.env.MAXIMUS_DOCUMENTS_DIR ??
-  join(process.env.MAXIMUS_DB_PATH?.replace(/\/[^/]+$/, "") ?? "/data", "documents");
+  renamedEnv("DOCUMENTS_DIR") ??
+  join(renamedEnv("DB_PATH")?.replace(/\/[^/]+$/, "") ?? "/data", "documents");
 
 /**
  * The upload ceiling.
@@ -51,7 +52,7 @@ export const ALLOWED_CONTENT_TYPES: Readonly<Record<string, string>> = {
  * A fresh, opaque storage key.
  *
  * **The user's filename never reaches the filesystem.** It is kept in the
- * database for display only. A name like `../../../data/maximus.sqlite` reaching
+ * database for display only. A name like `../../../data/optima.sqlite` reaching
  * a path join is how an upload form becomes an arbitrary-write primitive, and
  * sanitising such a name correctly is far harder than not using it at all.
  */

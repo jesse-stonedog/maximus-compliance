@@ -1,6 +1,6 @@
 # Contributor License Agreement
 
-Thank you for contributing to Maximus Compliance.
+Thank you for contributing to Optima Filings.
 
 By submitting a contribution to this project, you agree to the terms below. If
 you are contributing on behalf of your employer, you confirm you have their

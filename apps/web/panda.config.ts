@@ -18,8 +18,8 @@ export default defineConfig({
   presets: [
     "@pandacss/preset-base",
     "@pandacss/preset-panda",
-    // NEH-170: our own --maximus-* namespace, not the default --hopper-*.
-    hopperStylePreset({ cssVarPrefix: "maximus" }),
+    // NEH-170: our own --optima-* namespace, not the default --hopper-*.
+    hopperStylePreset({ cssVarPrefix: "optima" }),
   ],
   /**
    * hopper-style and @maximus/ui ship TypeScript SOURCE, and Panda finds styles

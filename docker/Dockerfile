@@ -42,8 +42,16 @@ FROM node:24-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production \
     PORT=3000 \
-    HOSTNAME=0.0.0.0 \
-    MAXIMUS_DB_PATH=/data/maximus.sqlite
+    HOSTNAME=0.0.0.0
+
+# OPTIMA_DB_PATH is deliberately NOT set here, though the image used to set it.
+#
+# The app defaults to the same `/data/optima.sqlite`, so setting it changed
+# nothing — except that it is *always defined*, which silently disabled the
+# MAXIMUS_DB_PATH fallback (NEH-237): an upgrading self-hoster who had set the
+# pre-rename variable would have had it ignored, and been handed an empty
+# database beside their real one. Defaults belong in the app, where the
+# fallback logic can see them.
 
 # Never root. A compromised web process should not be able to rewrite its own
 # application code — and `node` already exists in the base image.
