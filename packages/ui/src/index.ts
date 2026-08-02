@@ -14,6 +14,7 @@
  */
 
 export { MaximusStyleProvider } from "./provider";
+export { MAXIMUS_INTENT_ICONS } from "./intent-icons";
 export type { MaximusStyleProviderProps } from "./provider";
 export {
   CSS_VAR_PREFIX,
