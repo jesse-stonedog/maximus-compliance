@@ -19,6 +19,7 @@ import {
   StyledInputText,
   StyledInputTextArea,
   StyledInputBool,
+  StyledInputSelect,
 } from "@maximus/ui";
 import { Disclaimer } from "@/components/disclaimer";
 
@@ -80,14 +81,16 @@ export default async function NewDocumentPage({
             <StyledFormLabel htmlFor="doc-entity" optional>
               Entity
             </StyledFormLabel>
-            <select id="doc-entity" className={inputClass} name="entityId" defaultValue="">
-              <option value="">Not tied to an entity</option>
-              {entities.map((entity) => (
-                <option key={entity.id} value={entity.id}>
-                  {entity.name}
-                </option>
-              ))}
-            </select>
+            <StyledInputSelect
+              id="doc-entity"
+              name="entityId"
+              defaultValue=""
+              placeholder="Not tied to an entity"
+              options={entities.map((entity) => ({
+                value: entity.id,
+                label: entity.name,
+              }))}
+            />
           </div>
         )}
 

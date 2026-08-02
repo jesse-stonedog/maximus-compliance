@@ -10,13 +10,13 @@ import {
   ActionSuggestions,
   fieldClass,
   hintClass,
-  inputClass,
 } from "@/components/action-fields";
 import {
   StyledFormLabel,
   StyledInputText,
   StyledInputTextArea,
   StyledInputBool,
+  StyledInputSelect,
 } from "@maximus/ui";
 import { Disclaimer } from "@/components/disclaimer";
 
@@ -114,17 +114,16 @@ export default async function NewActionPage({
             <StyledFormLabel htmlFor="action-entity" optional>
               Entity
             </StyledFormLabel>
-            {/* Still a native select: hopper-style has no dropdown yet (its
-                recipe exists, the component does not). Left explicit rather
-                than styled to look like one. */}
-            <select id="action-entity" className={inputClass} name="entityId" defaultValue="">
-              <option value="">Not tied to an entity</option>
-              {entities.map((entity) => (
-                <option key={entity.id} value={entity.id}>
-                  {entity.name}
-                </option>
-              ))}
-            </select>
+            <StyledInputSelect
+              id="action-entity"
+              name="entityId"
+              defaultValue=""
+              placeholder="Not tied to an entity"
+              options={entities.map((entity) => ({
+                value: entity.id,
+                label: entity.name,
+              }))}
+            />
           </div>
         )}
 
