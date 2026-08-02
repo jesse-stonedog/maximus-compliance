@@ -18,7 +18,19 @@ jobs:
   gate:
     runs-on: ubuntu-latest
     steps:
+      # `submodules: recursive` is load-bearing, not tidiness. Without it
+      # packages/hopper-style is an EMPTY DIRECTORY here, and jest's
+      # moduleNameMapper points `hopper-style/preset` inside it — so
+      # packages/ui/test/theme.test.ts cannot load and the gate is red.
+      #
+      # It fails only in CI, because every local checkout has the submodule
+      # initialised. That divergence is exactly what the header above forbids,
+      # and it went unnoticed for eight runs: the submodule is imported by one
+      # suite out of fifteen, so the run still reads as broadly healthy and
+      # nothing in the message names a submodule. See NEH-249.
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -40,7 +52,11 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
+      # Needed here too: `npm ci` runs hopper-style's `prepare`, which is
+      # `panda codegen` against its own source.
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - uses: actions/setup-node@v4
         with:
           node-version: 24
