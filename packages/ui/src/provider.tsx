@@ -8,6 +8,7 @@
 
 import React from "react";
 import { HopperStyleProvider } from "hopper-style";
+import { MAXIMUS_INTENT_ICONS } from "./intent-icons";
 
 export interface MaximusStyleProviderProps {
   children: React.ReactNode;
@@ -28,7 +29,15 @@ export interface MaximusStyleProviderProps {
  */
 export function MaximusStyleProvider({ children }: MaximusStyleProviderProps) {
   return (
-    <HopperStyleProvider fontSizeProfile="md" iconSize="md" variant="solid">
+    <HopperStyleProvider
+      fontSizeProfile="md"
+      iconSize="md"
+      variant="solid"
+      // The only place this product decides what a delete button looks like.
+      // hopper-style ships the buttons and no artwork; these are the Lucide
+      // glyphs. HopperGuard registers Font Awesome against the same keys.
+      icons={MAXIMUS_INTENT_ICONS}
+    >
       {children}
     </HopperStyleProvider>
   );
