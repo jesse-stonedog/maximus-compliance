@@ -400,3 +400,49 @@ describe("recurring actions", () => {
     store.close();
   });
 });
+
+describe("catching up on a missed recurring filing", () => {
+  it("advances by exactly one year, even when that is still in the past", () => {
+    // Deliberate, and load-bearing. Completing a 2024 filing in 2026 spawns
+    // 2025 — which is itself overdue — because the 2025 filing was ALSO missed
+    // and is genuinely still owed. The successor lands in the dashboard's
+    // Overdue section, which is where it belongs.
+    //
+    // The tempting "improvement" is to skip forward to the next FUTURE
+    // occurrence. Do not: it silently erases obligations the user still has,
+    // which is the one thing a compliance tool must never do. Catching up
+    // should take several deliberate steps, one per year actually missed.
+    const store = open();
+    store.documents.createAction(
+      { title: "File an Annual Report", dueOn: "2024-03-31", repeatAnnually: true },
+      "a1",
+    );
+    store.documents.setActionCompleted("a1", "2026-08-01");
+
+    const open_ = store.documents.listActions().filter((a) => !a.completedOn);
+    expect(open_.map((a) => a.dueOn)).toEqual(["2025-03-31"]);
+    store.close();
+  });
+
+  it("steps year by year, so no missed filing is skipped", () => {
+    const store = open();
+    store.documents.createAction(
+      { title: "File an Annual Report", dueOn: "2024-03-31", repeatAnnually: true },
+      "a1",
+    );
+    // Three catch-up completions produce 2025, 2026 and 2027 in turn — every
+    // year accounted for, none quietly dropped.
+    let current = store.documents.getAction("a1")!;
+    const spawned: string[] = [];
+    for (let i = 0; i < 3; i += 1) {
+      store.documents.setActionCompleted(current.id, "2026-08-01");
+      const next = store.documents
+        .listActions()
+        .find((a) => !a.completedOn && !spawned.includes(a.dueOn))!;
+      spawned.push(next.dueOn);
+      current = next;
+    }
+    expect(spawned).toEqual(["2025-03-31", "2026-03-31", "2027-03-31"]);
+    store.close();
+  });
+});
