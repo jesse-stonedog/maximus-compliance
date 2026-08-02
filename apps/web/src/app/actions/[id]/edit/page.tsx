@@ -12,8 +12,13 @@ import {
   fieldClass,
   hintClass,
   inputClass,
-  labelClass,
 } from "@/components/action-fields";
+import {
+  StyledFormLabel,
+  StyledInputText,
+  StyledInputTextArea,
+  StyledInputBool,
+} from "@maximus/ui";
 import { SubmitButton } from "@/components/submit-button";
 import { Disclaimer } from "@/components/disclaimer";
 
@@ -46,58 +51,68 @@ export default async function EditActionPage({
       <form action={updateActionById}>
         <input type="hidden" name="id" value={action.id} />
 
-        <label className={fieldClass}>
-          <span className={labelClass}>What needs doing</span>
-          <input
-            className={inputClass}
+        <div className={fieldClass}>
+          <StyledFormLabel htmlFor="action-title" required>
+            What needs doing
+          </StyledFormLabel>
+          <StyledInputText
+            id="action-title"
             name="title"
             list="action-suggestions"
             required
             defaultValue={action.title}
           />
           <ActionSuggestions />
-        </label>
+        </div>
 
-        <label className={fieldClass}>
-          <span className={labelClass}>Due by</span>
-          <input
-            className={inputClass}
+        <div className={fieldClass}>
+          <StyledFormLabel htmlFor="action-due-on" required>
+            Due by
+          </StyledFormLabel>
+          <StyledInputText
+            id="action-due-on"
             type="date"
             name="dueOn"
             required
             defaultValue={action.dueOn}
           />
-        </label>
+        </div>
 
-        <label className={css({ display: "block", marginBottom: "4" })}>
-          <input
-            type="checkbox"
+        <div className={css({ marginBottom: "4" })}>
+          <StyledInputBool
             name="repeatAnnually"
             value="true"
             defaultChecked={action.repeatAnnually}
-          />{" "}
-          Repeats every year
-          <span className={hintClass}>
+            label="Repeats every year"
+            aria-describedby="action-repeat-hint"
+          />
+          <span className={hintClass} id="action-repeat-hint">
             {action.successorSpawned
               ? "Next year's has already been created — turning this off will not remove it."
               : "When you mark this done, next year's is created for you."}
           </span>
-        </label>
+        </div>
 
-        <label className={fieldClass}>
-          <span className={labelClass}>Notes (optional)</span>
-          <textarea
-            className={inputClass}
+        <div className={fieldClass}>
+          <StyledFormLabel htmlFor="action-detail" optional>
+            Notes
+          </StyledFormLabel>
+          <StyledInputTextArea
+            id="action-detail"
             name="detail"
             rows={3}
             defaultValue={action.detail ?? ""}
           />
-        </label>
+        </div>
 
         {entities.length > 0 && (
-          <label className={fieldClass}>
-            <span className={labelClass}>Entity (optional)</span>
-            <select className={inputClass} name="entityId" defaultValue={action.entityId ?? ""}>
+          <div className={fieldClass}>
+            <StyledFormLabel htmlFor="action-entity" optional>
+              Entity
+            </StyledFormLabel>
+            {/* Still a native select — hopper-style has no dropdown component
+                yet (its recipe exists, the component does not). */}
+            <select id="action-entity" className={inputClass} name="entityId" defaultValue={action.entityId ?? ""}>
               <option value="">Not tied to an entity</option>
               {entities.map((entity) => (
                 <option key={entity.id} value={entity.id}>
@@ -105,7 +120,7 @@ export default async function EditActionPage({
                 </option>
               ))}
             </select>
-          </label>
+          </div>
         )}
 
         <SubmitButton>Save changes</SubmitButton> <Link href="/">Cancel</Link>

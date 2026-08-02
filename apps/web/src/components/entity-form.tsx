@@ -8,12 +8,34 @@
  * field added to one could silently not exist on the other — and the field most
  * likely to be missed is an optional one, which is exactly where "I cannot
  * clear this value" bugs live.
+ *
+ * ## Built from hopper-style, not from local classes
+ *
+ * Fields used to be hand-rolled `labelClass` / `inputClass` markup. Those
+ * classes were not bad, but they were a *second* definition of what a field
+ * looks like, and two definitions drift. The shared controls also carry things
+ * the local markup did not: the app-wide text-size profile, the theme variant,
+ * and a checkbox whose label is part of its tap target.
+ *
+ * The structure changed with them. The old shape wrapped the control inside the
+ * label and put the visible text in a `<span>`:
+ *
+ *     <label className={fieldClass}>
+ *       <span className={labelClass}>Name</span>
+ *       <input className={inputClass} name="name" />
+ *     </label>
+ *
+ * `StyledFormLabel` renders a real `<label>`, and a label inside a label is
+ * invalid, so each field is now an explicit `htmlFor`/`id` pair. That is the
+ * better structure anyway: the association is stated rather than implied by
+ * nesting, and every control has an `id` that an error message can point at.
  */
 import { ENTITY_TYPES } from "@maximus/engine";
 import type { StoredEntity } from "@maximus/db";
+import { StyledFormLabel, StyledInputText, StyledInputBool } from "@maximus/ui";
 import { css } from "styled-system/css";
 import { entityTypeLabel } from "@/lib/format";
-import { fieldClass, hintClass, inputClass, labelClass } from "./action-fields";
+import { fieldClass, hintClass, labelClass } from "./action-fields";
 
 /** Minor units back to a decimal string for an editable field. */
 function toDollars(minorUnits: number | undefined): string {
@@ -23,12 +45,16 @@ function toDollars(minorUnits: number | undefined): string {
 export function EntityFormFields({ entity }: { entity?: StoredEntity }) {
   return (
     <>
-      <label className={fieldClass}>
-        <span className={labelClass}>Name</span>
-        <input className={inputClass} name="name" required defaultValue={entity?.name} />
-      </label>
+      <div className={fieldClass}>
+        <StyledFormLabel htmlFor="entity-name" required>
+          Name
+        </StyledFormLabel>
+        <StyledInputText id="entity-name" name="name" required defaultValue={entity?.name} />
+      </div>
 
       <fieldset className={css({ marginBottom: "4", border: "none", padding: "0" })}>
+        {/* A legend, not a StyledFormLabel — it names the group, and a <label>
+            here would claim to label a single control. */}
         <legend className={labelClass}>Legal form</legend>
         <p className={hintClass}>
           Pick every form this entity holds. A 501(c)(3) is almost always also a
@@ -36,139 +62,162 @@ export function EntityFormFields({ entity }: { entity?: StoredEntity }) {
           so selecting both is usually correct.
         </p>
         {ENTITY_TYPES.map((type) => (
-          <label key={type} className={css({ display: "block", marginTop: "1" })}>
-            <input
-              type="checkbox"
-              name="entityTypes"
-              value={type}
-              defaultChecked={entity?.entityTypes.includes(type)}
-            />{" "}
-            {entityTypeLabel(type)}
-          </label>
+          <StyledInputBool
+            key={type}
+            name="entityTypes"
+            value={type}
+            defaultChecked={entity?.entityTypes.includes(type)}
+            label={entityTypeLabel(type)}
+          />
         ))}
       </fieldset>
 
-      <label className={fieldClass}>
-        <span className={labelClass}>Date formed</span>
-        <input
-          className={inputClass}
+      <div className={fieldClass}>
+        <StyledFormLabel htmlFor="entity-formed-on" required>
+          Date formed
+        </StyledFormLabel>
+        <StyledInputText
+          id="entity-formed-on"
           type="date"
           name="formedOn"
           required
           defaultValue={entity?.formedOn}
+          aria-describedby="entity-formed-on-hint"
         />
-        <span className={hintClass}>
+        <span className={hintClass} id="entity-formed-on-hint">
           Most state annual reports are due in the anniversary month of this
           date, so it needs to be right — getting it wrong shifts every state
           deadline for this entity.
         </span>
-      </label>
+      </div>
 
-      <label className={fieldClass}>
-        <span className={labelClass}>Home jurisdiction</span>
-        <input
-          className={inputClass}
+      <div className={fieldClass}>
+        <StyledFormLabel htmlFor="entity-home-jurisdiction" required>
+          Home jurisdiction
+        </StyledFormLabel>
+        <StyledInputText
+          id="entity-home-jurisdiction"
           name="homeJurisdiction"
           placeholder="US-WA"
           pattern="US-[A-Z]{2}"
           required
           defaultValue={entity?.homeJurisdiction}
+          aria-describedby="entity-home-jurisdiction-hint"
         />
-        <span className={hintClass}>The state it was formed in, e.g. US-WA.</span>
-      </label>
+        <span className={hintClass} id="entity-home-jurisdiction-hint">
+          The state it was formed in, e.g. US-WA.
+        </span>
+      </div>
 
-      <label className={fieldClass}>
-        <span className={labelClass}>Registered in</span>
-        <input
-          className={inputClass}
+      <div className={fieldClass}>
+        <StyledFormLabel htmlFor="entity-jurisdictions" required>
+          Registered in
+        </StyledFormLabel>
+        <StyledInputText
+          id="entity-jurisdictions"
           name="jurisdictions"
           placeholder="US, US-WA"
           required
           defaultValue={entity?.jurisdictions.join(", ")}
+          aria-describedby="entity-jurisdictions-hint"
         />
-        <span className={hintClass}>
+        <span className={hintClass} id="entity-jurisdictions-hint">
           Comma-separated. Include <code>US</code> for federal filings and every
           state you are registered in — registering in a state is what creates
           the obligation to it.
         </span>
-      </label>
+      </div>
 
-      <label className={fieldClass}>
-        <span className={labelClass}>Fiscal year ends</span>
-        <input
-          className={inputClass}
+      <div className={fieldClass}>
+        <StyledFormLabel htmlFor="entity-fiscal-year-end" required>
+          Fiscal year ends
+        </StyledFormLabel>
+        <StyledInputText
+          id="entity-fiscal-year-end"
           name="fiscalYearEnd"
           placeholder="12-31"
           pattern="\d{2}-\d{2}"
           defaultValue={entity?.fiscalYearEnd ?? "12-31"}
           required
+          aria-describedby="entity-fiscal-year-end-hint"
         />
-        <span className={hintClass}>
+        <span className={hintClass} id="entity-fiscal-year-end-hint">
           MM-DD. The federal return is due five months after this, so a
           non-calendar year changes the date.
         </span>
-      </label>
+      </div>
 
-      <label className={fieldClass}>
-        <span className={labelClass}>Gross annual revenue (optional)</span>
-        <input
-          className={inputClass}
+      <div className={fieldClass}>
+        {/* `optional` rather than "(optional)" typed into the label text: it is
+            announced as part of the accessible name either way, but this way
+            the styling and the wording stay consistent across every form. */}
+        <StyledFormLabel htmlFor="entity-gross-revenue" optional>
+          Gross annual revenue
+        </StyledFormLabel>
+        <StyledInputText
+          id="entity-gross-revenue"
           type="number"
           name="grossRevenue"
           min="0"
           step="0.01"
           defaultValue={toDollars(entity?.grossRevenueMinorUnits)}
+          aria-describedby="entity-gross-revenue-hint"
         />
-        <span className={hintClass}>
+        <span className={hintClass} id="entity-gross-revenue-hint">
           In dollars. <strong>Leave blank if you do not know</strong> — an
           unknown is reported as “cannot tell yet”, whereas a guess is reported
           as an answer. Clearing this field puts it back to unknown.
         </span>
-      </label>
+      </div>
 
-      <label className={fieldClass}>
-        <span className={labelClass}>Total assets (optional)</span>
-        <input
-          className={inputClass}
+      <div className={fieldClass}>
+        <StyledFormLabel htmlFor="entity-total-assets" optional>
+          Total assets
+        </StyledFormLabel>
+        <StyledInputText
+          id="entity-total-assets"
           type="number"
           name="totalAssets"
           min="0"
           step="0.01"
           defaultValue={toDollars(entity?.totalAssetsMinorUnits)}
         />
-      </label>
+      </div>
 
-      <label className={fieldClass}>
-        <span className={labelClass}>Charitable assets (optional)</span>
-        <input
-          className={inputClass}
+      <div className={fieldClass}>
+        <StyledFormLabel htmlFor="entity-charitable-assets" optional>
+          Charitable assets
+        </StyledFormLabel>
+        <StyledInputText
+          id="entity-charitable-assets"
           type="number"
           name="charitableAssets"
           min="0"
           step="0.01"
           defaultValue={toDollars(entity?.charitableAssetsMinorUnits)}
+          aria-describedby="entity-charitable-assets-hint"
         />
-        <span className={hintClass}>
+        <span className={hintClass} id="entity-charitable-assets-hint">
           The portion held for charitable purposes — <strong>not the same as
           total assets</strong>. Several states require charity registration
           above a threshold on this figure alone, even for an organisation that
           never asks the public for money.
         </span>
-      </label>
+      </div>
 
-      <label className={css({ display: "block", marginBottom: "6" })}>
-        <input
-          type="checkbox"
+      <div className={css({ marginBottom: "6" })}>
+        <StyledInputBool
           name="solicits"
           value="true"
           defaultChecked={entity?.solicitsCharitableContributions === true}
-        />{" "}
-        This organisation solicits charitable contributions
-        <span className={hintClass}>
+          label="This organisation solicits charitable contributions"
+          aria-describedby="entity-solicits-hint"
+        />
+        <span className={hintClass} id="entity-solicits-hint">
           Charity registration is a separate obligation from the corporate
           annual report, and it is the one most often missed.
         </span>
-      </label>
+      </div>
     </>
   );
 }

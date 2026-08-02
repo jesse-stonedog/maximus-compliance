@@ -25,3 +25,30 @@ export {
 } from "./theme";
 export type { ThemeTokens } from "./theme";
 export * from "./icons";
+
+/**
+ * Form controls, re-exported from hopper-style.
+ *
+ * Through this package rather than imported directly, for the same reason the
+ * icons are: `@maximus/ui` is the one door the app knocks on, so swapping an
+ * implementation or wrapping one in product behaviour is a change here rather
+ * than a sweep across every screen.
+ *
+ * These replaced hand-rolled `labelClass` / `inputClass` markup. The local
+ * classes were not bad — but they were a second, parallel definition of what a
+ * field looks like, and two definitions drift. The shared ones also carry
+ * things the local markup did not: the app-wide text-size profile, the theme
+ * variant, and a checkbox whose label is part of its tap target.
+ */
+export {
+  StyledFormLabel,
+  StyledInputText,
+  StyledInputTextArea,
+  StyledInputBool,
+} from "hopper-style";
+export type {
+  StyledFormLabelProps,
+  StyledInputTextProps,
+  StyledInputTextAreaProps,
+  StyledInputBoolProps,
+} from "hopper-style";
