@@ -6,7 +6,7 @@
   "author": "StoneDogCode L.L.C.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jesse-stonedog/maximus-compliance.git",
+    "url": "git+https://github.com/jesse-stonedog/optima-filings.git",
     "directory": "packages/engine"
   },
   "type": "module",

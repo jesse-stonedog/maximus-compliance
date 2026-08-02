@@ -28,12 +28,12 @@ export function SubmitButton({
       style={
         tone === "danger"
           ? {
-              background: "var(--maximus-text-error-text)",
-              color: "var(--maximus-button-primary-text)",
+              background: "var(--optima-text-error-text)",
+              color: "var(--optima-button-primary-text)",
             }
           : {
-              background: "var(--maximus-button-primary-bg)",
-              color: "var(--maximus-button-primary-text)",
+              background: "var(--optima-button-primary-bg)",
+              color: "var(--optima-button-primary-text)",
             }
       }
     >

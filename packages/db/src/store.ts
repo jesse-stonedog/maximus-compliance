@@ -256,9 +256,9 @@ export class EntityStore {
   /**
    * Fold the write-ahead log back into the main database file.
    *
-   * WAL mode keeps recent writes in `maximus.sqlite-wal` until SQLite decides
+   * WAL mode keeps recent writes in `optima.sqlite-wal` until SQLite decides
    * to checkpoint. That is right for a running server and a trap for a
-   * self-hoster: copying `maximus.sqlite` — the obvious backup instinct —
+   * self-hoster: copying `optima.sqlite` — the obvious backup instinct —
    * yields a file that **opens cleanly and is silently missing everything
    * recent**. A backup that looks like it worked is worse than none, because
    * the discovery happens during a restore.

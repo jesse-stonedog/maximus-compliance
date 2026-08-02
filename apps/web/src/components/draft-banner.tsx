@@ -19,8 +19,8 @@ export function DraftBanner() {
       role="note"
       className={css({ padding: "3", borderRadius: "md", fontSize: "sm" })}
       style={{
-        background: "var(--maximus-box-info-bg)",
-        borderLeft: "4px solid var(--maximus-text-warning-text)",
+        background: "var(--optima-box-info-bg)",
+        borderLeft: "4px solid var(--optima-text-warning-text)",
       }}
     >
       <StyledUnverified title="Warning" />{" "}

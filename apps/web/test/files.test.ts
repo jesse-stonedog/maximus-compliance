@@ -14,7 +14,7 @@ const file = (over: Partial<{ size: number; type: string; name: string }> = {}) 
 
 describe("newStorageKey", () => {
   it("never contains the user's filename", () => {
-    // A name like "../../data/maximus.sqlite" reaching a path join is how an
+    // A name like "../../data/optima.sqlite" reaching a path join is how an
     // upload form becomes an arbitrary-write primitive. Sanitising such a name
     // correctly is much harder than never using it.
     const key = newStorageKey("application/pdf");

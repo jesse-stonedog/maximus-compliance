@@ -1,7 +1,7 @@
 {
   "name": "@maximus/ui",
   "version": "0.1.0",
-  "description": "Maximus presentation layer: the theme, the Lucide icon set, and the app-wide sizing choice.",
+  "description": "Optima presentation layer: the theme, the Lucide icon set, and the app-wide sizing choice.",
   "license": "AGPL-3.0-only",
   "author": "StoneDogCode L.L.C.",
   "type": "module",

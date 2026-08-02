@@ -1,5 +1,5 @@
 /**
- * Which Lucide glyph Maximus draws for each intent.
+ * Which Lucide glyph Optima draws for each intent.
  *
  * Copyright (C) 2026 StoneDogCode L.L.C.
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -9,7 +9,7 @@
  * HopperGuard uses a per-seat licensed icon set: the buttons are shared, the
  * glyphs are not.
  *
- * This is the Maximus half. Registered once on `MaximusStyleProvider`, it is
+ * This is the Optima half. Registered once on `OptimaStyleProvider`, it is
  * the only place in this product that decides what a delete button looks like,
  * and it is why the same `<StyledDeleteButton />` can render a Font Awesome
  * trash can over there and a Lucide one here.
@@ -43,7 +43,7 @@ import {
   X,
 } from "lucide-react";
 
-export const MAXIMUS_INTENT_ICONS: IntentIcons = {
+export const OPTIMA_INTENT_ICONS: IntentIcons = {
   add: <Plus />,
   analytics: <ChartLine />,
   back: <ArrowLeft />,

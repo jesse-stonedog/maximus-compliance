@@ -1,5 +1,5 @@
 /**
- * @maximus/ui — Maximus presentation layer over hopper-style.
+ * @maximus/ui — Optima presentation layer over hopper-style.
  *
  * Copyright (C) 2026 StoneDogCode L.L.C.
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -13,9 +13,9 @@
  * these — and webpack will not map a ".js" specifier back onto a ".tsx" file.
  */
 
-export { MaximusStyleProvider } from "./provider";
-export { MAXIMUS_INTENT_ICONS } from "./intent-icons";
-export type { MaximusStyleProviderProps } from "./provider";
+export { OptimaStyleProvider } from "./provider";
+export { OPTIMA_INTENT_ICONS } from "./intent-icons";
+export type { OptimaStyleProviderProps } from "./provider";
 export {
   CSS_VAR_PREFIX,
   DARK_THEME,

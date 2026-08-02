@@ -27,8 +27,8 @@ export default async function NewEntityPage({
           role="alert"
           className={css({ padding: "3", borderRadius: "sm" })}
           style={{
-            background: "var(--maximus-box-info-bg)",
-            color: "var(--maximus-text-error-text)",
+            background: "var(--optima-box-info-bg)",
+            color: "var(--optima-text-error-text)",
           }}
         >
           {error}

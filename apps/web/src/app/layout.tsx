@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 import type { Metadata } from "next";
-import { MaximusStyleProvider, themeCss } from "@maximus/ui";
+import { OptimaStyleProvider, themeCss } from "@maximus/ui";
 import "../styles.css";
 
 export const metadata: Metadata = {
-  title: "Maximus Compliance",
+  title: "Optima Filings",
   description: "Know what your business owes, and when.",
 };
 
@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <style dangerouslySetInnerHTML={{ __html: themeCss() }} />
       </head>
       <body>
-        <MaximusStyleProvider>{children}</MaximusStyleProvider>
+        <OptimaStyleProvider>{children}</OptimaStyleProvider>
       </body>
     </html>
   );

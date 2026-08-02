@@ -30,8 +30,8 @@ export default async function DeleteDocumentPage({
       <div
         className={css({ padding: "4", borderRadius: "md", marginBottom: "4" })}
         style={{
-          background: "var(--maximus-box-info-bg)",
-          borderLeft: "4px solid var(--maximus-text-error-text)",
+          background: "var(--optima-box-info-bg)",
+          borderLeft: "4px solid var(--optima-text-error-text)",
         }}
       >
         <p className={css({ marginTop: "0" })}>

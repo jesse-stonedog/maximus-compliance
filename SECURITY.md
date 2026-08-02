@@ -22,7 +22,7 @@ the tooling around them. In scope, for example:
 - Anything in the self-host container that exposes a user's data beyond their
   own instance
 
-The hosted service at maximuscompliance.com is a separate, closed codebase.
+The hosted service at optimafilings.com is a separate, closed codebase.
 Reports about it are very welcome at the same address.
 
 ## Wrong rule data is not a vulnerability — but please still tell us

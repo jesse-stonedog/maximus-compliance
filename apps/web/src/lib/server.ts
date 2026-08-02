@@ -16,6 +16,7 @@ import "server-only";
 import { EntityStore, type StoredEntity } from "@maximus/db";
 import { evaluate, type EvaluationResult } from "@maximus/engine";
 import { ALL_RULES } from "@maximus/rules";
+import { adoptLegacyDatabase, renamedEnv } from "./upgrade";
 
 /**
  * Where the SQLite file lives.
@@ -24,8 +25,11 @@ import { ALL_RULES } from "@maximus/rules";
  * who forgets `-v` gets a database inside the container that vanishes on the
  * next `docker run` — so the startup log says the path out loud rather than
  * letting the loss be discovered later.
+ *
+ * Resolved through `renamedEnv`/`adoptLegacyDatabase` so an install predating
+ * the Optima Filings rename keeps its data; see `upgrade.ts`.
  */
-const DB_PATH = process.env.MAXIMUS_DB_PATH ?? "/data/maximus.sqlite";
+const DB_PATH = renamedEnv("DB_PATH") ?? "/data/optima.sqlite";
 
 /**
  * One store for the process.
@@ -34,22 +38,25 @@ const DB_PATH = process.env.MAXIMUS_DB_PATH ?? "/data/maximus.sqlite";
  * dev server re-evaluates modules on every hot reload — a plain module variable
  * leaks a new SQLite handle per edit until the process runs out of them.
  */
-const globalForStore = globalThis as unknown as { maximusStore?: EntityStore };
+const globalForStore = globalThis as unknown as { optimaStore?: EntityStore };
 
 export function getStore(): EntityStore {
-  if (!globalForStore.maximusStore) {
-    globalForStore.maximusStore = new EntityStore({
-      path: DB_PATH,
+  if (!globalForStore.optimaStore) {
+    // Before the file is opened, never after: opening creates it, and a created
+    // file would make the pre-rename database invisible from then on.
+    const path = adoptLegacyDatabase(DB_PATH);
+    globalForStore.optimaStore = new EntityStore({
+      path,
       now: () => new Date().toISOString(),
     });
     if (process.env.NODE_ENV !== "test") {
-      console.info(`[maximus] database: ${DB_PATH}`);
+      console.info(`[optima] database: ${DB_PATH}`);
       // Registered here rather than at module load: this is the moment a
       // database handle actually exists to be checkpointed.
       void import("./shutdown").then((m) => m.wireShutdown());
     }
   }
-  return globalForStore.maximusStore;
+  return globalForStore.optimaStore;
 }
 
 /** Today, UTC, as `YYYY-MM-DD`. The app's single clock read. */
@@ -66,7 +73,7 @@ export function today(): string {
  * such row is marked in the UI.
  */
 export function includeDraft(): boolean {
-  return process.env.MAXIMUS_INCLUDE_DRAFT === "true";
+  return renamedEnv("INCLUDE_DRAFT") === "true";
 }
 
 export interface EntityCalendar {

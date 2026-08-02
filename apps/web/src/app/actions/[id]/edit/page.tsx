@@ -43,7 +43,7 @@ export default async function EditActionPage({
       <h1 className={css({ fontSize: "2xl" })}>Edit action</h1>
 
       {error && (
-        <p role="alert" style={{ color: "var(--maximus-text-error-text)" }}>
+        <p role="alert" style={{ color: "var(--optima-text-error-text)" }}>
           {error}
         </p>
       )}

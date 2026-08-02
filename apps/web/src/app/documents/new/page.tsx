@@ -38,7 +38,7 @@ export default async function NewDocumentPage({
       <h1 className={css({ fontSize: "2xl" })}>Upload a document</h1>
 
       {error && (
-        <p role="alert" style={{ color: "var(--maximus-text-error-text)" }}>
+        <p role="alert" style={{ color: "var(--optima-text-error-text)" }}>
           {error}
         </p>
       )}
@@ -178,8 +178,8 @@ export default async function NewDocumentPage({
             minHeight: "44px",
           })}
           style={{
-            background: "var(--maximus-button-primary-bg)",
-            color: "var(--maximus-button-primary-text)",
+            background: "var(--optima-button-primary-bg)",
+            color: "var(--optima-button-primary-text)",
           }}
         >
           Upload

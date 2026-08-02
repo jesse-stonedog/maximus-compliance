@@ -19,7 +19,7 @@ import type { Obligation } from "@maximus/engine";
  * previously exported event look like a different event, and a re-import then
  * duplicates the user's entire calendar instead of updating it.
  */
-const UID_DOMAIN = "maximuscompliance.com";
+const UID_DOMAIN = "optimafilings.com";
 
 export interface ICalendarOptions {
   /**
@@ -152,7 +152,7 @@ export function toICalendar(
   const lines: string[] = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//StoneDogCode LLC//Maximus Compliance//EN",
+    "PRODID:-//StoneDogCode LLC//Optima Filings//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     `X-WR-CALNAME:${escapeText(calendarName)}`,

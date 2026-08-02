@@ -47,11 +47,11 @@ describe("theme completeness", () => {
   });
 });
 
-describe("the Maximus namespace", () => {
-  it("is maximus, not hopper", () => {
+describe("the Optima namespace", () => {
+  it("is optima, not hopper", () => {
     // NEH-170. Shipping a compliance product whose stylesheet is branded for an
     // unrelated eldercare product only gets harder to unpick later.
-    expect(CSS_VAR_PREFIX).toBe("maximus");
+    expect(CSS_VAR_PREFIX).toBe("optima");
     expect(themeCss()).not.toContain("--hopper-");
   });
 });
@@ -78,7 +78,7 @@ describe("the font scale", () => {
 });
 
 describe("themeCss", () => {
-  it("emits every property under the maximus prefix", () => {
+  it("emits every property under the optima prefix", () => {
     const css = themeCss();
     for (const prop of required) expect(css).toContain(prop);
   });

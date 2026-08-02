@@ -93,7 +93,7 @@ describe("toICalendar", () => {
 describe("UID stability", () => {
   it("keys on the rule and the occurrence, so recurrences are separate events", () => {
     expect(obligationUid(obligation)).toBe(
-      "us-wa-sos-nonprofit-annual-report-2026-03-31@maximuscompliance.com",
+      "us-wa-sos-nonprofit-annual-report-2026-03-31@optimafilings.com",
     );
     expect(obligationUid({ ...obligation, dueOn: "2027-03-31" })).not.toBe(
       obligationUid(obligation),

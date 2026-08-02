@@ -1,6 +1,6 @@
 "use client";
 /**
- * The one place Maximus configures hopper-style.
+ * The one place Optima configures hopper-style.
  *
  * Copyright (C) 2026 StoneDogCode L.L.C.
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -8,9 +8,9 @@
 
 import React from "react";
 import { HopperStyleProvider } from "hopper-style";
-import { MAXIMUS_INTENT_ICONS } from "./intent-icons";
+import { OPTIMA_INTENT_ICONS } from "./intent-icons";
 
-export interface MaximusStyleProviderProps {
+export interface OptimaStyleProviderProps {
   children: React.ReactNode;
 }
 
@@ -19,7 +19,7 @@ export interface MaximusStyleProviderProps {
  *
  * HopperGuard runs deliberately large — `iconSize` defaults to `2x` (32px) and
  * its font scale starts at ~22px — because it serves an often-elderly,
- * sometimes cognitively-impaired audience. Maximus is a business tool for a
+ * sometimes cognitively-impaired audience. Optima is a business tool for a
  * general audience and runs a conventional scale: `iconSize="md"` (20px) plus
  * the `--font-sizes-*` properties from `theme.ts`.
  *
@@ -27,7 +27,7 @@ export interface MaximusStyleProviderProps {
  * names its own size opts that icon out of ever being retuned, which is how an
  * app grows three icon scales and no single place to fix them.
  */
-export function MaximusStyleProvider({ children }: MaximusStyleProviderProps) {
+export function OptimaStyleProvider({ children }: OptimaStyleProviderProps) {
   return (
     <HopperStyleProvider
       fontSizeProfile="md"
@@ -36,7 +36,7 @@ export function MaximusStyleProvider({ children }: MaximusStyleProviderProps) {
       // The only place this product decides what a delete button looks like.
       // hopper-style ships the buttons and no artwork; these are the Lucide
       // glyphs. HopperGuard registers Font Awesome against the same keys.
-      icons={MAXIMUS_INTENT_ICONS}
+      icons={OPTIMA_INTENT_ICONS}
     >
       {children}
     </HopperStyleProvider>

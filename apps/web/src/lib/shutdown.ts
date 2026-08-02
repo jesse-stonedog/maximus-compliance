@@ -13,23 +13,23 @@ import "server-only";
 
 import { getStore } from "./server";
 
-const globalForShutdown = globalThis as unknown as { maximusShutdownWired?: boolean };
+const globalForShutdown = globalThis as unknown as { optimaShutdownWired?: boolean };
 
 export function wireShutdown(): void {
   // Next's dev server re-evaluates modules on every hot reload, so an unguarded
   // listener registration leaks one per edit until Node warns about a leak.
-  if (globalForShutdown.maximusShutdownWired) return;
-  globalForShutdown.maximusShutdownWired = true;
+  if (globalForShutdown.optimaShutdownWired) return;
+  globalForShutdown.optimaShutdownWired = true;
 
   for (const signal of ["SIGTERM", "SIGINT"] as const) {
     process.once(signal, () => {
       try {
         getStore().close();
-        console.info("[maximus] database checkpointed and closed");
+        console.info("[optima] database checkpointed and closed");
       } catch (error) {
         // Never block shutdown on this. The data is still in the WAL and will
         // be recovered on next open; hanging the container would be worse.
-        console.error(`[maximus] checkpoint on ${signal} failed:`, error);
+        console.error(`[optima] checkpoint on ${signal} failed:`, error);
       }
       process.exit(0);
     });
