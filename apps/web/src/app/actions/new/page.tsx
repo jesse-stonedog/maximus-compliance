@@ -11,8 +11,13 @@ import {
   fieldClass,
   hintClass,
   inputClass,
-  labelClass,
 } from "@/components/action-fields";
+import {
+  StyledFormLabel,
+  StyledInputText,
+  StyledInputTextArea,
+  StyledInputBool,
+} from "@maximus/ui";
 import { Disclaimer } from "@/components/disclaimer";
 
 export const dynamic = "force-dynamic";
@@ -49,49 +54,70 @@ export default async function NewActionPage({
           </p>
         )}
 
-        <label className={fieldClass}>
-          <span className={labelClass}>What needs doing</span>
-          <input
-            className={inputClass}
+        <div className={fieldClass}>
+          <StyledFormLabel htmlFor="action-title" required>
+            What needs doing
+          </StyledFormLabel>
+          <StyledInputText
+            id="action-title"
             name="title"
             list="action-suggestions"
             placeholder="File an Annual Report"
             required
             autoFocus
+            aria-describedby="action-title-hint"
           />
           <ActionSuggestions />
-          <span className={hintClass}>
+          <span className={hintClass} id="action-title-hint">
             Suggestions are a starting point — type anything.
           </span>
-        </label>
+        </div>
 
-        <label className={fieldClass}>
-          <span className={labelClass}>Due by</span>
-          <input className={inputClass} type="date" name="dueOn" required />
-        </label>
+        <div className={fieldClass}>
+          <StyledFormLabel htmlFor="action-due-on" required>
+            Due by
+          </StyledFormLabel>
+          <StyledInputText id="action-due-on" type="date" name="dueOn" required />
+        </div>
 
-        <label className={css({ display: "block", marginBottom: "4" })}>
-          <input type="checkbox" name="repeatAnnually" value="true" /> Repeats
-          every year
-          <span className={hintClass}>
+        <div className={css({ marginBottom: "4" })}>
+          <StyledInputBool
+            name="repeatAnnually"
+            value="true"
+            label="Repeats every year"
+            aria-describedby="action-repeat-hint"
+          />
+          <span className={hintClass} id="action-repeat-hint">
             Most compliance filings do. When you mark this done, next year's is
             created for you with the same notes.
           </span>
-        </label>
+        </div>
 
-        <label className={fieldClass}>
-          <span className={labelClass}>Notes (optional)</span>
-          <textarea className={inputClass} name="detail" rows={3} />
-          <span className={hintClass}>
+        <div className={fieldClass}>
+          <StyledFormLabel htmlFor="action-detail" optional>
+            Notes
+          </StyledFormLabel>
+          <StyledInputTextArea
+            id="action-detail"
+            name="detail"
+            rows={3}
+            aria-describedby="action-detail-hint"
+          />
+          <span className={hintClass} id="action-detail-hint">
             Where to file, a login, a reference number — whatever you will want in
             front of you on the day.
           </span>
-        </label>
+        </div>
 
         {entities.length > 0 && (
-          <label className={fieldClass}>
-            <span className={labelClass}>Entity (optional)</span>
-            <select className={inputClass} name="entityId" defaultValue="">
+          <div className={fieldClass}>
+            <StyledFormLabel htmlFor="action-entity" optional>
+              Entity
+            </StyledFormLabel>
+            {/* Still a native select: hopper-style has no dropdown yet (its
+                recipe exists, the component does not). Left explicit rather
+                than styled to look like one. */}
+            <select id="action-entity" className={inputClass} name="entityId" defaultValue="">
               <option value="">Not tied to an entity</option>
               {entities.map((entity) => (
                 <option key={entity.id} value={entity.id}>
@@ -99,7 +125,7 @@ export default async function NewActionPage({
                 </option>
               ))}
             </select>
-          </label>
+          </div>
         )}
 
         <button

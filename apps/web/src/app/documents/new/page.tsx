@@ -14,6 +14,12 @@ import {
   inputClass,
   labelClass,
 } from "@/components/action-fields";
+import {
+  StyledFormLabel,
+  StyledInputText,
+  StyledInputTextArea,
+  StyledInputBool,
+} from "@maximus/ui";
 import { Disclaimer } from "@/components/disclaimer";
 
 export const dynamic = "force-dynamic";
@@ -37,29 +43,44 @@ export default async function NewDocumentPage({
       )}
 
       <form action={uploadDocument}>
-        <label className={fieldClass}>
-          <span className={labelClass}>File</span>
-          <input className={inputClass} type="file" name="file" required />
-          <span className={hintClass}>
+        <div className={fieldClass}>
+          <StyledFormLabel htmlFor="doc-file" required>
+            File
+          </StyledFormLabel>
+          {/* A native file input, deliberately. hopper-style has no file
+              control, and styling one to look like a text field is how you get
+              a picker that does not behave like either. */}
+          <input
+            id="doc-file"
+            className={inputClass}
+            type="file"
+            name="file"
+            required
+            aria-describedby="doc-file-hint"
+          />
+          <span className={hintClass} id="doc-file-hint">
             PDF, image, plain text, or Word document, up to{" "}
             {MAX_UPLOAD_BYTES / 1024 / 1024} MB.
           </span>
-        </label>
+        </div>
 
-        <label className={fieldClass}>
-          <span className={labelClass}>Title</span>
-          <input
-            className={inputClass}
+        <div className={fieldClass}>
+          <StyledFormLabel htmlFor="doc-title">Title</StyledFormLabel>
+          <StyledInputText
+            id="doc-title"
             name="title"
             placeholder="WA SOS formation letter"
+            aria-describedby="doc-title-hint"
           />
-          <span className={hintClass}>Defaults to the filename.</span>
-        </label>
+          <span className={hintClass} id="doc-title-hint">Defaults to the filename.</span>
+        </div>
 
         {entities.length > 0 && (
-          <label className={fieldClass}>
-            <span className={labelClass}>Entity (optional)</span>
-            <select className={inputClass} name="entityId" defaultValue="">
+          <div className={fieldClass}>
+            <StyledFormLabel htmlFor="doc-entity" optional>
+              Entity
+            </StyledFormLabel>
+            <select id="doc-entity" className={inputClass} name="entityId" defaultValue="">
               <option value="">Not tied to an entity</option>
               {entities.map((entity) => (
                 <option key={entity.id} value={entity.id}>
@@ -67,28 +88,33 @@ export default async function NewDocumentPage({
                 </option>
               ))}
             </select>
-          </label>
+          </div>
         )}
 
-        <label className={fieldClass}>
-          <span className={labelClass}>Reference numbers (optional)</span>
-          <textarea
-            className={inputClass}
+        <div className={fieldClass}>
+          <StyledFormLabel htmlFor="doc-fields" optional>
+            Reference numbers
+          </StyledFormLabel>
+          <StyledInputTextArea
+            id="doc-fields"
             name="fields"
             rows={4}
             placeholder={"UBI Number: 604 123 456\nEIN: 91-1234567\nDUNS: 123456789"}
+            aria-describedby="doc-fields-hint"
           />
-          <span className={hintClass}>
+          <span className={hintClass} id="doc-fields-hint">
             One per line, as <code>Label: value</code>. This is what makes a
             number findable later without opening the file — copy them straight
             off the letter.
           </span>
-        </label>
+        </div>
 
-        <label className={fieldClass}>
-          <span className={labelClass}>Notes (optional)</span>
-          <textarea className={inputClass} name="notes" rows={2} />
-        </label>
+        <div className={fieldClass}>
+          <StyledFormLabel htmlFor="doc-notes" optional>
+            Notes
+          </StyledFormLabel>
+          <StyledInputTextArea id="doc-notes" name="notes" rows={2} />
+        </div>
 
         <fieldset
           className={css({
@@ -105,31 +131,36 @@ export default async function NewDocumentPage({
             can find it later is a perfectly good reason to upload it.
           </p>
 
-          <label className={fieldClass}>
-            <span className={labelClass}>What needs doing</span>
-            <input
-              className={inputClass}
+          <div className={fieldClass}>
+            <StyledFormLabel htmlFor="doc-action-title">What needs doing</StyledFormLabel>
+            <StyledInputText
+              id="doc-action-title"
               name="actionTitle"
               list="action-suggestions"
               placeholder="File an Annual Report"
             />
             <ActionSuggestions />
-          </label>
+          </div>
 
-          <label className={fieldClass}>
-            <span className={labelClass}>Due by</span>
-            <input className={inputClass} type="date" name="dueOn" />
-          </label>
+          <div className={fieldClass}>
+            <StyledFormLabel htmlFor="doc-action-due-on">Due by</StyledFormLabel>
+            <StyledInputText id="doc-action-due-on" type="date" name="dueOn" />
+          </div>
 
-          <label className={css({ display: "block", marginBottom: "3" })}>
-            <input type="checkbox" name="repeatAnnually" value="true" /> Repeats
-            every year
-          </label>
+          <div className={css({ marginBottom: "3" })}>
+            <StyledInputBool
+              name="repeatAnnually"
+              value="true"
+              label="Repeats every year"
+            />
+          </div>
 
-          <label className={css({ display: "block" })}>
-            <span className={labelClass}>Notes for the action (optional)</span>
-            <textarea className={inputClass} name="actionDetail" rows={2} />
-          </label>
+          <div>
+            <StyledFormLabel htmlFor="doc-action-detail" optional>
+              Notes for the action
+            </StyledFormLabel>
+            <StyledInputTextArea id="doc-action-detail" name="actionDetail" rows={2} />
+          </div>
         </fieldset>
 
         <button
