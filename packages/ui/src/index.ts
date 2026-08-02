@@ -45,10 +45,13 @@ export {
   StyledInputText,
   StyledInputTextArea,
   StyledInputBool,
+  StyledInputSelect,
 } from "hopper-style";
 export type {
   StyledFormLabelProps,
   StyledInputTextProps,
   StyledInputTextAreaProps,
   StyledInputBoolProps,
+  StyledInputSelectProps,
+  SelectOption,
 } from "hopper-style";
