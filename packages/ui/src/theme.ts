@@ -37,17 +37,28 @@ export const LIGHT_THEME: ThemeTokens = {
   "box-main-text": "#161b22",
   "box-primary-text": "#161b22",
   "box-secondary-text": "#3d4753",
-  "box-accent-text": "#ffffff",
+  // The accent surface is a light tint (below), so its own text is the deep
+  // blue rather than white — which also keeps Optima's blue as the thing the
+  // eye reads on an accented panel.
+  "box-accent-text": "#0b4f78",
 
-  // Surfaces.
+  // Surfaces. **Every light surface is light, including the accent one.**
+  // `box-accent-bg` was #0b4f78, a deep blue, and stonedog-style's `inputText`
+  // and `form` recipes paint the ordinary body colour (`textPrimary`, #161b22)
+  // onto it — 1.98:1, well under AA. A dark surface in a light theme cannot
+  // satisfy both its own text and the body text that lands on it from a
+  // cross-group recipe, so the surface moved rather than the recipes. (NEH-275)
   "box-main-bg": "#ffffff",
   "box-primary-bg": "#f7f9fb",
   "box-secondary-bg": "#eef2f6",
-  "box-accent-bg": "#0b4f78",
+  "box-accent-bg": "#dbeafe",
   "box-info-bg": "#e6f0f7",
 
   "box-primary-border": "#d5dde5",
   "box-secondary-border": "#c3ced9",
+  // Stays the deep blue: it is an edge, not a surface, and it is also what the
+  // app's `:focus-visible` outline is drawn in (8.74:1 on the page background,
+  // comfortably past the 3:1 WCAG asks of a non-text indicator).
   "box-accent-border": "#0b4f78",
 
   // Disclosure arrows.
