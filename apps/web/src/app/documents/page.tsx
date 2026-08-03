@@ -4,7 +4,7 @@
  */
 import Link from "next/link";
 import { css } from "styled-system/css";
-import { StyledCalendarAdd, StyledForm } from "@maximus/ui";
+import { StyledCalendarAdd, StyledForm } from "@optima/ui";
 import { getStore } from "@/lib/server";
 import { formatDate } from "@/lib/format";
 import { Disclaimer } from "@/components/disclaimer";

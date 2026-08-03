@@ -5,7 +5,7 @@
 
 import { parseArgs, todayUtc } from "../src/args.js";
 import { DISCLAIMER, formatMoney, renderResult } from "../src/format.js";
-import type { EvaluationResult } from "@maximus/engine";
+import type { EvaluationResult } from "@optima/engine";
 
 describe("parseArgs", () => {
   it("requires an entity file", () => {

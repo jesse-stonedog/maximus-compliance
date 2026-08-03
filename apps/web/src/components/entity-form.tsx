@@ -30,9 +30,9 @@
  * better structure anyway: the association is stated rather than implied by
  * nesting, and every control has an `id` that an error message can point at.
  */
-import { ENTITY_TYPES } from "@maximus/engine";
-import type { StoredEntity } from "@maximus/db";
-import { StyledFormLabel, StyledInputText, StyledInputBool } from "@maximus/ui";
+import { ENTITY_TYPES } from "@optima/engine";
+import type { StoredEntity } from "@optima/db";
+import { StyledFormLabel, StyledInputText, StyledInputBool } from "@optima/ui";
 import { css } from "styled-system/css";
 import { entityTypeLabel } from "@/lib/format";
 import { fieldClass, hintClass, labelClass } from "./action-fields";

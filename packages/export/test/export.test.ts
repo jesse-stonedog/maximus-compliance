@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { Obligation } from "@maximus/engine";
+import type { Obligation } from "@optima/engine";
 import { foldLine, obligationUid, toICalendar } from "../src/ical.js";
 import { toCsv } from "../src/csv.js";
 

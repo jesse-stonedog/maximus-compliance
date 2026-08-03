@@ -1,5 +1,5 @@
 {
-  "name": "@maximus/rules",
+  "name": "@optima/rules",
   "version": "2026.8.0",
   "description": "Crowd-maintained US business compliance rule packs. Every rule cites its statute.",
   "license": "AGPL-3.0-only",
@@ -36,7 +36,7 @@
   },
   "//version": "Date-versioned YYYY.M.PATCH, not semver. This is data; it changes when a legislature does. A SCHEMA change is what bumps rule.v1.json to v2, and v1 rules keep working.",
   "dependencies": {
-    "@maximus/engine": "0.1.0"
+    "@optima/engine": "0.1.0"
   },
   "engines": {
     "node": ">=22"

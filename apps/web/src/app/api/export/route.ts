@@ -4,7 +4,7 @@
  * Copyright (C) 2026 StoneDogCode L.L.C.
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import { toCsv, toICalendar } from "@maximus/export";
+import { toCsv, toICalendar } from "@optima/export";
 import { allCalendars, today } from "@/lib/server";
 
 export const dynamic = "force-dynamic";

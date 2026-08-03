@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { EntityFacts } from "@maximus/engine";
+import type { EntityFacts } from "@optima/engine";
 import { EntityStore } from "../src/store.js";
 import { MIGRATIONS } from "../src/schema.js";
 

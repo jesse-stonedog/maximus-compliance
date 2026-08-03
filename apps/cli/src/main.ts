@@ -7,9 +7,9 @@
  */
 
 import { readFileSync } from "node:fs";
-import { evaluate, type EntityFacts } from "@maximus/engine";
-import { ALL_RULES } from "@maximus/rules";
-import { toCsv, toICalendar } from "@maximus/export";
+import { evaluate, type EntityFacts } from "@optima/engine";
+import { ALL_RULES } from "@optima/rules";
+import { toCsv, toICalendar } from "@optima/export";
 import { parseArgs, USAGE } from "./args.js";
 import { renderResult } from "./format.js";
 

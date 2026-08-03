@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 import { css } from "styled-system/css";
-import type { Bucketed, DatedItem, WindowName } from "@maximus/reminders";
-import { WINDOW_DEFINITIONS } from "@maximus/reminders";
-import { StyledCheck, StyledStatute, StyledUnverified, StyledWarning } from "@maximus/ui";
+import type { Bucketed, DatedItem, WindowName } from "@optima/reminders";
+import { WINDOW_DEFINITIONS } from "@optima/reminders";
+import { StyledCheck, StyledStatute, StyledUnverified, StyledWarning } from "@optima/ui";
 import Link from "next/link";
 import { formatDate, relativeDue } from "@/lib/format";
 import { toggleActionCompleted } from "@/app/actions/actions";

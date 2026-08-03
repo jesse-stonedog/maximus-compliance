@@ -17,7 +17,7 @@ export default {
   /**
    * Next's `standalone` output traces a COPY of every workspace package into
    * .next/. Jest's module map then finds two packages claiming the name
-   * `@maximus/engine` and refuses to resolve either — a failure that reads as a
+   * `@optima/engine` and refuses to resolve either — a failure that reads as a
    * broken import and is actually a stale build artifact.
    */
   modulePathIgnorePatterns: ["<rootDir>/apps/web/.next/", "<rootDir>/apps/web/styled-system/"],
@@ -26,12 +26,12 @@ export default {
     // Workspace packages resolve to SOURCE, not to dist. An app's tests must
     // not depend on a build step having run first, or a clean checkout fails
     // its own suite in a way that looks like a code error.
-    "^@maximus/engine$": "<rootDir>/packages/engine/src/index.ts",
-    "^@maximus/rules$": "<rootDir>/packages/rules/src/index.ts",
-    "^@maximus/db$": "<rootDir>/packages/db/src/index.ts",
+    "^@optima/engine$": "<rootDir>/packages/engine/src/index.ts",
+    "^@optima/rules$": "<rootDir>/packages/rules/src/index.ts",
+    "^@optima/db$": "<rootDir>/packages/db/src/index.ts",
     "^server-only$": "<rootDir>/test-support/server-only.cjs",
-    "^@maximus/reminders$": "<rootDir>/packages/reminders/src/index.ts",
-    "^@maximus/export$": "<rootDir>/packages/export/src/index.ts",
+    "^@optima/reminders$": "<rootDir>/packages/reminders/src/index.ts",
+    "^@optima/export$": "<rootDir>/packages/export/src/index.ts",
     // stonedog-style is a SUBMODULE shipping TypeScript source, so both entry
     // points map to source too. Its `preset` entry runs in Node at build time
     // and is what the theme-completeness test reads.

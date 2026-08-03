@@ -13,9 +13,9 @@ import "server-only";
  * into a client component.
  */
 
-import { EntityStore, type StoredEntity } from "@maximus/db";
-import { evaluate, type EvaluationResult } from "@maximus/engine";
-import { ALL_RULES } from "@maximus/rules";
+import { EntityStore, type StoredEntity } from "@optima/db";
+import { evaluate, type EvaluationResult } from "@optima/engine";
+import { ALL_RULES } from "@optima/rules";
 import { adoptLegacyDatabase, renamedEnv } from "./upgrade";
 
 /**

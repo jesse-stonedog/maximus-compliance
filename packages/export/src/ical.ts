@@ -10,7 +10,7 @@
  * impossible to diff, cache, or assert on in a test.
  */
 
-import type { Obligation } from "@maximus/engine";
+import type { Obligation } from "@optima/engine";
 
 /**
  * The UID domain.

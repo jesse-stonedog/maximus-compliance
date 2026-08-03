@@ -33,7 +33,7 @@ RUN npm ci
 
 # `next build` needs the emitting packages compiled and Panda codegen run
 # first. Both are wired into apps/web's prebuild, so this is one command.
-RUN npm run build --workspace=@maximus/web
+RUN npm run build --workspace=@optima/web
 
 # ---------------------------------------------------------------------------
 # Runtime

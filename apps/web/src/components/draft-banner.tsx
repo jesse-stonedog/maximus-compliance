@@ -2,7 +2,7 @@
  * Copyright (C) 2026 StoneDogCode L.L.C.
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import { StyledUnverified } from "@maximus/ui";
+import { StyledUnverified } from "@optima/ui";
 import { css } from "styled-system/css";
 
 /**

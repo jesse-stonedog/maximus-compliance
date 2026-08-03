@@ -6,9 +6,9 @@ import "server-only";
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { IndeterminateRule } from "@maximus/engine";
-import type { DatedItem } from "@maximus/reminders";
-import { bucket, type Bucketed } from "@maximus/reminders";
+import type { IndeterminateRule } from "@optima/engine";
+import type { DatedItem } from "@optima/reminders";
+import { bucket, type Bucketed } from "@optima/reminders";
 import { allCalendars, getStore, today } from "./server";
 
 /**
