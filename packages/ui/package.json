@@ -11,7 +11,10 @@
     ".": "./src/index.ts",
     "./package.json": "./package.json"
   },
-  "files": ["src", "README.md"],
+  "files": [
+    "src",
+    "README.md"
+  ],
   "scripts": {
     "type-check": "tsc --noEmit"
   },
@@ -19,9 +22,14 @@
     "lucide-react": "^0.460.0"
   },
   "peerDependencies": {
-    "stonedog-style": "*",
     "react": ">=18",
-    "react-dom": ">=18"
+    "react-dom": ">=18",
+    "stonedog-style": "*"
   },
-  "engines": { "node": ">=22" }
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "stonedog-theme": "0.1.0"
+  }
 }
