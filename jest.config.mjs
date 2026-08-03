@@ -32,11 +32,11 @@ export default {
     "^server-only$": "<rootDir>/test-support/server-only.cjs",
     "^@maximus/reminders$": "<rootDir>/packages/reminders/src/index.ts",
     "^@maximus/export$": "<rootDir>/packages/export/src/index.ts",
-    // hopper-style is a SUBMODULE shipping TypeScript source, so both entry
+    // stonedog-style is a SUBMODULE shipping TypeScript source, so both entry
     // points map to source too. Its `preset` entry runs in Node at build time
     // and is what the theme-completeness test reads.
-    "^hopper-style/preset$": "<rootDir>/packages/hopper-style/src/preset/index.ts",
-    "^hopper-style$": "<rootDir>/packages/hopper-style/src/index.ts",
+    "^stonedog-style/preset$": "<rootDir>/packages/stonedog-style/src/preset/index.ts",
+    "^stonedog-style$": "<rootDir>/packages/stonedog-style/src/index.ts",
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
   transform: {

@@ -8,7 +8,7 @@
  * **Lucide, not Font Awesome — and that is a licence constraint, not taste.**
  * `hopper-icons` vendors Font Awesome Pro path data. This repo is public and
  * publishes a `docker run` image to the world, so shipping that artwork here
- * would be redistribution the licence does not permit. hopper-style's icon seam
+ * would be redistribution the licence does not permit. stonedog-style's icon seam
  * exists precisely for this case: same sizing, theming and accessibility, from
  * a permissive set, one line per glyph.
  *
@@ -21,7 +21,7 @@
  * the provider, so the whole set retunes from one place.
  */
 
-import { createIconFromComponent } from "hopper-style";
+import { createIconFromComponent } from "stonedog-style";
 import {
   AlertTriangle,
   Building2,

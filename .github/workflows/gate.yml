@@ -19,8 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # `submodules: recursive` is load-bearing, not tidiness. Without it
-      # packages/hopper-style is an EMPTY DIRECTORY here, and jest's
-      # moduleNameMapper points `hopper-style/preset` inside it — so
+      # packages/stonedog-style is an EMPTY DIRECTORY here, and jest's
+      # moduleNameMapper points `stonedog-style/preset` inside it — so
       # packages/ui/test/theme.test.ts cannot load and the gate is red.
       #
       # It fails only in CI, because every local checkout has the submodule
@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-      # Needed here too: `npm ci` runs hopper-style's `prepare`, which is
+      # Needed here too: `npm ci` runs stonedog-style's `prepare`, which is
       # `panda codegen` against its own source.
       - uses: actions/checkout@v4
         with:

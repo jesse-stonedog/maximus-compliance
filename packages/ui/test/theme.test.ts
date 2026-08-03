@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { requiredCssCustomProperties } from "hopper-style/preset";
+import { requiredCssCustomProperties } from "stonedog-style/preset";
 import {
   CSS_VAR_PREFIX,
   DARK_THEME,

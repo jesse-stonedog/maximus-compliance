@@ -20,9 +20,9 @@ WORKDIR /build
 #
 # The usual trick is to copy manifests, `npm ci`, then copy source — so a
 # source-only edit reuses the install layer. It does not work here:
-# hopper-style's `prepare` script runs `panda codegen`, which needs its source,
+# stonedog-style's `prepare` script runs `panda codegen`, which needs its source,
 # and `npm ci` runs prepare for every workspace. Installing with
-# --ignore-scripts would skip it and leave hopper-style without the
+# --ignore-scripts would skip it and leave stonedog-style without the
 # styled-system its own components import.
 #
 # So the layer cache is traded for a build that matches what runs locally. This

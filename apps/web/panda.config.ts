@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 import { defineConfig } from "@pandacss/dev";
-import { hopperStylePreset } from "hopper-style/preset";
+import { stonedogStylePreset } from "stonedog-style/preset";
 
 export default defineConfig({
   preflight: true,
@@ -19,10 +19,10 @@ export default defineConfig({
     "@pandacss/preset-base",
     "@pandacss/preset-panda",
     // NEH-170: our own --optima-* namespace, not the default --hopper-*.
-    hopperStylePreset({ cssVarPrefix: "optima" }),
+    stonedogStylePreset({ cssVarPrefix: "optima" }),
   ],
   /**
-   * hopper-style and @maximus/ui ship TypeScript SOURCE, and Panda finds styles
+   * stonedog-style and @maximus/ui ship TypeScript SOURCE, and Panda finds styles
    * by statically parsing files. A package it never parses contributes no CSS,
    * and its components then render with class names that have no rules behind
    * them — which looks like a broken stylesheet, not a missing glob.
@@ -30,7 +30,7 @@ export default defineConfig({
   include: [
     "./src/**/*.{ts,tsx}",
     "../../packages/ui/src/**/*.{ts,tsx}",
-    "../../packages/hopper-style/src/**/*.tsx",
+    "../../packages/stonedog-style/src/**/*.tsx",
   ],
   exclude: [],
   outdir: "styled-system",

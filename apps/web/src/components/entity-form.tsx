@@ -9,7 +9,7 @@
  * likely to be missed is an optional one, which is exactly where "I cannot
  * clear this value" bugs live.
  *
- * ## Built from hopper-style, not from local classes
+ * ## Built from stonedog-style, not from local classes
  *
  * Fields used to be hand-rolled `labelClass` / `inputClass` markup. Those
  * classes were not bad, but they were a *second* definition of what a field
