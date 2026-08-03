@@ -24,7 +24,7 @@ packages/
   rules/         @maximus/rules   — rule packs + JSON Schema, published as data
   db/            @maximus/db      — SQLite persistence for self-host
   ui/            @maximus/ui      — the Lucide icon set + app primitives
-  hopper-style/  SUBMODULE → jesse-stonedog/hopper-style (Apache-2.0)
+  stonedog-style/  SUBMODULE → jesse-stonedog/stonedog-style (Apache-2.0)
 apps/
   web/                            — self-host dashboard, single-tenant
   cli/                            — `optima check`, rule linting, imports
@@ -37,25 +37,26 @@ obligations come out. That purity is what makes it testable against thousands of
 fixture cases, embeddable in a browser, and safe to expose as the B2B API.
 
 Dependency direction is one-way: `web`/`cli` → `db` → `engine` ← `rules`, and
-`web` → `ui` → `hopper-style`. **`engine` imports nothing from the others.**
+`web` → `ui` → `stonedog-style`. **`engine` imports nothing from the others.**
 
-`packages/hopper-style` is a submodule, so a change to it is a PR in *that* repo
+`packages/stonedog-style` is a submodule, so a change to it is a PR in *that* repo
 followed by a pointer bump here — never an edit in place. It has three consumers;
 see the project file.
 
 ## Design system & icons
 
-Primitives come from `hopper-style`. Wiring is four steps and two of them get
-missed — read hopper-style's CLAUDE.md, but the short version: add
-`hopperStylePreset()` to `presets` **alongside** `@pandacss/preset-base` and
+Primitives come from `stonedog-style`. Wiring is four steps and two of them get
+missed — read stonedog-style's CLAUDE.md, but the short version: add
+`stonedogStylePreset()` to `presets` **alongside** `@pandacss/preset-base` and
 `@pandacss/preset-panda` (listing `presets` replaces Panda's defaults rather than
 extending them, and the loss is silent), add
-`./packages/hopper-style/src/**/*.tsx` to the Panda `include` globs, and define
-the `--hopper-*` custom properties.
+`./packages/stonedog-style/src/**/*.tsx` to the Panda `include` globs, and define
+the `--optima-*` custom properties — this repo passes `cssVarPrefix: "optima"`
+(NEH-170), so the default `--hopper-*` namespace is NOT what it reads.
 
-**No Font Awesome. Ever.** `hopper-icons` vendors licensed Pro artwork and this
+**No Font Awesome. Ever.** `stonedog-icons` vendors licensed Pro artwork and this
 repo is public and ships a public Docker image — see the project file. Icons here
-are Lucide, wrapped one line each through hopper-style's seam in
+are Lucide, wrapped one line each through stonedog-style's seam in
 `packages/ui/src/icons/`:
 
 ```tsx
@@ -69,11 +70,11 @@ the repos without icon edits.
 **Standard sizing, not HopperGuard's.** Set it once, at the provider:
 
 ```tsx
-<HopperStyleProvider fontSizeProfile="md" iconSize="md" variant="solid">
+<StonedogStyleProvider fontSizeProfile="md" iconSize="md" variant="solid">
 ```
 
 plus a standard `--font-sizes-*` scale (`md` = 1rem) in the theme CSS, which
-overrides hopper-style's elder-audience fallbacks. Never pass `size` at an icon
+overrides stonedog-style's elder-audience fallbacks. Never pass `size` at an icon
 call site to compensate — that's how an app ends up with three icon scales and
 no way to retune any of them.
 
@@ -276,6 +277,6 @@ See the project file.
   *depend* on this one, and any leak in the other direction muddies the licence
   story that the whole business model rests on.
 - **Nothing licensed-but-not-redistributable may land here** — Font Awesome Pro
-  above all. `packages/hopper-style` is Apache-2.0 and safe; `hopper-icons` is
+  above all. `packages/stonedog-style` is Apache-2.0 and safe; `stonedog-icons` is
   not and must never appear in this repo's dependency tree, submodules, or
   Docker image.

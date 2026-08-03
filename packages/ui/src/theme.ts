@@ -4,7 +4,7 @@
  * Copyright (C) 2026 StoneDogCode L.L.C.
  * SPDX-License-Identifier: AGPL-3.0-only
  *
- * hopper-style ships **no colours**: every one of its tokens resolves to a bare
+ * stonedog-style ships **no colours**: every one of its tokens resolves to a bare
  * CSS custom property that the host defines. This file is that definition for
  * Optima, under our own `--optima-*` namespace (NEH-170) rather than the
  * default `--hopper-*`.
@@ -146,7 +146,7 @@ export const DARK_THEME: ThemeTokens = {
 /**
  * A standard web type scale.
  *
- * hopper-style's own fallbacks are deliberately large — it came from a product
+ * stonedog-style's own fallbacks are deliberately large — it came from a product
  * for an often-elderly, sometimes cognitively-impaired audience, where `md` is
  * 1.375rem (~22px). Optima is a business tool for a general audience, so it
  * supplies a conventional scale here. **rem throughout, never px**, so the
