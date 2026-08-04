@@ -24,7 +24,7 @@ packages/
   rules/         @maximus/rules   — rule packs + JSON Schema, published as data
   db/            @maximus/db      — SQLite persistence for self-host
   ui/            @maximus/ui      — the Lucide icon set + app primitives
-  stonedog-style/  SUBMODULE → jesse-stonedog/stonedog-style (Apache-2.0)
+  stonedog-style/  SUBMODULE → stonedog-code/stonedog-style (Apache-2.0)
 apps/
   web/                            — self-host dashboard, single-tenant
   cli/                            — `optima check`, rule linting, imports
