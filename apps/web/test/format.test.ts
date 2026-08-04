@@ -12,6 +12,7 @@ import {
   jurisdictionLabel,
   relativeDue,
   urgency,
+  verificationNote,
 } from "../src/lib/format.js";
 
 const obligation: Obligation = {
@@ -145,5 +146,64 @@ describe("accessible names for repeated items", () => {
     // and the labels are built from formatDate, so this is the piece that has
     // to stay unambiguous.
     expect(formatDate("2026-08-10")).not.toBe(formatDate("2027-08-10"));
+  });
+});
+
+describe("verificationNote", () => {
+  const ASOF = "2026-08-04";
+
+  it("says how long ago a fresh rule was checked", () => {
+    expect(verificationNote(ASOF, "2026-05-04")).toEqual({
+      text: "Checked 3 months ago",
+      stale: false,
+    });
+  });
+
+  it("singularises one month", () => {
+    expect(verificationNote(ASOF, "2026-07-04").text).toBe(
+      "Checked 1 month ago",
+    );
+  });
+
+  it("has wording for a rule checked within the month", () => {
+    // "Checked 0 months ago" is what a naive template produces and it reads as
+    // broken. This is the most common case for a freshly-authored rule.
+    expect(verificationNote(ASOF, "2026-08-01")).toEqual({
+      text: "Checked this month",
+      stale: false,
+    });
+  });
+
+  it("calls out a rule past the twelve-month threshold", () => {
+    expect(verificationNote(ASOF, "2024-02-04")).toEqual({
+      text: "Not checked in 30 months",
+      stale: true,
+    });
+  });
+
+  it("flips exactly at twelve months, not a day early or late", () => {
+    // The boundary is the only place this can disagree with
+    // `npm run rules:staleness --months 12`, and disagreeing there teaches
+    // people to trust neither number.
+    expect(verificationNote(ASOF, "2025-08-05").stale).toBe(false);
+    expect(verificationNote(ASOF, "2025-08-04").stale).toBe(true);
+  });
+
+  it("states a fact rather than hedging", () => {
+    // A soft "may be out of date" reads as boilerplate and gets skipped, which
+    // defeats the point of surfacing staleness at all.
+    const { text } = verificationNote(ASOF, "2020-01-01");
+    expect(text).toMatch(/^Not checked in \d+ months$/);
+    expect(text).not.toMatch(/may|might|possibly/i);
+  });
+
+  it("distinguishes fresh from stale in the text, not only the colour", () => {
+    // WCAG 1.4.1 — `stale` drives colour, so the strings themselves have to
+    // carry the distinction for a reader who cannot see it.
+    const fresh = verificationNote(ASOF, "2026-06-04").text;
+    const stale = verificationNote(ASOF, "2023-06-04").text;
+    expect(fresh).not.toBe(stale);
+    expect(fresh).toMatch(/^Checked/);
+    expect(stale).toMatch(/^Not checked/);
   });
 });

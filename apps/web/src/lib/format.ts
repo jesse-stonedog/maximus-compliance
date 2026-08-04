@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { Obligation } from "@optima/engine";
+import { isStale, monthsSinceVerified, type Obligation } from "@optima/engine";
 
 /**
  * Money, from integer minor units.
@@ -77,6 +77,42 @@ export function relativeDue(asOf: string, dueOn: string): string {
   if (days < 45) return `in ${days} days`;
   const months = Math.round(days / 30);
   return `in about ${months} month${months === 1 ? "" : "s"}`;
+}
+
+/**
+ * How the age of a rule's last verification should read, and whether it is old
+ * enough to call out.
+ *
+ * Phrased about the *checking*, not about the rule — "Checked 3 months ago"
+ * rather than "3 months old". A rule can be decades old and perfectly correct;
+ * what the user is being told is how long since a human confirmed it, which is
+ * the thing that decays.
+ *
+ * The stale wording is deliberately blunt. "Not checked in 18 months" states a
+ * fact the reader can act on; a softer "may be out of date" is a hedge that
+ * reads as boilerplate and gets skipped, which defeats the point of surfacing
+ * it at all.
+ *
+ * `stale` drives colour, but the two strings already differ from each other, so
+ * the distinction survives for a reader who cannot see the colour and for a
+ * screen reader that gets nothing from it — WCAG 1.4.1, same as the urgency
+ * treatment above.
+ */
+export function verificationNote(
+  asOf: string,
+  lastVerified: string,
+): { text: string; stale: boolean } {
+  const months = monthsSinceVerified(lastVerified, asOf);
+  const stale = isStale(lastVerified, asOf);
+
+  if (stale) {
+    return { text: `Not checked in ${months} months`, stale: true };
+  }
+  if (months === 0) return { text: "Checked this month", stale: false };
+  return {
+    text: `Checked ${months} month${months === 1 ? "" : "s"} ago`,
+    stale: false,
+  };
 }
 
 /** Entity-type codes to something a person would say. */
