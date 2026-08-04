@@ -4,6 +4,7 @@
  */
 import type { Metadata } from "next";
 import { OptimaStyleProvider, themeCss } from "@maximus/ui";
+import { SiteFooter } from "../components/site-footer";
 import "../styles.css";
 
 export const metadata: Metadata = {
@@ -24,7 +25,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <style dangerouslySetInnerHTML={{ __html: themeCss() }} />
       </head>
       <body>
-        <OptimaStyleProvider>{children}</OptimaStyleProvider>
+        <OptimaStyleProvider>
+          {children}
+          {/*
+            In the layout rather than per-page, so a self-hoster cannot end up
+            with a page that quietly carries no notice — which for an AGPL
+            network application is the one omission with a legal consequence.
+          */}
+          <SiteFooter />
+        </OptimaStyleProvider>
       </body>
     </html>
   );

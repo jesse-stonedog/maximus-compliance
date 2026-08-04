@@ -10,6 +10,12 @@ coverage/
 .DS_Store
 *.log
 
+# Build output. Neither was ignored before, and neither is tracked on main —
+# so a fresh checkout that runs a build and then `git add -A` stages several
+# hundred generated files. That is how this file grew the entry.
+.next/
+styled-system/
+
 # Self-host data. A committed SQLite file would carry someone's real EIN and
 # filing history into a public repo.
 *.sqlite
