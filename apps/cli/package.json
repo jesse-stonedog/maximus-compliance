@@ -1,5 +1,5 @@
 {
-  "name": "@maximus/cli",
+  "name": "@optima/cli",
   "version": "0.1.0",
   "description": "optima check \u2014 print an entity's compliance calendar.",
   "license": "AGPL-3.0-only",
@@ -18,9 +18,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@maximus/engine": "0.1.0",
-    "@maximus/rules": "2026.8.0",
-    "@maximus/export": "0.1.0"
+    "@optima/engine": "0.1.0",
+    "@optima/rules": "2026.8.0",
+    "@optima/export": "0.1.0"
   },
   "engines": {
     "node": ">=22"

@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { EvaluationResult, Obligation } from "@maximus/engine";
+import type { EvaluationResult, Obligation } from "@optima/engine";
 
 /**
  * The disclaimer.

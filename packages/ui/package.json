@@ -1,5 +1,5 @@
 {
-  "name": "@maximus/ui",
+  "name": "@optima/ui",
   "version": "0.1.0",
   "description": "Optima presentation layer: the theme, the Lucide icon set, and the app-wide sizing choice.",
   "license": "AGPL-3.0-only",

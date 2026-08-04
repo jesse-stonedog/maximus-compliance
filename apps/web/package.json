@@ -1,5 +1,5 @@
 {
-  "name": "@maximus/web",
+  "name": "@optima/web",
   "version": "0.1.0",
   "description": "The self-hosted Optima dashboard. Single-tenant, SQLite, one container.",
   "license": "AGPL-3.0-only",
@@ -18,12 +18,12 @@
     "//prepare:packages": "engine/rules/db/export declare main:./dist, so they must be COMPILED before Next resolves them. ui and stonedog-style are the opposite — they ship source and are transpiled by Next."
   },
   "dependencies": {
-    "@maximus/db": "0.1.0",
-    "@maximus/engine": "0.1.0",
-    "@maximus/export": "0.1.0",
-    "@maximus/reminders": "0.1.0",
-    "@maximus/rules": "2026.8.0",
-    "@maximus/ui": "0.1.0",
+    "@optima/db": "0.1.0",
+    "@optima/engine": "0.1.0",
+    "@optima/export": "0.1.0",
+    "@optima/reminders": "0.1.0",
+    "@optima/rules": "2026.8.0",
+    "@optima/ui": "0.1.0",
     "stonedog-style": "*",
     "next": "^15.1.0",
     "react": "^19.0.0",

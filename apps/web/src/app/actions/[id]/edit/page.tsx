@@ -18,7 +18,7 @@ import {
   StyledInputTextArea,
   StyledInputBool,
   StyledInputSelect,
-} from "@maximus/ui";
+} from "@optima/ui";
 import { SubmitButton } from "@/components/submit-button";
 import { Disclaimer } from "@/components/disclaimer";
 

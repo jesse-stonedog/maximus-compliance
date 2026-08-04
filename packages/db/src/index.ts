@@ -1,5 +1,5 @@
 /**
- * @maximus/db — SQLite persistence for the self-hosted tier.
+ * @optima/db — SQLite persistence for the self-hosted tier.
  *
  * Copyright (C) 2026 StoneDogCode L.L.C.
  * SPDX-License-Identifier: AGPL-3.0-only

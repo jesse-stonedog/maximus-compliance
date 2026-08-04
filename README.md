@@ -51,8 +51,8 @@ is five minutes of someone's time.
 
 | Package | What it is |
 |---|---|
-| `@maximus/engine` | The evaluator. Pure and clock-free: entity facts and rules in, obligations out. No I/O, no `Date.now()`, so a result is reproducible and you can ask what was due in 2024. |
-| `@maximus/rules` | The rule packs, as JSON, plus the JSON Schema that validates them. Every rule carries a citation and the date a human last verified it. |
+| `@optima/engine` | The evaluator. Pure and clock-free: entity facts and rules in, obligations out. No I/O, no `Date.now()`, so a result is reproducible and you can ask what was due in 2024. |
+| `@optima/rules` | The rule packs, as JSON, plus the JSON Schema that validates them. Every rule carries a citation and the date a human last verified it. |
 
 ## Quick start
 

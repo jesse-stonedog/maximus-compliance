@@ -20,7 +20,7 @@ import {
   StyledInputTextArea,
   StyledInputBool,
   StyledInputSelect,
-} from "@maximus/ui";
+} from "@optima/ui";
 import { Disclaimer } from "@/components/disclaimer";
 
 export const dynamic = "force-dynamic";

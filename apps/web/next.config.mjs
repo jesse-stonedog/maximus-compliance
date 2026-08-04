@@ -15,7 +15,7 @@ export default {
    * Both packages ship TypeScript source rather than a bundle, for Panda's
    * sake, so Next has to compile them itself.
    */
-  transpilePackages: ["stonedog-style", "@maximus/ui"],
+  transpilePackages: ["stonedog-style", "@optima/ui"],
   experimental: {
     // The store is a singleton holding an open SQLite handle. Without this,
     // Next's bundler would try to trace node:sqlite into the client graph.

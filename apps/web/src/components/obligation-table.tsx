@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { EvaluationResult, Obligation } from "@maximus/engine";
-import { StyledStatute, StyledUnverified, StyledWarning } from "@maximus/ui";
+import type { EvaluationResult, Obligation } from "@optima/engine";
+import { StyledStatute, StyledUnverified, StyledWarning } from "@optima/ui";
 import { css } from "styled-system/css";
 import {
   formatDate,

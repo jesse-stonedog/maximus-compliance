@@ -1,5 +1,5 @@
 /**
- * @maximus/rules — the rule packs.
+ * @optima/rules — the rule packs.
  *
  * Copyright (C) 2026 StoneDogCode L.L.C.
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -13,7 +13,7 @@
  * "Oregon raised a fee".
  */
 
-import type { Rule } from "@maximus/engine";
+import type { Rule } from "@optima/engine";
 import { ALL_RULES } from "./generated.js";
 
 export { ALL_RULES };

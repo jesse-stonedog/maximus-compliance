@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { Rule } from "@maximus/engine";
+import type { Rule } from "@optima/engine";
 
 export const ALL_RULES: readonly Rule[] = [
   // us/de/corporation-annual-report.json

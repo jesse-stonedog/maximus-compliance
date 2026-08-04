@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { Obligation } from "@maximus/engine";
+import type { Obligation } from "@optima/engine";
 
 /**
  * Money, from integer minor units.

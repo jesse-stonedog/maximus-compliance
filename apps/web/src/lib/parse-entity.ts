@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { isEntityType, type EntityFacts, type EntityType } from "@maximus/engine";
+import { isEntityType, type EntityFacts, type EntityType } from "@optima/engine";
 
 export type ParseResult =
   | { ok: true; facts: EntityFacts }
