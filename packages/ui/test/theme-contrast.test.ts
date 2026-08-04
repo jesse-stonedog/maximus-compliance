@@ -7,15 +7,16 @@
  * `theme.test.ts` already asserts the theme is *complete* — that every custom
  * property the preset reads is defined, in both modes. Complete is not the same
  * as readable: a theme can define all 44 properties and still paint near-black
- * text on a deep-blue surface, which is what this file found.
+ * text on a deep-blue surface, which is exactly what this file found in light
+ * mode and what NEH-275 then fixed.
  *
  * The pairs come from `RECIPE_CONTRAST_PAIRS` in stonedog-theme, which encodes
  * which foreground a recipe actually paints on which surface — **including
  * cross-group pairs**. That matters: comparing each token's own `bg` to its own
  * `text` looks like the obvious check and is the wrong one. It reports failures
  * for icon and arrow tokens, which paint no text at all, and it misses
- * `textPrimary` landing on `boxBgAccent`, which is the pair that actually
- * fails here.
+ * `textPrimary` landing on `boxBgAccent` — which was the pair that actually
+ * failed, and is the one a regression here would land on again.
  *
  * stonedog-theme is an Apache-2.0, zero-runtime-dependency package and enters
  * only as a devDependency, so nothing it brings reaches the published image.
@@ -37,23 +38,18 @@ const MODES = { light: LIGHT_THEME, dark: DARK_THEME };
 /**
  * Known-failing pairs, pinned rather than hidden.
  *
- * All three are one root cause: in **light** mode `boxAccent.bg` (#0b4f78) is a
- * deep blue while every other light surface is near-white, so `textPrimary`
- * (#161b22) lands on it at 1.98:1. The accent surface carries its own white
- * text (`box-accent-text`) and reads fine that way — the failure is the
- * cross-group pair, where a recipe paints the ordinary body colour onto it.
+ * **Empty, and worth keeping empty.** It held three entries — the light-mode
+ * `inputText/solid`, `inputText/glass` and `form/solid` pairs, where a deep
+ * blue `boxAccent.bg` (#0b4f78) took the ordinary body colour at 1.98:1. That
+ * was fixed at the source in NEH-275 by making the light accent surface an
+ * actual light surface (#dbeafe) and moving its own text to the blue, so the
+ * entries came out with it.
  *
- * Not fixed here on purpose. The fix is a design decision about whether
- * Optima's accent surface is dark-on-light or light-on-dark, it changes a live
- * product's brand colour, and it is not a call to make inside a test PR. Filed
- * separately; this list is the thing that stops it being forgotten, and any
- * pair NOT on it still fails the build.
+ * Adding one back is a deliberate act: it exempts a pair from the build, and
+ * "keeps the pinned exceptions honest" below makes sure it cannot outlive the
+ * problem it names.
  */
-const KNOWN_BELOW_AA = new Set([
-  "light:inputText/solid:textPrimary:boxBgAccent",
-  "light:inputText/glass:textPrimary:boxBgAccent",
-  "light:form/solid:textPrimary:boxBgAccent",
-]);
+const KNOWN_BELOW_AA = new Set<string>([]);
 
 /** The theme is keyed by property suffix; the registry speaks `--hopper-*`. */
 function colour(tokens: Record<string, string>, semanticToken: string) {
@@ -136,15 +132,33 @@ describe("recipe contrast", () => {
 
 describe("the accent surface, specifically", () => {
   it("reads correctly with its own text colour", () => {
-    // The pinned failures are about a *cross-group* pair. The accent surface's
-    // intended pairing — its own white text — must stay well clear, or the
-    // exception above would be masking a much bigger problem.
+    // The failure this file was written for was a *cross-group* pair, and the
+    // tempting fix — recolour the surface until the body colour reads on it —
+    // silently breaks the surface's own pairing instead. Both halves have to
+    // hold at once, which is why they are asserted separately.
     for (const [mode, tokens] of Object.entries(MODES)) {
       const ratio = getContrastRatio(
         tokens["box-accent-text"]!,
         tokens["box-accent-bg"]!,
       );
       expect({ mode, ok: ratio >= AA }).toEqual({ mode, ok: true });
+    }
+  });
+
+  it("keeps its border usable as a focus ring", () => {
+    // `apps/web/src/styles.css` draws `:focus-visible` in `box-accent-border`,
+    // so that token is a non-text indicator: WCAG 2.2 SC 1.4.11 wants 3:1
+    // against what it sits on, which is the page background. It was drawn in
+    // `box-accent-bg` until NEH-275 lightened that to a tint — at which point
+    // the outline fell to 1.22:1 and all but vanished. Pinning the border here
+    // means the next person to retune the accent cannot quietly repeat it.
+    const NON_TEXT = 3;
+    for (const [mode, tokens] of Object.entries(MODES)) {
+      const ratio = getContrastRatio(
+        tokens["box-accent-border"]!,
+        tokens["box-main-bg"]!,
+      );
+      expect({ mode, ok: ratio >= NON_TEXT }).toEqual({ mode, ok: true });
     }
   });
 });

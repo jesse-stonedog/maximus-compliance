@@ -24,8 +24,14 @@ a { color: var(--optima-text-pop-text); }
 
 /* WCAG 2.2: a visible focus indicator on everything reachable by keyboard.
    Never remove this without replacing it — keyboard users lose their place
-   entirely, and it is invisible to anyone testing with a mouse. */
+   entirely, and it is invisible to anyone testing with a mouse.
+
+   Drawn in the accent BORDER, not the accent surface. The two were the same
+   deep blue until NEH-275 lightened the light-mode surface to #dbeafe; an
+   outline in that tint is 1.22:1 against the page and effectively gone, while
+   the border stayed #0b4f78 at 8.74:1. Both modes render exactly the colour
+   they did before — a border is the right token for a line either way. */
 :focus-visible {
-  outline: 3px solid var(--optima-box-accent-bg);
+  outline: 3px solid var(--optima-box-accent-border);
   outline-offset: 2px;
 }
