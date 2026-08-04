@@ -29,6 +29,16 @@ import { css } from "styled-system/css";
  * A hard-coded year is wrong every January and stays wrong for months because
  * nobody is looking at the footer. `getFullYear()` costs nothing and cannot
  * rot.
+ *
+ * ## Why it claims no trademark
+ *
+ * It used to, and that was wrong (NEH-371). "Optima" has never had a clearance
+ * search (NEH-199), and the previous product name was abandoned *because* of a
+ * real conflict — so an ownership claim here is unsupported in precisely the
+ * direction the project already knows it can be wrong. Everything left in this
+ * footer is a fact: who holds the copyright, which licence applies, where the
+ * source is. `apps/web/test/no-trademark-claim.test.ts` keeps it that way until
+ * NEH-199 resolves.
  */
 export function SiteFooter() {
   return (
@@ -56,7 +66,7 @@ export function SiteFooter() {
         <a href="https://github.com/stonedog-code/optima-filings">
           github.com/stonedog-code/optima-filings
         </a>
-        . Optima Filings is a trademark of StoneDogCode L.L.C.
+        .
       </span>
     </footer>
   );
