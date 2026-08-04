@@ -48,15 +48,15 @@ jobs:
           PERSONAL_ACCESS_TOKEN: ${{ secrets.CLA_SIGNATURES_TOKEN }}
         with:
           path-to-signatures: signatures/optima-filings.json
-          path-to-document: https://github.com/jesse-stonedog/optima-filings/blob/main/CLA.md
+          path-to-document: https://github.com/stonedog-code/optima-filings/blob/main/CLA.md
           branch: main
-          remote-organization-name: jesse-stonedog
+          remote-organization-name: stonedog-code
           remote-repository-name: cla-signatures
           custom-notsigned-prcomment: >-
             Thank you for this contribution.
 
 
-            Before it can be merged, please read the [CLA](https://github.com/jesse-stonedog/optima-filings/blob/main/CLA.md)
+            Before it can be merged, please read the [CLA](https://github.com/stonedog-code/optima-filings/blob/main/CLA.md)
             and, if you agree, post the sentence below as a new comment on this pull request.
             **You keep the copyright in your work** — the CLA is a licence, not an assignment.
             You only do this once, and it covers everything you contribute here afterwards.
