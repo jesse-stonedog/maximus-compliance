@@ -103,17 +103,38 @@ test.describe("the self-host journey", () => {
 /**
  * Deadlines have to leave the tool or nobody sees them (NEH-211).
  *
- * These assert the ROUTE, not a click, and that is a finding rather than a
- * shortcut: **nothing in the UI links to `/api/export`.** A user who does not
- * read the source cannot discover the export at all, so there is no link for a
- * browser test to press. Filed as NEH-378; when a link exists, these become
- * click-then-download and gain the assertion that the affordance works.
+ * These now **press the actual control**, which they could not when this file
+ * was written: nothing in the UI linked to `/api/export`, so the export existed
+ * and was undiscoverable (NEH-378). The route assertions are kept alongside the
+ * click, because they answer different questions — one that the affordance is
+ * there and works, the other that what it hands back is a real calendar.
  *
- * `page.goto` cannot be used for a download — it throws "Download is starting"
- * because the navigation never completes. `page.request` is the right tool for
- * a response nothing renders.
+ * Note `page.goto` cannot be used for a download; it throws "Download is
+ * starting" because the navigation never completes. A click with a `download`
+ * event listener is the browser-faithful way, and `page.request` is right for
+ * asserting a response nothing renders.
  */
 test.describe("exports", () => {
+  test("a person can find and press the export from the calendar", async ({
+    page,
+  }) => {
+    // The half that was missing. A working route nobody can reach is not a
+    // shipped feature, and only a browser test can tell the difference.
+    await page.goto("/");
+
+    const download = page.waitForEvent("download");
+    await page.getByRole("link", { name: /add to your calendar/i }).click();
+    expect((await download).suggestedFilename()).toMatch(/\.ics$/);
+  });
+
+  test("the spreadsheet export is reachable too", async ({ page }) => {
+    await page.goto("/");
+
+    const download = page.waitForEvent("download");
+    await page.getByRole("link", { name: /spreadsheet/i }).click();
+    expect((await download).suggestedFilename()).toMatch(/\.csv$/);
+  });
+
   test("the calendar exports as iCal, with the headers that make it a file", async ({
     page,
   }) => {
