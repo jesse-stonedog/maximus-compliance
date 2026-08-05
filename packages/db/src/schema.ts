@@ -136,4 +136,48 @@ export const MIGRATIONS: readonly { id: number; name: string; sql: string }[] = 
       ALTER TABLE actions ADD COLUMN successor_spawned INTEGER NOT NULL DEFAULT 0;
     `,
   },
+  {
+    id: 4,
+    name: "document_type_and_date",
+    sql: `
+      -- What kind of document this is. The vocabulary lives in
+      -- @optima/engine (DOCUMENT_TYPES) so the hosted tier imports the same
+      -- list rather than mirroring it — see NEH-343 for what mirroring costs.
+      --
+      -- Stored as TEXT with no CHECK constraint on purpose. SQLite cannot alter
+      -- a constraint without rebuilding the table, so a CHECK here would make
+      -- adding a seventh type a table rebuild on every self-hoster's database.
+      -- The vocabulary is enforced where values are written, which is the layer
+      -- that can give a useful error anyway.
+      --
+      -- DEFAULT 'OTHER' is what existing rows get, and it is the honest answer:
+      -- nothing knows what those documents were. A migration that guessed from
+      -- the title would mislabel some of them, and a mislabelled document is
+      -- worse than an unlabelled one because the filter hides it from the
+      -- person who would have spotted the mistake.
+      ALTER TABLE documents ADD COLUMN type TEXT NOT NULL DEFAULT 'OTHER';
+
+      -- The date ON the document, as opposed to created_at, which is when
+      -- somebody uploaded it. Minutes from the March meeting scanned in August
+      -- belong in March.
+      --
+      -- A 'YYYY-MM-DD' civil date, never a timestamp — the same rule
+      -- entities.formed_on follows. A meeting is a calendar fact in a place,
+      -- not an instant, and a timestamp acquires a zone that shifts it a day.
+      --
+      -- NULLABLE, and it stays nullable even though the UI requires it for the
+      -- dated types: every row that predates this migration has no date and
+      -- none can be invented for them.
+      ALTER TABLE documents ADD COLUMN document_date TEXT;
+
+      -- Filtering by type is the point of the column.
+      CREATE INDEX idx_documents_type ON documents (type);
+
+      -- The list view's actual query: one type, most recent first. Composite
+      -- rather than two single-column indexes, because SQLite uses one index
+      -- per table in a query and a type-only index would still leave the sort
+      -- to a scan.
+      CREATE INDEX idx_documents_type_date ON documents (type, document_date);
+    `,
+  },
 ];

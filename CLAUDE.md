@@ -90,6 +90,35 @@ fact one rule at a time, versioning the schema repeatedly in a month; every
 version is a migration for self-hosters and a breaking change for the B2B API.
 Adding a fact is cheap, changing what one *means* is not.
 
+## Product vocabularies live in `engine`, and are imported — never mirrored
+
+`ENTITY_TYPES`, jurisdictions, and **`DOCUMENT_TYPES`** (NEH-362) are all
+defined in `packages/engine` and imported by everything else, including the
+hosted tier.
+
+This is not tidiness. NEH-343 records what the other arrangement costs: entity
+vocabulary was *mirrored* into the cloud repo rather than imported, and the two
+copies drift. For documents the drift is worse than untidy — a document filed
+as `MEETING_MINUTES` in a self-hosted install would import into the cloud as
+nothing at all, which is data loss wearing the costume of a successful import.
+
+- **The string values are permanent public identifiers**, exactly like rule ids.
+  They are persisted in every self-hoster's database and cross the tier
+  boundary. **Add a value; never rename one** — a rename silently reclassifies
+  every stored row that used it.
+- **`DOCUMENT_TYPE_INFO` is a `Record` keyed by the union**, so adding a value
+  without describing it is a *type error* rather than a blank row in a picker.
+- **Reading is lenient, writing is strict.** `toDocumentType()` coerces an
+  unrecognised value to `OTHER` so a row from a newer version stays readable;
+  `isDocumentType()` guards writes so the closed list stays closed. Do not
+  collapse the two — a document that becomes unlistable is worse than one that
+  is mislabelled.
+- **`hasDocumentDate` is one property with two consequences**: it decides both
+  whether the list orders by `documentDate` and whether entry requires it. They
+  coincide because a type is worth ordering by its own date exactly when it has
+  one. Splitting them invites a type ordered by a date it never collects, which
+  sorts most of a list by `NULL`.
+
 ## Rule packs — the heart of the project
 
 Rules live at `packages/rules/us/<state>/<slug>.json`, e.g.

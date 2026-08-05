@@ -4,6 +4,7 @@
  */
 import Link from "next/link";
 import { css } from "styled-system/css";
+import { DOCUMENT_TYPES, DOCUMENT_TYPE_INFO } from "@optima/engine";
 import { getStore } from "@/lib/server";
 import { uploadDocument } from "./actions";
 import { MAX_UPLOAD_BYTES } from "@/lib/files";
@@ -44,6 +45,64 @@ export default async function NewDocumentPage({
       )}
 
       <form action={uploadDocument}>
+        {/*
+          Type first, before the file — PRD-0002 §4. It governs whether a
+          document date is wanted, and asking after the file is chosen means
+          changing the form under the person filling it in.
+
+          No default selection. Defaulting to "Other" would make it the most
+          common value by accident, and defaulting to Meeting Minutes would
+          mislabel whatever someone uploads without reading.
+        */}
+        <div className={fieldClass}>
+          <StyledFormLabel htmlFor="doc-type" required>
+            Kind of document
+          </StyledFormLabel>
+          <StyledInputSelect
+            id="doc-type"
+            name="type"
+            defaultValue=""
+            placeholder="Choose a kind…"
+            required
+            aria-describedby="doc-type-hint"
+            options={DOCUMENT_TYPES.map((value) => ({
+              value,
+              label: DOCUMENT_TYPE_INFO[value].label,
+            }))}
+          />
+          <span className={hintClass} id="doc-type-hint">
+            This is what lets you filter your paperwork later.{" "}
+            {DOCUMENT_TYPE_INFO.OTHER.label} is fine if nothing fits.
+          </span>
+        </div>
+
+        {/*
+          Always rendered, never revealed by JavaScript. The self-hosted tier
+          cannot assume JS, and a required field that only appears when a script
+          runs is a form that silently cannot be submitted. The hint carries the
+          conditionality instead; the server enforces it.
+        */}
+        <div className={fieldClass}>
+          <StyledFormLabel htmlFor="doc-date" optional>
+            Date on the document
+          </StyledFormLabel>
+          <input
+            id="doc-date"
+            className={inputClass}
+            type="date"
+            name="documentDate"
+            aria-describedby="doc-date-hint"
+          />
+          <span className={hintClass} id="doc-date-hint">
+            The date the document itself carries — the day of the meeting, the
+            date of the letter — not today. Required for{" "}
+            {DOCUMENT_TYPES.filter((t) => DOCUMENT_TYPE_INFO[t].hasDocumentDate)
+              .map((t) => DOCUMENT_TYPE_INFO[t].label)
+              .join(", ")}
+            , which are listed in date order.
+          </span>
+        </div>
+
         <div className={fieldClass}>
           <StyledFormLabel htmlFor="doc-file" required>
             File

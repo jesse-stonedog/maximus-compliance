@@ -5,7 +5,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { addYears } from "@optima/engine";
+import {
+  DEFAULT_DOCUMENT_TYPE,
+  DOCUMENT_TYPES,
+  addYears,
+  isDocumentType,
+  requiresDocumentDate,
+  toDocumentType,
+  type DocumentType,
+} from "@optima/engine";
 import type { DatabaseSync } from "node:sqlite";
 
 export interface DocumentField {
@@ -24,6 +32,19 @@ export interface StoredDocument {
   /** Opaque key. The only value used to build a filesystem path. */
   storageKey: string;
   notes?: string;
+  /**
+   * What kind of document this is. Always present when reading — rows written
+   * before migration 4 read as `OTHER` rather than `undefined`, so a consumer
+   * never has to handle a document with no type.
+   */
+  type: DocumentType;
+  /**
+   * The date ON the document, not the date it was uploaded. `YYYY-MM-DD`.
+   *
+   * Absent for the types that have no meaningful date of their own, and for
+   * every row that predates migration 4.
+   */
+  documentDate?: string;
   fields: DocumentField[];
   createdAt: string;
   updatedAt: string;
@@ -37,6 +58,10 @@ export interface NewDocument {
   byteSize: number;
   storageKey: string;
   notes?: string;
+  /** Defaults to `OTHER`, so an importer that does not know is still valid. */
+  type?: DocumentType;
+  /** `YYYY-MM-DD`. Required for the types where `requiresDocumentDate`. */
+  documentDate?: string;
   fields?: { label: string; value: string }[];
 }
 
@@ -95,13 +120,35 @@ export class DocumentStore {
 
   createDocument(input: NewDocument, id: string): StoredDocument {
     const timestamp = this.now();
+    const type = input.type ?? DEFAULT_DOCUMENT_TYPE;
+
+    // WRITING rejects an unknown type, where reading coerces to OTHER. That
+    // asymmetry is the whole point of a closed vocabulary: a value that never
+    // gets in cannot split a filter later, while a value already stored must
+    // never make its document unreadable.
+    if (!isDocumentType(type)) {
+      throw new Error(
+        `Unknown document type "${String(type)}". Use one of DOCUMENT_TYPES from @optima/engine.`,
+      );
+    }
+
+    // The date is required exactly where it is also what orders the list — see
+    // `hasDocumentDate`. Enforced here rather than only in the form, because
+    // the CLI and any importer reach this path without passing a form.
+    if (requiresDocumentDate(type) && !input.documentDate) {
+      throw new Error(
+        `A document of type "${type}" needs a documentDate (YYYY-MM-DD) — it is what the list is ordered by.`,
+      );
+    }
+
     this.db.exec("BEGIN");
     try {
       this.db
         .prepare(
           `INSERT INTO documents (id, entity_id, title, original_filename,
-             content_type, byte_size, storage_key, notes, created_at, updated_at)
-           VALUES (?,?,?,?,?,?,?,?,?,?)`,
+             content_type, byte_size, storage_key, notes, type, document_date,
+             created_at, updated_at)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
         )
         .run(
           id,
@@ -112,6 +159,8 @@ export class DocumentStore {
           input.byteSize,
           input.storageKey,
           input.notes ?? null,
+          type,
+          input.documentDate ?? null,
           timestamp,
           timestamp,
         );
@@ -162,18 +211,61 @@ export class DocumentStore {
       byteSize: row.byte_size as number,
       storageKey: row.storage_key as string,
       ...(row.notes === null ? {} : { notes: row.notes as string }),
+      // Coerced, not asserted. A row written by a newer version — or imported
+      // from a system with its own vocabulary — must still be readable, so an
+      // unrecognised value reads as OTHER rather than making the document
+      // vanish from every list.
+      type: toDocumentType(row.type),
+      ...(row.document_date === null
+        ? {}
+        : { documentDate: row.document_date as string }),
       fields,
       createdAt: row.created_at as string,
       updatedAt: row.updated_at as string,
     };
   }
 
-  listDocuments(): StoredDocument[] {
-    return (
-      this.db
-        .prepare("SELECT id FROM documents ORDER BY created_at DESC")
-        .all() as unknown as { id: string }[]
-    ).map((row) => this.getDocument(row.id)!);
+  /**
+   * Every document, newest first.
+   *
+   * Ordered by `document_date` where the row has one and falling back to
+   * `created_at` where it does not, so a mixed list is never arbitrary. The
+   * fallback is what stops every pre-migration-4 row sinking to the bottom
+   * under a `NULL` sort.
+   */
+  listDocuments(type?: DocumentType): StoredDocument[] {
+    const order = "ORDER BY coalesce(document_date, created_at) DESC";
+    const rows = (
+      type === undefined
+        ? this.db.prepare(`SELECT id FROM documents ${order}`).all()
+        : this.db
+            .prepare(`SELECT id FROM documents WHERE type = ? ${order}`)
+            .all(type)
+    ) as unknown as { id: string }[];
+    return rows.map((row) => this.getDocument(row.id)!);
+  }
+
+  /**
+   * How many documents of each type, for the filter's counts.
+   *
+   * Returned for **every** type including the empty ones, because a filter that
+   * only lists types you already have cannot tell you the category exists. Zero
+   * is information.
+   */
+  countDocumentsByType(): Record<DocumentType, number> {
+    const counts = Object.fromEntries(
+      DOCUMENT_TYPES.map((t) => [t, 0]),
+    ) as Record<DocumentType, number>;
+
+    for (const row of this.db
+      .prepare("SELECT type, count(*) AS n FROM documents GROUP BY type")
+      .all() as unknown as { type: string; n: number }[]) {
+      // Coerced for the same reason reading is: an unknown stored value is
+      // counted under OTHER rather than dropped, so the totals still add up to
+      // the number of documents that exist.
+      counts[toDocumentType(row.type)] += row.n;
+    }
+    return counts;
   }
 
   /**
@@ -183,26 +275,48 @@ export class DocumentStore {
    * to look up a UBI number they know is "in the formation letter somewhere",
    * and a title-only search would not find it.
    */
-  searchDocuments(query: string): StoredDocument[] {
+  searchDocuments(query: string, type?: DocumentType): StoredDocument[] {
     const term = `%${query.trim().toLowerCase()}%`;
     // The same stripping applied to the query, so "604123456", "604 123 456"
     // and "604-123-456" all find the same document.
     const normalized = normalizeReference(query);
-    if (query.trim() === "") return this.listDocuments();
+    if (query.trim() === "") return this.listDocuments(type);
+
+    // The type filter ANDs with the search rather than replacing it. Someone
+    // who has filtered to Meeting Minutes and then searches expects to search
+    // within the minutes — a search that silently dropped the filter would
+    // return board papers they had just excluded.
+    //
+    // Parenthesised, because the OR chain would otherwise bind looser than the
+    // AND and the filter would apply to only the last clause. That is a bug
+    // with no symptom on an unfiltered search, which is how it would ship.
+    const typeClause = type === undefined ? "" : "AND d.type = ?";
+    const params: (string | number)[] = [
+      term,
+      term,
+      term,
+      term,
+      term,
+      normalized,
+      `%${normalized}%`,
+    ];
+    if (type !== undefined) params.push(type);
+
     return (
       this.db
         .prepare(
-          `SELECT DISTINCT d.id, d.created_at FROM documents d
+          `SELECT DISTINCT d.id, d.document_date, d.created_at FROM documents d
              LEFT JOIN document_fields f ON f.document_id = d.id
-           WHERE lower(d.title) LIKE ?
+           WHERE (lower(d.title) LIKE ?
               OR lower(coalesce(d.notes, '')) LIKE ?
               OR lower(d.original_filename) LIKE ?
               OR lower(f.value) LIKE ?
               OR lower(f.label) LIKE ?
-              OR (? <> '' AND f.value_normalized LIKE ?)
-           ORDER BY d.created_at DESC`,
+              OR (? <> '' AND f.value_normalized LIKE ?))
+             ${typeClause}
+           ORDER BY coalesce(d.document_date, d.created_at) DESC`,
         )
-        .all(term, term, term, term, term, normalized, `%${normalized}%`) as unknown as {
+        .all(...params) as unknown as {
         id: string;
       }[]
     ).map((row) => this.getDocument(row.id)!);

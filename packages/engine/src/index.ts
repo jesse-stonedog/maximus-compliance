@@ -74,3 +74,12 @@ export {
   isStale,
   monthsSinceVerified,
 } from "./staleness.js";
+export {
+  DEFAULT_DOCUMENT_TYPE,
+  DOCUMENT_TYPES,
+  DOCUMENT_TYPE_INFO,
+  isDocumentType,
+  requiresDocumentDate,
+  toDocumentType,
+} from "./documentTypes.js";
+export type { DocumentType, DocumentTypeInfo } from "./documentTypes.js";
