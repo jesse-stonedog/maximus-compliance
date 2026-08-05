@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  *
  * The rules are inlined into a TypeScript module rather than read from disk at
- * runtime, because `@optima/engine` is pure and must run in a browser: a
+ * runtime, because `@optima-compliance/engine` is pure and must run in a browser: a
  * consumer that had to `fs.readFile` a rule pack could not. The generated file
  * is committed, and `--check` fails the gate when it is stale, so a rule added
  * without regenerating is caught at merge rather than going silently missing
@@ -67,7 +67,7 @@ function render(rules) {
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { Rule } from "@optima/engine";
+import type { Rule } from "@optima-compliance/engine";
 
 export const ALL_RULES: readonly Rule[] = [
 ${body}

@@ -7,9 +7,9 @@
  */
 
 import { readFileSync } from "node:fs";
-import { evaluate, type EntityFacts } from "@optima/engine";
-import { ALL_RULES } from "@optima/rules";
-import { toCsv, toICalendar } from "@optima/export";
+import { evaluate, type EntityFacts } from "@optima-compliance/engine";
+import { ALL_RULES } from "@optima-compliance/rules";
+import { toCsv, toICalendar } from "@optima-compliance/export";
 import { parseArgs, USAGE } from "./args.js";
 import { renderResult } from "./format.js";
 

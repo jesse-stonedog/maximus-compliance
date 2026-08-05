@@ -1,5 +1,5 @@
 {
-  "name": "@optima/db",
+  "name": "@optima-compliance/db",
   "version": "0.1.0",
   "description": "SQLite persistence for the self-hosted tier. Zero dependencies — uses node:sqlite.",
   "license": "AGPL-3.0-only",
@@ -13,6 +13,6 @@
   },
   "files": ["dist", "README.md"],
   "scripts": { "build": "tsc --build", "type-check": "tsc --noEmit" },
-  "dependencies": { "@optima/engine": "0.1.0" },
+  "dependencies": { "@optima-compliance/engine": "0.1.0" },
   "engines": { "node": ">=22.5" }
 }

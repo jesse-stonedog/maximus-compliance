@@ -4,7 +4,7 @@
  */
 import Link from "next/link";
 import { css } from "styled-system/css";
-import { DOCUMENT_TYPES, DOCUMENT_TYPE_INFO } from "@optima/engine";
+import { DOCUMENT_TYPES, DOCUMENT_TYPE_INFO } from "@optima-compliance/engine";
 import { getStore } from "@/lib/server";
 import { uploadDocument } from "./actions";
 import { MAX_UPLOAD_BYTES } from "@/lib/files";
@@ -21,7 +21,7 @@ import {
   StyledInputTextArea,
   StyledInputBool,
   StyledInputSelect,
-} from "@optima/ui";
+} from "@optima-compliance/ui";
 import { Disclaimer } from "@/components/disclaimer";
 
 export const dynamic = "force-dynamic";

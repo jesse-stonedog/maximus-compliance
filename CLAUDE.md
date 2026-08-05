@@ -20,10 +20,10 @@ uses.
 
 ```
 packages/
-  engine/        @optima/engine  — pure TS evaluator, zero runtime deps
-  rules/         @optima/rules   — rule packs + JSON Schema, published as data
-  db/            @optima/db      — SQLite persistence for self-host
-  ui/            @optima/ui      — the Lucide icon set + app primitives
+  engine/        @optima-compliance/engine  — pure TS evaluator, zero runtime deps
+  rules/         @optima-compliance/rules   — rule packs + JSON Schema, published as data
+  db/            @optima-compliance/db      — SQLite persistence for self-host
+  ui/            @optima-compliance/ui      — the Lucide icon set + app primitives
   stonedog-style/  SUBMODULE → stonedog-code/stonedog-style (Apache-2.0)
 apps/
   web/                            — self-host dashboard, single-tenant
@@ -263,7 +263,7 @@ were found by this tier on its first run, which is the argument for having it.
 
 **Do not symlink `node_modules` to the canonical checkout here.** That works for
 a single-package repo, but this is an npm workspace: the canonical
-`node_modules/@optima/engine` links to the *canonical* `packages/engine`, so a
+`node_modules/@optima-compliance/engine` links to the *canonical* `packages/engine`, so a
 worktree borrowing it type-checks your edits against **whatever branch the
 canonical checkout happens to be on**.
 
@@ -273,15 +273,15 @@ plainly in the source — because the `.d.ts` it is reading belongs to another
 branch. Nothing in the message points at the symlink, and the obvious next moves
 (regenerate the barrel, tweak the type) all fail for reasons that look unrelated.
 
-`npm install` in the worktree takes seconds and links `@optima/*` to that
+`npm install` in the worktree takes seconds and links `@optima-compliance/*` to that
 worktree's own packages.
 
 ## Public API surface & versioning
 
-- `@optima/engine` — **semver, strictly.** Third parties and the SaaS build on
+- `@optima-compliance/engine` — **semver, strictly.** Third parties and the SaaS build on
   it. Anything exported from the package root is a promise; keep internals
   behind `src/internal/` and out of the entry point.
-- `@optima/rules` — **date-versioned** `YYYY.M.PATCH` (`2026.7.0`). It's data;
+- `@optima-compliance/rules` — **date-versioned** `YYYY.M.PATCH` (`2026.7.0`). It's data;
   it changes weekly and semver doesn't describe it. A *schema* change is what
   bumps `rule.v1.json` to `v2`, and v1 rules keep working.
 - **Rule ids are permanent public identifiers.** Never rename one — customers,

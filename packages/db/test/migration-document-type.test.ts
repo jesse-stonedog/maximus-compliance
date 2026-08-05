@@ -26,7 +26,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { DEFAULT_DOCUMENT_TYPE } from "@optima/engine";
+import { DEFAULT_DOCUMENT_TYPE } from "@optima-compliance/engine";
 import { MIGRATIONS } from "../src/schema.js";
 import { EntityStore } from "../src/store.js";
 

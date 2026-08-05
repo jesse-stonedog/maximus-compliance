@@ -8,8 +8,8 @@ import {
   DOCUMENT_TYPES,
   DOCUMENT_TYPE_INFO,
   isDocumentType,
-} from "@optima/engine";
-import { StyledCalendarAdd, StyledForm } from "@optima/ui";
+} from "@optima-compliance/engine";
+import { StyledCalendarAdd, StyledForm } from "@optima-compliance/ui";
 import { getStore } from "@/lib/server";
 import { formatDate } from "@/lib/format";
 import { Disclaimer } from "@/components/disclaimer";

@@ -17,7 +17,7 @@ import {
   StyledInputTextArea,
   StyledInputBool,
   StyledInputSelect,
-} from "@optima/ui";
+} from "@optima-compliance/ui";
 import { Disclaimer } from "@/components/disclaimer";
 
 export const dynamic = "force-dynamic";

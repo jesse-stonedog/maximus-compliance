@@ -6,7 +6,7 @@
  */
 
 import { DatabaseSync } from "node:sqlite";
-import type { EntityFacts, EntityType, Jurisdiction } from "@optima/engine";
+import type { EntityFacts, EntityType, Jurisdiction } from "@optima-compliance/engine";
 import { MIGRATIONS } from "./schema.js";
 import { DocumentStore } from "./documents.js";
 

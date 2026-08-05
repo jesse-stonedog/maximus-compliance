@@ -1,5 +1,5 @@
 /**
- * @optima/ui — Optima presentation layer over stonedog-style.
+ * @optima-compliance/ui — Optima presentation layer over stonedog-style.
  *
  * Copyright (C) 2026 StoneDogCode L.L.C.
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -30,7 +30,7 @@ export * from "./icons";
  * Form controls, re-exported from stonedog-style.
  *
  * Through this package rather than imported directly, for the same reason the
- * icons are: `@optima/ui` is the one door the app knocks on, so swapping an
+ * icons are: `@optima-compliance/ui` is the one door the app knocks on, so swapping an
  * implementation or wrapping one in product behaviour is a change here rather
  * than a sweep across every screen.
  *

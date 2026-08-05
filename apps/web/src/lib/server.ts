@@ -13,9 +13,9 @@ import "server-only";
  * into a client component.
  */
 
-import { EntityStore, type StoredEntity } from "@optima/db";
-import { evaluate, type EvaluationResult } from "@optima/engine";
-import { ALL_RULES } from "@optima/rules";
+import { EntityStore, type StoredEntity } from "@optima-compliance/db";
+import { evaluate, type EvaluationResult } from "@optima-compliance/engine";
+import { ALL_RULES } from "@optima-compliance/rules";
 import { adoptLegacyDatabase, renamedEnv } from "./upgrade";
 
 /**

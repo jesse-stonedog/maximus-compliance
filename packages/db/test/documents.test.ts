@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 import { EntityStore } from "../src/store.js";
-import type { EntityFacts } from "@optima/engine";
+import type { EntityFacts } from "@optima-compliance/engine";
 
 const NOW = "2026-08-01T00:00:00.000Z";
 let counter = 0;

@@ -10,7 +10,7 @@ import {
   StyledDownload,
   StyledEntity,
   StyledForm,
-} from "@optima/ui";
+} from "@optima-compliance/ui";
 import { getStore, includeDraft, today } from "@/lib/server";
 import { mergedCalendar } from "@/lib/calendar";
 import { WindowList } from "@/components/window-list";
