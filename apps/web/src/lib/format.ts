@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { isStale, monthsSinceVerified, type Obligation } from "@optima/engine";
+import { isStale, monthsSinceVerified, type Obligation } from "@optima-compliance/engine";
 
 /**
  * Money, from integer minor units.

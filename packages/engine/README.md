@@ -1,4 +1,4 @@
-# @optima/engine
+# @optima-compliance/engine
 
 Pure, clock-free compliance rules evaluator. Entity facts and rules in, filing
 obligations out.
@@ -9,14 +9,14 @@ S-Corps, C-Corps and B-Corps. It answers one question well: *given this entity,
 in these jurisdictions, what is due, when, to whom, and for how much?*
 
 ```bash
-npm install @optima/engine @optima/rules
+npm install @optima-compliance/engine @optima-compliance/rules
 ```
 
 ## Quick start
 
 ```ts
-import { evaluate, type EntityFacts } from "@optima/engine";
-import { ALL_RULES } from "@optima/rules";
+import { evaluate, type EntityFacts } from "@optima-compliance/engine";
+import { ALL_RULES } from "@optima-compliance/rules";
 
 const entity: EntityFacts = {
   name: "Cascade Trails Association",
@@ -87,7 +87,7 @@ Regulatory data does not fail loudly; it rots quietly. Every rule carries
 `lastVerified`, and the engine exposes the arithmetic:
 
 ```ts
-import { isStale, monthsSinceVerified, STALE_AFTER_MONTHS } from "@optima/engine";
+import { isStale, monthsSinceVerified, STALE_AFTER_MONTHS } from "@optima-compliance/engine";
 
 isStale(rule.lastVerified, "2026-08-05"); // → boolean, 12-month default
 ```
@@ -119,5 +119,5 @@ source** — every rule carries a `citation` for exactly that purpose.
 **AGPL-3.0-only.** Copyright © 2026 StoneDogCode L.L.C.
 
 Contributions require a [CLA](https://github.com/stonedog-code/optima-filings/blob/main/CLA.md).
-Rule data lives in [`@optima/rules`](https://www.npmjs.com/package/@optima/rules)
+Rule data lives in [`@optima-compliance/rules`](https://www.npmjs.com/package/@optima-compliance/rules)
 and is maintained by pull request — corrections welcome, citations required.

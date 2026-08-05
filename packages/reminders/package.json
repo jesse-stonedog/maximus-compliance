@@ -1,5 +1,5 @@
 {
-  "name": "@optima/reminders",
+  "name": "@optima-compliance/reminders",
   "version": "0.1.0",
   "description": "Notification windows over dated compliance items. Pure and clock-free.",
   "license": "AGPL-3.0-only",
@@ -14,6 +14,6 @@
   },
   "files": ["dist", "README.md"],
   "scripts": { "build": "tsc --build", "type-check": "tsc --noEmit" },
-  "dependencies": { "@optima/engine": "0.1.0" },
+  "dependencies": { "@optima-compliance/engine": "0.1.0" },
   "engines": { "node": ">=22" }
 }

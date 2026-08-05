@@ -22,7 +22,7 @@ export default defineConfig({
     stonedogStylePreset({ cssVarPrefix: "optima" }),
   ],
   /**
-   * stonedog-style and @optima/ui ship TypeScript SOURCE, and Panda finds styles
+   * stonedog-style and @optima-compliance/ui ship TypeScript SOURCE, and Panda finds styles
    * by statically parsing files. A package it never parses contributes no CSS,
    * and its components then render with class names that have no rules behind
    * them — which looks like a broken stylesheet, not a missing glob.

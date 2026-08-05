@@ -18,7 +18,7 @@ import {
   StyledInputTextArea,
   StyledInputBool,
   StyledInputSelect,
-} from "@optima/ui";
+} from "@optima-compliance/ui";
 import { SubmitButton } from "@/components/submit-button";
 import { Disclaimer } from "@/components/disclaimer";
 

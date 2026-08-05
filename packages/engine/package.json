@@ -1,5 +1,5 @@
 {
-  "name": "@optima/engine",
+  "name": "@optima-compliance/engine",
   "version": "0.1.0",
   "description": "Pure, clock-free compliance rules evaluator. Entity facts and rules in, filing obligations out.",
   "license": "AGPL-3.0-only",

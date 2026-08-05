@@ -1,5 +1,5 @@
 /**
- * @optima/reminders — notification windows over anything with a due date.
+ * @optima-compliance/reminders — notification windows over anything with a due date.
  *
  * Copyright (C) 2026 StoneDogCode L.L.C.
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -15,8 +15,8 @@
  * their own dates to arrive on time.
  */
 
-import { addDays, addMonths, compareDates, isOnOrAfter, isOnOrBefore } from "@optima/engine";
-import type { CalendarDate } from "@optima/engine";
+import { addDays, addMonths, compareDates, isOnOrAfter, isOnOrBefore } from "@optima-compliance/engine";
+import type { CalendarDate } from "@optima-compliance/engine";
 
 /** Where a dated item came from. Never collapse these — see `DatedItem`. */
 export type ItemSource = "rule" | "user";

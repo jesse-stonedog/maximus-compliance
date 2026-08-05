@@ -106,7 +106,7 @@ export default defineConfig({
     // only tier that can tell you the thing users actually run works, and a dev
     // server differs from it in exactly the ways that bite — compilation,
     // minification, and server/client component boundaries.
-    command: `npm run build --workspace=@optima/web && npm run start --workspace=@optima/web -- --port ${PORT}`,
+    command: `npm run build --workspace=@optima-compliance/web && npm run start --workspace=@optima-compliance/web -- --port ${PORT}`,
     url: BASE_URL,
     // Never reuse: a server already running has unknown configuration, quite
     // possibly pointed at a real database.

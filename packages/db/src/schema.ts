@@ -141,7 +141,7 @@ export const MIGRATIONS: readonly { id: number; name: string; sql: string }[] = 
     name: "document_type_and_date",
     sql: `
       -- What kind of document this is. The vocabulary lives in
-      -- @optima/engine (DOCUMENT_TYPES) so the hosted tier imports the same
+      -- @optima-compliance/engine (DOCUMENT_TYPES) so the hosted tier imports the same
       -- list rather than mirroring it — see NEH-343 for what mirroring costs.
       --
       -- Stored as TEXT with no CHECK constraint on purpose. SQLite cannot alter

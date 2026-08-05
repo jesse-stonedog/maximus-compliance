@@ -1,19 +1,19 @@
-# @optima/rules
+# @optima-compliance/rules
 
 Crowd-maintained US business compliance rule packs. **Every rule cites its
 statute.**
 
 The data half of **[Optima Filings](https://github.com/stonedog-code/optima-filings)**.
-Evaluated by [`@optima/engine`](https://www.npmjs.com/package/@optima/engine),
+Evaluated by [`@optima-compliance/engine`](https://www.npmjs.com/package/@optima-compliance/engine),
 which turns these rules plus an entity's facts into a filing calendar.
 
 ```bash
-npm install @optima/rules @optima/engine
+npm install @optima-compliance/rules @optima-compliance/engine
 ```
 
 ```ts
-import { ALL_RULES } from "@optima/rules";
-import { evaluate } from "@optima/engine";
+import { ALL_RULES } from "@optima-compliance/rules";
+import { evaluate } from "@optima-compliance/engine";
 
 evaluate(entity, ALL_RULES, { asOf: "2026-08-05" });
 ```
@@ -64,7 +64,7 @@ here, at the same accuracy, on the same day.
 ```
 
 Validated against a published JSON Schema, shipped at
-`@optima/rules/schema/rule.v1.json`.
+`@optima-compliance/rules/schema/rule.v1.json`.
 
 ## Five rules about the data
 
@@ -89,7 +89,7 @@ and hides the change from review.
 ## Versioning — dates, not semver
 
 `YYYY.M.PATCH`. This is **data**: it changes when a legislature does, and semver
-does not describe that. `@optima/engine` is separately semver'd, because its
+does not describe that. `@optima-compliance/engine` is separately semver'd, because its
 *behaviour* changes far less often than the rules do.
 
 A **schema** change is what bumps `rule.v1.json` to `v2`; v1 rules keep working.

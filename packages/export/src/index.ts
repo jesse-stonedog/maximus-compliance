@@ -1,5 +1,5 @@
 /**
- * @optima/export — obligations to calendar and spreadsheet formats.
+ * @optima-compliance/export — obligations to calendar and spreadsheet formats.
  *
  * Copyright (C) 2026 StoneDogCode L.L.C.
  * SPDX-License-Identifier: AGPL-3.0-only

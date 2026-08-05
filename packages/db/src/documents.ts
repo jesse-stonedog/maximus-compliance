@@ -13,7 +13,7 @@ import {
   requiresDocumentDate,
   toDocumentType,
   type DocumentType,
-} from "@optima/engine";
+} from "@optima-compliance/engine";
 import type { DatabaseSync } from "node:sqlite";
 
 export interface DocumentField {
@@ -128,7 +128,7 @@ export class DocumentStore {
     // never make its document unreadable.
     if (!isDocumentType(type)) {
       throw new Error(
-        `Unknown document type "${String(type)}". Use one of DOCUMENT_TYPES from @optima/engine.`,
+        `Unknown document type "${String(type)}". Use one of DOCUMENT_TYPES from @optima-compliance/engine.`,
       );
     }
 

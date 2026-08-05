@@ -1,5 +1,5 @@
 /**
- * @optima/engine — the compliance rules evaluator.
+ * @optima-compliance/engine — the compliance rules evaluator.
  *
  * Copyright (C) 2026 StoneDogCode L.L.C.
  * SPDX-License-Identifier: AGPL-3.0-only
