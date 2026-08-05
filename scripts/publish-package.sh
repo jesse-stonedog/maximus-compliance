@@ -4,8 +4,8 @@
 #
 # Publish one of the two public packages, end to end.
 #
-#   npm run publish-engine
-#   npm run publish-rules
+#   npm run publish:engine
+#   npm run publish:rules
 #
 # Run these from a terminal, interactively. npm prompts for the 2FA one-time
 # password itself (the account is `auth-and-writes`), and the browser login flow
@@ -120,7 +120,7 @@ fi
 if [ "$PACKAGE_KIND" = "rules" ]; then
   ENGINE_PIN="$(node -p "require('./packages/rules/package.json').dependencies['@optima-compliance/engine']")"
   npm view "@optima-compliance/engine@$ENGINE_PIN" version >/dev/null 2>&1 \
-    || fail "rules depends on @optima-compliance/engine@$ENGINE_PIN, which is not on the registry. Publish the engine first: npm run publish-engine"
+    || fail "rules depends on @optima-compliance/engine@$ENGINE_PIN, which is not on the registry. Publish the engine first: npm run publish:engine"
   echo "  engine@$ENGINE_PIN is on the registry"
 fi
 
