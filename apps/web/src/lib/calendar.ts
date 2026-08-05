@@ -31,6 +31,12 @@ export function allDatedItems(asOf: string = today()): DatedItem[] {
       dueOn: o.dueOn,
       source: "rule" as const,
       citation: o.citation,
+      // Both URLs travel with the citation. Dropping them here is what made the
+      // source unclickable in the shipped UI — the projection compiled fine,
+      // the page looked complete, and the only symptom was text where a link
+      // belonged.
+      ...(o.citationUrl === undefined ? {} : { citationUrl: o.citationUrl }),
+      ...(o.agencyUrl === undefined ? {} : { agencyUrl: o.agencyUrl }),
       status: o.status,
       entityId: entity.id,
     })),

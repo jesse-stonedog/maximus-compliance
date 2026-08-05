@@ -172,6 +172,23 @@ export interface Rule {
   /** The statute, regulation, or agency page this came from. Required. */
   citation: string;
   citationUrl?: string;
+  /**
+   * The agency's OWN page for this filing — where a filer goes to file it and
+   * to read the current fee, form and deadline.
+   *
+   * **Distinct from `citationUrl`, and both are needed.** A citation is the
+   * legal source a reviewer checks the rule against; this is where a person
+   * with a deadline actually goes. They are usually different pages, and often
+   * different institutions.
+   *
+   * The reason it is a separate field rather than a nicety: **the statute
+   * frequently does not carry the operative detail.** RCW 23.95.255(4) hands
+   * the annual-report due date to the secretary of state and names no date;
+   * 8 Del. C. 502 sets the 1 March deadline and no fee at all. Linking only the
+   * statute would send someone to a page that cannot answer "what do I owe and
+   * when", which is the only question they came with.
+   */
+  agencyUrl?: string;
   /** Date a human last confirmed this against the primary source. */
   lastVerified: CalendarDate;
   status: RuleStatus;

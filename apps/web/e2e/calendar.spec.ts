@@ -76,7 +76,41 @@ test.describe("the self-host journey", () => {
     // in front of them. A calendar that lost its citations would still look
     // right, which is why this is asserted rather than assumed.
     await page.goto("/");
-    await expect(page.getByText(/RCW|USC|CFR|\bIRC\b|§/).first()).toBeVisible();
+    const citation = page.getByText(/RCW|USC|CFR|\bIRC\b|§/).first();
+    await expect(citation).toBeVisible();
+
+    // And it is a LINK, not just text. It rendered as plain text for as long as
+    // this screen existed — `lib/calendar.ts` projected the obligation without
+    // its `citationUrl`, so the page looked complete and the source was
+    // unclickable. This assertion is what would have caught that.
+    await expect(
+      page.getByRole("link", { name: /RCW 24\.03A\.070/ }).first(),
+    ).toBeVisible();
+  });
+
+  test("every deadline links to the agency, not only to the statute", async ({
+    page,
+  }) => {
+    // The citation above answers "is this rule faithful to the law". This
+    // answers "what is true today, and where do I file it" — and the statute
+    // frequently cannot: RCW 23.95.255(4) hands the due date to the secretary
+    // of state and names no date, and 8 Del. C. 502 sets no fee at all.
+    //
+    // Asserted as a real, resolvable link rather than as text, because a link
+    // that renders but points nowhere is the failure mode: the row still looks
+    // complete and trustworthy.
+    await page.goto("/");
+    const agencyLink = page
+      .getByRole("link", { name: /Check the agency for the current fee and deadline/i })
+      .first();
+    await expect(agencyLink).toBeVisible();
+
+    const href = await agencyLink.getAttribute("href");
+    expect(href).toMatch(/^https:\/\//);
+    // A .gov host. This is what stops a well-meaning edit pointing the link at
+    // a compliance vendor's summary page — the one thing the rule-authoring
+    // guide forbids outright, because copying a vendor imports their errors.
+    expect(new URL(href!).hostname.endsWith(".gov")).toBe(true);
   });
 
   test("the disclaimer is visible next to the deadlines", async ({ page }) => {

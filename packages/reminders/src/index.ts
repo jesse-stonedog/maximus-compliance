@@ -36,6 +36,19 @@ export interface DatedItem {
   source: ItemSource;
   /** Present on rule-derived items; absent on user-authored ones. */
   citation?: string;
+  /** Deep link to the statute or regulation the citation names. */
+  citationUrl?: string;
+  /**
+   * The agency's own page for this filing — where to go and check what is true
+   * today.
+   *
+   * Carried all the way through to the UI rather than stopping at the engine,
+   * because the projection here is where it would otherwise be lost. `citation`
+   * made that trip alone for a long time and `citationUrl` did not, so the
+   * source rendered as unclickable text in the shipped app while a component
+   * that DID link it sat unused three files away.
+   */
+  agencyUrl?: string;
   /** `draft` on an unverified rule. Absent for user items — they are neither. */
   status?: "draft" | "active";
   /** User items only. Completing a rule obligation is not modelled yet. */

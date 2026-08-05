@@ -94,6 +94,56 @@ When a fee or deadline changes, **do not edit the rule** — set `effectiveTo` o
 the old one and add a new one. That is what keeps "what was due in 2024"
 answerable, and what makes the change visible to a reviewer.
 
+## Found a rule that looks wrong? Say so — you do not need to know git
+
+Every obligation the dashboard shows carries two links, and they answer
+different questions:
+
+- the **citation** — the statute or regulation the rule came from, for checking
+  whether the rule is faithful to the law
+- **"Check *&lt;agency&gt;* for the current fee and deadline"** — the agency's
+  own page, for checking whether the law is still what we think it is
+
+The second link exists because the first one often cannot answer it. Washington
+does not set its annual-report due date in statute at all — RCW 23.95.255(4)
+hands it to the Secretary of State — and Delaware's 8 Del. C. § 502 sets the
+1 March deadline with no fee attached. **If the agency page and this software
+disagree, the agency is right and we have a bug.**
+
+When that happens:
+
+**[→ Open a "A deadline or fee changed" issue](https://github.com/stonedog-code/optima-filings/issues/new?template=rule-change.yml)**
+
+It is a form: which jurisdiction, what is wrong, and where you saw it. **No pull
+request, no JSON, no git.** Converting a filled-in form into a rule change takes
+us about five minutes, and it is the single most valuable thing an outside
+contributor can do here — the people who notice a fee changed are the ones
+filing, not the ones reading the repository.
+
+A few things that make a report immediately actionable, none of them required:
+
+- **The agency page you saw it on.** A link beats a description.
+- **The rule id**, if the screen shows one (`us-wa-sos-nonprofit-annual-report`).
+- **What you expected instead.** "The fee is $70, not $60" is enough.
+
+**Every report and its resolution stay public**, in the issue tracker, where
+anyone can read what was checked and what changed. That is deliberate: this is a
+shared dataset, and a correction that arrived through a private channel would
+mean some users quietly get better data than others.
+
+**Please do not include an EIN, an account number, or anything from a real
+filing.** The tracker is public and permanent. The jurisdiction and entity type
+are all we need.
+
+### Not sure whether it is wrong?
+
+Report it anyway. A rule marked **unverified** in the dashboard has not been
+checked against its primary source by a person, and "this looked odd to me" is
+useful information about one — see [`docs/rule-verification/`](docs/rule-verification/)
+for what a verification pass actually found the last time someone did this
+properly. Four values in the seed set were wrong, including a fee that had been
+correct in an earlier year and quietly stopped being so.
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Contributions require signing a CLA

@@ -79,7 +79,42 @@ function Item({ item, asOf }: { item: DatedItem; asOf: string }) {
         <div className={css({ fontSize: "xs", color: "boxTextSecondary" })}>
           {item.source === "rule" ? (
             <>
-              <StyledStatute /> {item.citation}
+              <StyledStatute />{" "}
+              {/*
+                Linked when the rule carries a URL. It always did carry one —
+                the projection in lib/calendar.ts simply dropped it, so this
+                rendered as unclickable text for as long as the screen has
+                existed. Still falls back to plain text, because a citation
+                without a deep link is a legitimate state.
+              */}
+              {item.citationUrl ? (
+                <a href={item.citationUrl} rel="noreferrer noopener">
+                  {item.citation}
+                </a>
+              ) : (
+                item.citation
+              )}
+              {/*
+                The agency's own page, and a different question from the
+                citation. The citation answers "is this rule faithful to the
+                law"; this answers "what is true today, and where do I file it"
+                — which the statute frequently cannot: Washington sets no
+                annual-report due date in statute at all, and Delaware's
+                8 Del. C. 502 names no fee.
+
+                Worded as an instruction rather than a bare URL. "Check the
+                agency" tells someone what to do with the link; a naked domain
+                leaves them to infer why it is there. This tier exists for
+                people who would rather confirm a date themselves than take
+                ours on trust, and this is the link that lets them.
+              */}
+              {item.agencyUrl && (
+                <span className={css({ display: "block" })}>
+                  <a href={item.agencyUrl} rel="noreferrer noopener">
+                    Check the agency for the current fee and deadline
+                  </a>
+                </span>
+              )}
             </>
           ) : (
             <>
