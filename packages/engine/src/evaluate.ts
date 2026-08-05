@@ -322,6 +322,17 @@ function occurrenceInYear(
       const { month } = parseDate(entity.formedOn);
       return dateInMonth(year, month, cadence.dayOfMonth);
     }
+    case "formation-anniversary": {
+      // Month AND day from the entity — the difference from `formation-month`,
+      // which takes the day from the rule.
+      //
+      // `dateInMonth` clamps, so a 29 February formation gives 28 February in a
+      // common year. That is not a convenient accident: ORS 65.001 defines the
+      // anniversary as 28 February in exactly that case, so the clamp and the
+      // statute agree and no special case is needed.
+      const { month, day } = parseDate(entity.formedOn);
+      return dateInMonth(year, month, day);
+    }
     case "calendar": {
       return dateInMonth(year, cadence.month, cadence.day);
     }

@@ -44,6 +44,51 @@ export const OR_LLC: EntityFacts = {
   fiscalYearEnd: "12-31",
 };
 
+/**
+ * Formed mid-month, which is the only shape that can catch the Oregon bug.
+ *
+ * `OR_LLC` above is formed on the 31st, so the end of its anniversary month IS
+ * its anniversary and a month-end rule agrees with an anniversary rule by
+ * accident. Every Oregon assertion passed that way while the rule was wrong by
+ * up to 30 days for everyone else (NEH-400).
+ *
+ * The 14th agrees with nothing: it is not a month end, not a leap day, and not
+ * the first. A rule that computes the wrong thing cannot produce this date.
+ */
+export const OR_NONPROFIT_MID_MONTH: EntityFacts = {
+  name: "Example Deschutes Trails Alliance",
+  entityTypes: ["501c3", "nonprofit-corp"],
+  formedOn: "2019-06-14",
+  homeJurisdiction: "US-OR",
+  jurisdictions: ["US-OR"],
+  fiscalYearEnd: "12-31",
+};
+
+/**
+ * An Oregon corporation formed on a leap day.
+ *
+ * ORS defines the anniversary as **28 February** where it would otherwise fall
+ * on 29 February. `dateInMonth` already clamps, so the statute and the engine
+ * agree without a special case — this pins that they keep agreeing, in both a
+ * common year and a leap year.
+ *
+ * **It cannot detect the NEH-400 bug**, and it is worth saying so plainly:
+ * February's month end is the 28th or 29th, which is exactly where a leap-day
+ * anniversary clamps to, so `formation-month` and `formation-anniversary`
+ * produce identical dates here. These assertions passed before the fix and
+ * after it. Only [[OR_NONPROFIT_MID_MONTH]] distinguishes the two anchors —
+ * which is the same trap that let the bug ship, since the only Oregon fixture
+ * at the time was formed on the 31st.
+ */
+export const OR_CORP_LEAP_DAY: EntityFacts = {
+  name: "Example Cascade Locks Instruments Inc.",
+  entityTypes: ["c-corp"],
+  formedOn: "2024-02-29",
+  homeJurisdiction: "US-OR",
+  jurisdictions: ["US-OR"],
+  fiscalYearEnd: "12-31",
+};
+
 export const DE_CORP: EntityFacts = {
   name: "Example Nautilus Robotics Inc.",
   entityTypes: ["c-corp"],

@@ -187,8 +187,7 @@ export const ALL_RULES: readonly Rule[] = [
     ],
     "cadence": {
       "type": "annual",
-      "anchor": "formation-month",
-      "dayOfMonth": "last"
+      "anchor": "formation-anniversary"
     },
     "fee": {
       "amountMinorUnits": 10000,
@@ -199,7 +198,7 @@ export const ALL_RULES: readonly Rule[] = [
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "DEADLINE CONFIRMED WRONG 2026-08-05 — the exact worry the previous note raised. ORS 60.787(1) says the report is due \"by the corporation's anniversary\", VERBATIM: the anniversary DATE, not the end of the anniversary month. Oregon's SOS says the same: \"Your renewal is due on the anniversary date of the original filing.\" So this rule is currently up to 30 days LATE — the unsafe direction. NOT FIXED HERE because the schema cannot express it: anchor \"formation-month\" takes a literal dayOfMonth, and the anniversary day varies per entity. It needs a new cadence anchor that reads the day from the entity's own formation date. Tracked separately; the rule stays draft and excluded meanwhile. Oregon also defines the anniversary as 28 February when it would otherwise fall on 29 February. FEE VERIFIED: $100 — read directly from the SOS Business Registry Fee Schedule PDF, \"DOMESTIC CORPORATIONS > Business/Professional > Renewal (Annually) $100.00\"."
+    "notes": "DEADLINE FIXED 2026-08-05 (NEH-400). This rule used anchor \"formation-month\" with dayOfMonth \"last\" — the end of the anniversary month — and was therefore up to 30 days LATE, the direction that costs a customer a penalty. ORS 60.787(1) VERBATIM: the report is due \"by the corporation's anniversary\", which is the anniversary DATE. Oregon's SOS says the same: \"Your renewal is due on the anniversary date of the original filing.\" Now anchor \"formation-anniversary\", which takes the month and day from the entity. Leap days need no special case: 29 February clamps to the 28th in a common year, which is what ORS 65.001 defines the anniversary to be. FEE VERIFIED 2026-08-05: $100 — read directly from the SOS Business Registry Fee Schedule PDF, \"DOMESTIC CORPORATIONS > Business/Professional > Renewal (Annually) $100.00\". STILL DRAFT: the deadline and fee are now checked, but promotion to active means a PERSON has read the statute. See docs/rule-verification/."
   },
   // us/or/llc-annual-report.json
   {
@@ -212,8 +211,7 @@ export const ALL_RULES: readonly Rule[] = [
     ],
     "cadence": {
       "type": "annual",
-      "anchor": "formation-month",
-      "dayOfMonth": "last"
+      "anchor": "formation-anniversary"
     },
     "fee": {
       "amountMinorUnits": 10000,
@@ -224,7 +222,7 @@ export const ALL_RULES: readonly Rule[] = [
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "DEADLINE CONFIRMED WRONG 2026-08-05 — the exact worry the previous note raised. ORS 63.787(1) says the report is due \"by the limited liability company's anniversary\", VERBATIM: the anniversary DATE, not the end of the anniversary month. Oregon's SOS says the same: \"Your renewal is due on the anniversary date of the original filing.\" So this rule is currently up to 30 days LATE — the unsafe direction. NOT FIXED HERE because the schema cannot express it: anchor \"formation-month\" takes a literal dayOfMonth, and the anniversary day varies per entity. It needs a new cadence anchor that reads the day from the entity's own formation date. Tracked separately; the rule stays draft and excluded meanwhile. Oregon also defines the anniversary as 28 February when it would otherwise fall on 29 February. FEE VERIFIED: $100 — read directly from the SOS Business Registry Fee Schedule PDF, \"LIMITED LIABILITY COMPANIES > Domestic > Renewal (Annually) $100.00\"."
+    "notes": "DEADLINE FIXED 2026-08-05 (NEH-400). This rule used anchor \"formation-month\" with dayOfMonth \"last\" — the end of the anniversary month — and was therefore up to 30 days LATE, the direction that costs a customer a penalty. ORS 63.787(1) VERBATIM: the report is due \"by the limited liability company's anniversary\", which is the anniversary DATE. Oregon's SOS says the same: \"Your renewal is due on the anniversary date of the original filing.\" Now anchor \"formation-anniversary\", which takes the month and day from the entity. Leap days need no special case: 29 February clamps to the 28th in a common year, which is what ORS 65.001 defines the anniversary to be. FEE VERIFIED 2026-08-05: $100 — read directly from the SOS Business Registry Fee Schedule PDF, \"LIMITED LIABILITY COMPANIES > Domestic > Renewal (Annually) $100.00\". STILL DRAFT: the deadline and fee are now checked, but promotion to active means a PERSON has read the statute. See docs/rule-verification/."
   },
   // us/or/nonprofit-annual-report.json
   {
@@ -238,8 +236,7 @@ export const ALL_RULES: readonly Rule[] = [
     ],
     "cadence": {
       "type": "annual",
-      "anchor": "formation-month",
-      "dayOfMonth": "last"
+      "anchor": "formation-anniversary"
     },
     "fee": {
       "amountMinorUnits": 5000,
@@ -250,7 +247,7 @@ export const ALL_RULES: readonly Rule[] = [
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "DEADLINE CONFIRMED WRONG 2026-08-05 — the exact worry the previous note raised. ORS 65.787(1) says the report is due \"by the corporation's anniversary\", VERBATIM: the anniversary DATE, not the end of the anniversary month. Oregon's SOS says the same: \"Your renewal is due on the anniversary date of the original filing.\" So this rule is currently up to 30 days LATE — the unsafe direction. NOT FIXED HERE because the schema cannot express it: anchor \"formation-month\" takes a literal dayOfMonth, and the anniversary day varies per entity. It needs a new cadence anchor that reads the day from the entity's own formation date. Tracked separately; the rule stays draft and excluded meanwhile. Oregon also defines the anniversary as 28 February when it would otherwise fall on 29 February. FEE VERIFIED: $50 — read directly from the SOS Business Registry Fee Schedule PDF, \"DOMESTIC CORPORATIONS > Nonprofit > Renewal (Annually) $50.00\"."
+    "notes": "DEADLINE FIXED 2026-08-05 (NEH-400). This rule used anchor \"formation-month\" with dayOfMonth \"last\" — the end of the anniversary month — and was therefore up to 30 days LATE, the direction that costs a customer a penalty. ORS 65.787(1) VERBATIM: the report is due \"by the corporation's anniversary\", which is the anniversary DATE. Oregon's SOS says the same: \"Your renewal is due on the anniversary date of the original filing.\" Now anchor \"formation-anniversary\", which takes the month and day from the entity. Leap days need no special case: 29 February clamps to the 28th in a common year, which is what ORS 65.001 defines the anniversary to be. FEE VERIFIED 2026-08-05: $50 — read directly from the SOS Business Registry Fee Schedule PDF, \"DOMESTIC CORPORATIONS > Nonprofit > Renewal (Annually) $50.00\". STILL DRAFT: the deadline and fee are now checked, but promotion to active means a PERSON has read the statute. See docs/rule-verification/."
   },
   // us/wa/charitable-solicitation-registration.json
   {

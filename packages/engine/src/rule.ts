@@ -19,18 +19,49 @@ import type {
 /**
  * How often the obligation recurs and what its due date is anchored to.
  *
- * These four anchors cover every rule in the seed set, and each exists because
- * a real filing uses it — they are not a generic date DSL. Resist adding a
- * fifth until a rule needs it: an anchor nothing uses is an untested branch
- * that will be wrong the first time someone reaches for it.
+ * These anchors cover every rule in the seed set, and each exists because a
+ * real filing uses it — they are not a generic date DSL. Resist adding another
+ * until a rule needs it: an anchor nothing uses is an untested branch that will
+ * be wrong the first time someone reaches for it.
  */
 export type Cadence =
-  /** Due in the anniversary month of formation. Most state annual reports. */
+  /**
+   * Due somewhere in the anniversary month of formation, on a day the RULE
+   * names. Washington: "the last day of your formation month", the same day for
+   * every entity in the state.
+   *
+   * **Not the same as `formation-anniversary`**, and confusing the two is a
+   * silent up-to-30-day error — see that anchor's note.
+   */
   | {
       type: "annual" | "biennial";
       anchor: "formation-month";
       /** Day within that month; `"last"` is the common case. */
       dayOfMonth: number | "last";
+    }
+  /**
+   * Due on the anniversary of formation — the month AND day come from the
+   * ENTITY, so every entity in the state has a different due date. Oregon:
+   * ORS 65.787(1), 60.787(1) and 63.787(1) all say "by the corporation's
+   * anniversary".
+   *
+   * There is deliberately no `dayOfMonth` here. That is the whole distinction
+   * from `formation-month`: a rule cannot name the day, because the day is a
+   * fact about the entity.
+   *
+   * **Why this is its own anchor rather than a flag.** The two agree exactly
+   * when an entity was formed on a month end, which is common enough that the
+   * Oregon rules shipped wrong and a full fixture suite agreed with them — the
+   * one Oregon fixture happened to be formed on the 31st (NEH-400). A separate
+   * anchor makes the choice explicit at authoring time instead of a default
+   * nobody revisits.
+   *
+   * Leap days need no special case: 29 February clamps to the 28th in a common
+   * year, which is what ORS 65.001 says the anniversary is.
+   */
+  | {
+      type: "annual" | "biennial";
+      anchor: "formation-anniversary";
     }
   /** Due on a fixed calendar date every year. Delaware franchise tax. */
   | {
