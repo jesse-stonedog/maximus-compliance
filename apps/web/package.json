@@ -24,14 +24,15 @@
     "@optima/reminders": "0.1.0",
     "@optima/rules": "2026.8.0",
     "@optima/ui": "0.1.0",
-    "stonedog-style": "*",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "stonedog-style": "*"
   },
   "devDependencies": {
     "@pandacss/dev": "^1.12.0",
+    "@playwright/test": "^1.62.1",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3"
   },
