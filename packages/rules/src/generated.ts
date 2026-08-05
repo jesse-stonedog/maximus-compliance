@@ -34,7 +34,7 @@ export const ALL_RULES: readonly Rule[] = [
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "FEE IS THE REPORT FEE ONLY. Delaware franchise tax is calculated separately (authorised-shares or assumed-par-value method) and is usually far larger than this. The schema has no way to express a computed fee — presenting $50 as the total cost would badly understate it. Do not promote to active until either the schema supports computed fees or the notes are surfaced in the UI."
+    "notes": "DUE DATE VERIFIED 2026-08-05, 8 Del. C. 502(a) VERBATIM: \"Annually on or before March 1, every corporation now existing or hereafter incorporated under Chapter 1 of this title ... shall make an annual franchise tax report to the Secretary of State.\" The fixed 1 March calendar date is right. FEE IS THE REPORT FEE ONLY, AND ITS SOURCE WAS NOT FOUND — 8 Del. C. 502 sets the deadline but no filing fee, and the fee section was not located in the chapter read. The $50 here is unverified. THE REAL COST IS THE FRANCHISE TAX, AND IT DWARFS THIS. 8 Del. C. 503 VERBATIM: the tax is \"more than $200,000 nor less than $175\" by the authorised-shares method, or \"more than $200,000 nor less than $400\" by assumed-par-value. So the MINIMUM real cost is at least 3.5x the figure shown and the maximum is 4000x it. The schema has no way to express a computed fee, and presenting $50 as the total would badly understate what a corporation actually owes. Do not promote until either the schema supports computed fees or the UI surfaces these notes. 502(c) also imposes a $200 penalty for a late report."
   },
   // us/de/llc-annual-tax.json
   {
@@ -52,15 +52,15 @@ export const ALL_RULES: readonly Rule[] = [
       "day": 1
     },
     "fee": {
-      "amountMinorUnits": 30000,
+      "amountMinorUnits": 40000,
       "currency": "USD"
     },
     "citation": "6 Del. C. 18-1107",
-    "citationUrl": "https://delcode.delaware.gov/title6/c018/sc10/index.html",
+    "citationUrl": "https://delcode.delaware.gov/title6/c018/sc11/index.html",
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "Delaware LLCs pay a flat annual tax and file no annual report. Fixed calendar date, not an anniversary. Verify the current amount — it has been $300 for some years but is set by statute and can change."
+    "notes": "AMOUNT CORRECTED 2026-08-05: was $300, now $400. The previous note asked for exactly this check and it was right to. 6 Del. C. 18-1107(b), VERBATIM: \"Every domestic limited liability company and every foreign limited liability company registered to do business in the State of Delaware shall pay an annual tax, for the use of the State of Delaware, in the amount of $400.\" Read twice from delcode.delaware.gov to be sure. DUE DATE VERIFIED: \"The annual tax for a domestic limited liability company shall be due and payable on the first day of June following the close of the calendar year\" — a fixed calendar date, which is what this rule already encodes. NO ANNUAL REPORT VERIFIED: 18-1107 requires the tax only; Delaware LLCs file no annual report. Unpaid tax accrues interest at 1.5% per month, which the schema has no way to express."
   },
   // us/federal/form-990.json
   {
@@ -99,7 +99,8 @@ export const ALL_RULES: readonly Rule[] = [
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "Due the 15th day of the 5th month after the fiscal year ends — 15 May for a calendar-year filer. The threshold is gross receipts >= $200k OR total assets >= $500k: an organisation meeting EITHER files the full return, which is why this uses an anyOf group. Still draft — the cadence and both thresholds need checking against the current IRS instructions before promotion."
+    "notes": "DUE DATE VERIFIED 2026-08-05 against irs.gov: the annual return is due the 15th day of the 5th month after the tax year ends — 15 May for a calendar-year filer, which this cadence produces. WEEKEND RULE ADDED: the IRS states \"If a due date falls on a Saturday, Sunday, or legal holiday, the due date is delayed until the next business day.\" This is opted into explicitly because the agency says it, not assumed. It matters concretely: 15 May 2027 is a Saturday, so without it a calendar-year filer is shown a date two days before the real deadline. Federal legal holidays are not modelled, so a deadline landing on one is still off. THRESHOLDS VERIFIED, verbatim from the IRS filing-thresholds table: \"Gross receipts >= $200,000, or Total assets >= $500,000\". The anyOf and both gte operators match exactly.",
+    "weekendRule": "roll-forward"
   },
   // us/federal/form-990-ez.json
   {
@@ -139,7 +140,8 @@ export const ALL_RULES: readonly Rule[] = [
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "Filing thresholds are reviewed by the IRS periodically; re-check the current instructions before promoting to active."
+    "notes": "DUE DATE VERIFIED 2026-08-05 against irs.gov: the annual return is due the 15th day of the 5th month after the tax year ends — 15 May for a calendar-year filer, which this cadence produces. WEEKEND RULE ADDED: the IRS states \"If a due date falls on a Saturday, Sunday, or legal holiday, the due date is delayed until the next business day.\" This is opted into explicitly because the agency says it, not assumed. It matters concretely: 15 May 2027 is a Saturday, so without it a calendar-year filer is shown a date two days before the real deadline. Federal legal holidays are not modelled, so a deadline landing on one is still off. THRESHOLDS VERIFIED: the IRS states \"Gross receipts < $200,000, and Total assets < $500,000\", which the upper bounds match. The >$50,000 LOWER bound is this pack's own modelling choice, not an IRS rule — the IRS lets a small organisation ELECT to file 990-EZ instead of 990-N. It is there so 990-N and 990-EZ are mutually exclusive and a small charity is not told it owes both. Deliberate; revisit only with the election in mind.",
+    "weekendRule": "roll-forward"
   },
   // us/federal/form-990-n.json
   {
@@ -169,7 +171,8 @@ export const ALL_RULES: readonly Rule[] = [
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "Failing to file for three consecutive years revokes exempt status automatically. Worth surfacing prominently in the UI — it is the single most consequential missed deadline for a small nonprofit."
+    "notes": "DUE DATE VERIFIED 2026-08-05 against irs.gov: the annual return is due the 15th day of the 5th month after the tax year ends — 15 May for a calendar-year filer, which this cadence produces. WEEKEND RULE ADDED: the IRS states \"If a due date falls on a Saturday, Sunday, or legal holiday, the due date is delayed until the next business day.\" This is opted into explicitly because the agency says it, not assumed. It matters concretely: 15 May 2027 is a Saturday, so without it a calendar-year filer is shown a date two days before the real deadline. Federal legal holidays are not modelled, so a deadline landing on one is still off. THRESHOLD VERIFIED, verbatim from the IRS: \"Gross receipts normally <= $50,000\". Note \"normally\" — the IRS applies an averaging test across years that this pack evaluates as a single-year figure, so an organisation just over the line in one year may still qualify. Failing to file for three consecutive years revokes exempt status automatically — the single most consequential missed deadline for a small nonprofit, and worth surfacing prominently in any UI.",
+    "weekendRule": "roll-forward"
   },
   // us/or/corporation-annual-report.json
   {
@@ -196,7 +199,7 @@ export const ALL_RULES: readonly Rule[] = [
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "Same anniversary-date question — verify before promoting."
+    "notes": "DEADLINE CONFIRMED WRONG 2026-08-05 — the exact worry the previous note raised. ORS 60.787(1) says the report is due \"by the corporation's anniversary\", VERBATIM: the anniversary DATE, not the end of the anniversary month. Oregon's SOS says the same: \"Your renewal is due on the anniversary date of the original filing.\" So this rule is currently up to 30 days LATE — the unsafe direction. NOT FIXED HERE because the schema cannot express it: anchor \"formation-month\" takes a literal dayOfMonth, and the anniversary day varies per entity. It needs a new cadence anchor that reads the day from the entity's own formation date. Tracked separately; the rule stays draft and excluded meanwhile. Oregon also defines the anniversary as 28 February when it would otherwise fall on 29 February. FEE VERIFIED: $100 — read directly from the SOS Business Registry Fee Schedule PDF, \"DOMESTIC CORPORATIONS > Business/Professional > Renewal (Annually) $100.00\"."
   },
   // us/or/llc-annual-report.json
   {
@@ -221,7 +224,7 @@ export const ALL_RULES: readonly Rule[] = [
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "Same anniversary-date question as the nonprofit report — verify before promoting."
+    "notes": "DEADLINE CONFIRMED WRONG 2026-08-05 — the exact worry the previous note raised. ORS 63.787(1) says the report is due \"by the limited liability company's anniversary\", VERBATIM: the anniversary DATE, not the end of the anniversary month. Oregon's SOS says the same: \"Your renewal is due on the anniversary date of the original filing.\" So this rule is currently up to 30 days LATE — the unsafe direction. NOT FIXED HERE because the schema cannot express it: anchor \"formation-month\" takes a literal dayOfMonth, and the anniversary day varies per entity. It needs a new cadence anchor that reads the day from the entity's own formation date. Tracked separately; the rule stays draft and excluded meanwhile. Oregon also defines the anniversary as 28 February when it would otherwise fall on 29 February. FEE VERIFIED: $100 — read directly from the SOS Business Registry Fee Schedule PDF, \"LIMITED LIABILITY COMPANIES > Domestic > Renewal (Annually) $100.00\"."
   },
   // us/or/nonprofit-annual-report.json
   {
@@ -247,7 +250,7 @@ export const ALL_RULES: readonly Rule[] = [
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "Oregon anniversary-based annual report. Verify whether the deadline is the anniversary DATE rather than the end of the anniversary month — this rule currently assumes end of month, which would be wrong by up to 30 days if Oregon uses the exact date."
+    "notes": "DEADLINE CONFIRMED WRONG 2026-08-05 — the exact worry the previous note raised. ORS 65.787(1) says the report is due \"by the corporation's anniversary\", VERBATIM: the anniversary DATE, not the end of the anniversary month. Oregon's SOS says the same: \"Your renewal is due on the anniversary date of the original filing.\" So this rule is currently up to 30 days LATE — the unsafe direction. NOT FIXED HERE because the schema cannot express it: anchor \"formation-month\" takes a literal dayOfMonth, and the anniversary day varies per entity. It needs a new cadence anchor that reads the day from the entity's own formation date. Tracked separately; the rule stays draft and excluded meanwhile. Oregon also defines the anniversary as 28 February when it would otherwise fall on 29 February. FEE VERIFIED: $50 — read directly from the SOS Business Registry Fee Schedule PDF, \"DOMESTIC CORPORATIONS > Nonprofit > Renewal (Annually) $50.00\"."
   },
   // us/wa/charitable-solicitation-registration.json
   {
@@ -266,7 +269,7 @@ export const ALL_RULES: readonly Rule[] = [
       "dayOfMonth": "last"
     },
     "fee": {
-      "amountMinorUnits": 6000,
+      "amountMinorUnits": 4000,
       "currency": "USD"
     },
     "conditions": [
@@ -285,12 +288,12 @@ export const ALL_RULES: readonly Rule[] = [
         ]
       }
     ],
-    "citation": "RCW 19.09.075; RCW 19.09.097",
-    "citationUrl": "https://app.leg.wa.gov/rcw/default.aspx?cite=19.09",
+    "citation": "RCW 19.09.075; RCW 19.09.085; RCW 19.09.062(2); WAC 434-120-140(2)(a)",
+    "citationUrl": "https://app.leg.wa.gov/wac/default.aspx?cite=434-120-140",
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "SEPARATE from the corporate annual report, and the one most often missed — an organisation can be in good standing as a corporation while unregistered to solicit. The trigger is soliciting donations OR holding $250,000+ in charitable assets, per the WA SOS formation letter; an endowed nonprofit that does not actively solicit is caught by the second half. Still draft: the letter is a form letter, not the statute, so the exact threshold, the renewal deadline (the fiscal-year-end offset here is a guess) and the fee all need checking against RCW 19.09 and the Charities Program directly."
+    "notes": "FEE CORRECTED 2026-08-05: was $60, now $40. RCW 19.09.062 sets $60 for an APPLICATION and $40 for a RENEWAL, and this rule is the renewal — the $60 was the initial-registration fee. VERBATIM: \"a fee of forty dollars. Ten dollars of this fee must be deposited in the state general fund...\". CITATION CORRECTED: RCW 19.09.097 was dropped — it governs contracts with COMMERCIAL FUND-RAISERS and has nothing to do with a charity's own renewal. DEADLINE VERIFIED: the 11-month offset was a guess and turns out to be right. WAC 434-120-140(2)(a): \"The completed form and fee shall be received no later than the last business day of the eleventh month after the end of the organization's accounting year.\" Note the statute does NOT set this — RCW 19.09.085(2) delegates it to the secretary by rule — so the WAC is the citation that matters. KNOWN WRONG, NOT FIXABLE IN THIS SCHEMA (1): the WAC says last BUSINESS day; dayOfMonth \"last\" gives the last calendar day, so a month ending at a weekend shows a deadline up to 2 days LATE. weekendRule only offers \"roll-forward\" and this needs backward. KNOWN WRONG (2): this rule CONFLATES TWO SEPARATE REGISTRATIONS. The $250,000 trigger is not in RCW 19.09 at all — it is WAC 434-120-305, the CHARITABLE TRUST registration under RCW 11.110, a different filing with its own form and deadline. And it reads \"exceeding\", so gte is off by one. Meanwhile RCW 19.09.081 exempts an all-volunteer organisation raising under $50,000, which this rule does not express. Splitting it needs the trust renewal deadline, which WAC 434-120-310 does not state — so the split waits rather than inventing one."
   },
   // us/wa/corporation-annual-report.json
   {
@@ -317,7 +320,7 @@ export const ALL_RULES: readonly Rule[] = [
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "RCW 23.95 is the Washington Uniform Business Organizations Code, which carries the annual report requirement for several entity forms. Verify the section and fee."
+    "notes": "VERIFIED 2026-08-05 (requirement only): RCW 23.95.255(2) requires every domestic entity and registered foreign entity to deliver an annual report, and a profit corporation is such an entity, so this is the right authority. DUE DATE NOT SETTLEABLE FROM STATUTE: RCW 23.95.255(4) says annual reports are due \"on a date determined by the secretary of state\", so no statute fixes it. The end-of-formation-month cadence here rests on the SOS's published practice, which needs a human to confirm. FEE UNVERIFIED and PROBABLY WRONG: search results attributed to sos.wa.gov give $70 for profit business entity types including LLCs, not the $60 recorded here. sos.wa.gov returns 403 to automated retrieval, so this could not be read from the agency page directly and the value is left unchanged rather than swapped for a second unverified number. A person must open the SOS fee schedule."
   },
   // us/wa/llc-annual-report.json
   {
@@ -337,12 +340,12 @@ export const ALL_RULES: readonly Rule[] = [
       "amountMinorUnits": 6000,
       "currency": "USD"
     },
-    "citation": "RCW 25.15.106",
+    "citation": "RCW 25.15.106; RCW 23.95.255",
     "citationUrl": "https://app.leg.wa.gov/rcw/default.aspx?cite=25.15",
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "Due by the end of the month the LLC was formed in. Verify the section and fee against the SOS fee schedule."
+    "notes": "VERIFIED 2026-08-05 (requirement only): RCW 25.15.106 reads \"Each domestic limited liability company, and each foreign limited liability company authorized to transact business in this state, must deliver to the secretary of state for filing initial and annual reports in accordance with RCW 23.95.255.\" Both sections read; the section number in this rule was correct. DUE DATE NOT SETTLEABLE FROM STATUTE: RCW 23.95.255(4) says annual reports are due \"on a date determined by the secretary of state\", so no statute fixes it. The end-of-formation-month cadence here rests on the SOS's published practice, which needs a human to confirm. FEE UNVERIFIED and PROBABLY WRONG: search results attributed to sos.wa.gov give $70 for profit business entity types including LLCs, not the $60 recorded here. sos.wa.gov returns 403 to automated retrieval, so this could not be read from the agency page directly and the value is left unchanged rather than swapped for a second unverified number. A person must open the SOS fee schedule."
   },
   // us/wa/nonprofit-annual-report.json
   {
@@ -363,11 +366,11 @@ export const ALL_RULES: readonly Rule[] = [
       "amountMinorUnits": 6000,
       "currency": "USD"
     },
-    "citation": "RCW 24.03A.1010",
+    "citation": "RCW 24.03A.070; RCW 23.95.255(2)",
     "citationUrl": "https://app.leg.wa.gov/rcw/default.aspx?cite=24.03A",
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2022-01-01",
-    "notes": "Washington replaced the old Nonprofit Corporation Act with RCW 24.03A effective 1 Jan 2022. Verify BOTH the exact RCW section and the current fee against the SOS fee schedule before promoting to active."
+    "notes": "CITATION CORRECTED 2026-08-05: this rule cited RCW 24.03A.1010, which DOES NOT EXIST (app.leg.wa.gov returns \"The Citation you requested cannot be found\"). The real authority is RCW 24.03A.070 — \"Each domestic nonprofit corporation ... shall deliver to the secretary of state for filing an annual report as required under RCW 23.95.255(2)\" — which delegates to the general UBOC provision. VERIFIED: the requirement exists and both sections were read. NOT VERIFIED and NOT SETTLEABLE FROM STATUTE: the due date. RCW 23.95.255(4) says annual reports are due \"on a date determined by the secretary of state\", so no statute sets it and the end-of-formation-month cadence here rests on the SOS's published practice, which blocks automated retrieval and needs a human to open. FEE UNVERIFIED: search results attributed to sos.wa.gov give $60 for an RCW 24.03A nonprofit, reduced to $20 if gross revenue was under $500,000 in the most recent fiscal year — a conditional the schema cannot express. Do not promote until a person has read the SOS fee schedule."
   },
 ] as const;

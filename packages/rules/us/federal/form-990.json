@@ -4,14 +4,29 @@
   "jurisdiction": "US",
   "title": "Form 990 — Return of Organization Exempt From Income Tax",
   "agency": "Internal Revenue Service",
-  "entityTypes": ["501c3"],
-  "cadence": { "type": "annual", "anchor": "fiscal-year-end", "offsetMonths": 5, "dayOfMonth": 15 },
+  "entityTypes": [
+    "501c3"
+  ],
+  "cadence": {
+    "type": "annual",
+    "anchor": "fiscal-year-end",
+    "offsetMonths": 5,
+    "dayOfMonth": 15
+  },
   "form": "990",
   "conditions": [
     {
       "anyOf": [
-        { "fact": "grossRevenueMinorUnits", "op": "gte", "value": 20000000 },
-        { "fact": "totalAssetsMinorUnits", "op": "gte", "value": 50000000 }
+        {
+          "fact": "grossRevenueMinorUnits",
+          "op": "gte",
+          "value": 20000000
+        },
+        {
+          "fact": "totalAssetsMinorUnits",
+          "op": "gte",
+          "value": 50000000
+        }
       ]
     }
   ],
@@ -20,5 +35,6 @@
   "lastVerified": "2026-08-01",
   "status": "draft",
   "effectiveFrom": "2020-01-01",
-  "notes": "Due the 15th day of the 5th month after the fiscal year ends — 15 May for a calendar-year filer. The threshold is gross receipts >= $200k OR total assets >= $500k: an organisation meeting EITHER files the full return, which is why this uses an anyOf group. Still draft — the cadence and both thresholds need checking against the current IRS instructions before promotion."
+  "notes": "DUE DATE VERIFIED 2026-08-05 against irs.gov: the annual return is due the 15th day of the 5th month after the tax year ends — 15 May for a calendar-year filer, which this cadence produces. WEEKEND RULE ADDED: the IRS states \"If a due date falls on a Saturday, Sunday, or legal holiday, the due date is delayed until the next business day.\" This is opted into explicitly because the agency says it, not assumed. It matters concretely: 15 May 2027 is a Saturday, so without it a calendar-year filer is shown a date two days before the real deadline. Federal legal holidays are not modelled, so a deadline landing on one is still off. THRESHOLDS VERIFIED, verbatim from the IRS filing-thresholds table: \"Gross receipts >= $200,000, or Total assets >= $500,000\". The anyOf and both gte operators match exactly.",
+  "weekendRule": "roll-forward"
 }

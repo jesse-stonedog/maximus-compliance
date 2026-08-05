@@ -4,13 +4,25 @@
   "jurisdiction": "US-DE",
   "title": "Corporation Annual Report and Franchise Tax",
   "agency": "Delaware Division of Corporations",
-  "entityTypes": ["s-corp", "c-corp", "b-corp"],
-  "cadence": { "type": "annual", "anchor": "calendar", "month": 3, "day": 1 },
-  "fee": { "amountMinorUnits": 5000, "currency": "USD" },
+  "entityTypes": [
+    "s-corp",
+    "c-corp",
+    "b-corp"
+  ],
+  "cadence": {
+    "type": "annual",
+    "anchor": "calendar",
+    "month": 3,
+    "day": 1
+  },
+  "fee": {
+    "amountMinorUnits": 5000,
+    "currency": "USD"
+  },
   "citation": "8 Del. C. 502",
   "citationUrl": "https://delcode.delaware.gov/title8/c001/sc15/index.html",
   "lastVerified": "2026-08-01",
   "status": "draft",
   "effectiveFrom": "2020-01-01",
-  "notes": "FEE IS THE REPORT FEE ONLY. Delaware franchise tax is calculated separately (authorised-shares or assumed-par-value method) and is usually far larger than this. The schema has no way to express a computed fee — presenting $50 as the total cost would badly understate it. Do not promote to active until either the schema supports computed fees or the notes are surfaced in the UI."
+  "notes": "DUE DATE VERIFIED 2026-08-05, 8 Del. C. 502(a) VERBATIM: \"Annually on or before March 1, every corporation now existing or hereafter incorporated under Chapter 1 of this title ... shall make an annual franchise tax report to the Secretary of State.\" The fixed 1 March calendar date is right. FEE IS THE REPORT FEE ONLY, AND ITS SOURCE WAS NOT FOUND — 8 Del. C. 502 sets the deadline but no filing fee, and the fee section was not located in the chapter read. The $50 here is unverified. THE REAL COST IS THE FRANCHISE TAX, AND IT DWARFS THIS. 8 Del. C. 503 VERBATIM: the tax is \"more than $200,000 nor less than $175\" by the authorised-shares method, or \"more than $200,000 nor less than $400\" by assumed-par-value. So the MINIMUM real cost is at least 3.5x the figure shown and the maximum is 4000x it. The schema has no way to express a computed fee, and presenting $50 as the total would badly understate what a corporation actually owes. Do not promote until either the schema supports computed fees or the UI surfaces these notes. 502(c) also imposes a $200 penalty for a late report."
 }

@@ -168,11 +168,24 @@ describe("a large Washington charity with a June fiscal year", () => {
   });
 
   it("owes the full 990, and it is not due in May", () => {
-    // Year ends 30 June, so the return is due 15 November — the case a
-    // hardcoded "May 15" gets wrong for every non-calendar filer.
+    // Year ends 30 June, so the return is due the 15th day of the 5th month
+    // after — November — the case a hardcoded "May 15" gets wrong for every
+    // non-calendar filer.
+    //
+    // MONDAY THE 16th, NOT SUNDAY THE 15th. This assertion said `2026-11-15`
+    // until the 990 rules gained `weekendRule: "roll-forward"`, and it was
+    // asserting a deadline that falls on a Sunday. The IRS is explicit — "If a
+    // due date falls on a Saturday, Sunday, or legal holiday, the due date is
+    // delayed until the next business day" — so the engine is right and the
+    // fixture was wrong.
+    //
+    // Worth keeping as the weekend case rather than picking a mid-week year
+    // end: it is the assertion that would go quiet if the weekend rule were
+    // ever dropped from the rule JSON, and a deadline shown on a day the IRS
+    // is closed is exactly the kind of small wrongness that costs trust.
     const federal = result.obligations.find((o) => o.jurisdiction === "US");
     expect(federal?.ruleId).toBe("us-federal-form-990");
-    expect(federal?.dueOn).toBe("2026-11-15");
+    expect(federal?.dueOn).toBe("2026-11-16");
   });
 });
 
@@ -248,5 +261,77 @@ describe("an endowed Washington charity that does not solicit", () => {
     expect(narrow.obligations.map((o) => o.ruleId)).not.toContain(
       "us-wa-charitable-solicitation-registration",
     );
+  });
+});
+
+/**
+ * Amounts and citations checked against the primary source on 2026-08-05, with
+ * the exact quote in each rule's `notes`.
+ *
+ * These are here because a fee is a plain number in a JSON file, and a plain
+ * number is the easiest thing in this repo to "tidy" back to a wrong value
+ * months later — the two corrected below had both been wrong since the seed
+ * commit, and one of them (Delaware) had a note *asking* for exactly this
+ * check. A number nobody asserts is a number that drifts back.
+ *
+ * Deliberately NOT a claim that the rules are verified: they are all still
+ * `draft`, because promotion means a person read the statute. This pins what
+ * the reading found so far.
+ */
+describe("what the primary sources actually say", () => {
+  it("charges $400 for the Delaware LLC annual tax, not $300", () => {
+    // 6 Del. C. 18-1107(b): "...shall pay an annual tax, for the use of the
+    // State of Delaware, in the amount of $400." The seed value of $300 was
+    // right for earlier years and had gone stale — the exact rot the
+    // `lastVerified` discipline exists to catch.
+    expect(byId("us-de-llc-annual-tax").fee?.amountMinorUnits).toBe(40_000);
+  });
+
+  it("charges $40 to RENEW a Washington charity registration, not the $60 to apply", () => {
+    // RCW 19.09.062 sets both, and the seed took the wrong one. This rule is
+    // the renewal. A wrong fee is a smaller failure than a wrong date, but it
+    // is the kind a customer notices at the moment they are paying.
+    expect(
+      byId("us-wa-charitable-solicitation-registration").fee?.amountMinorUnits,
+    ).toBe(4_000);
+  });
+
+  it("cites a Washington nonprofit section that exists", () => {
+    // The seed cited RCW 24.03A.1010, which returns "The Citation you
+    // requested cannot be found". An unreviewable citation is worse than a
+    // missing one: it looks checked.
+    const rule = byId("us-wa-sos-nonprofit-annual-report");
+    expect(rule.citation).toContain("24.03A.070");
+    expect(rule.citation).not.toContain("24.03A.1010");
+  });
+
+  it("does not cite the commercial fund-raiser section for a charity's own renewal", () => {
+    // RCW 19.09.097 governs contracts with commercial fund-raisers and says
+    // nothing about renewal. Citing it made the rule look sourced while
+    // pointing a reviewer at the wrong page.
+    expect(
+      byId("us-wa-charitable-solicitation-registration").citation,
+    ).not.toContain("19.09.097");
+  });
+
+  it("rolls the 990 family forward off a weekend, because the IRS says so", () => {
+    // Opted in per rule, never globally — rolling by default would invent a
+    // legal position no rule claimed. Here the agency states it outright.
+    for (const id of [
+      "us-federal-form-990",
+      "us-federal-form-990-ez",
+      "us-federal-form-990-n",
+    ]) {
+      expect(byId(id).weekendRule).toBe("roll-forward");
+    }
+  });
+
+  it("does not roll a state report forward, because no state source says to", () => {
+    // The other half of the same discipline, and the reason this test exists:
+    // an "add it everywhere while I'm here" tidy-up would be a silent legal
+    // claim about five agencies that none of them made.
+    for (const rule of RULES.filter((r) => r.jurisdiction !== "US")) {
+      expect(rule.weekendRule).toBeUndefined();
+    }
   });
 });

@@ -4,13 +4,23 @@
   "jurisdiction": "US-OR",
   "title": "Nonprofit Corporation Annual Report",
   "agency": "Oregon Secretary of State, Corporation Division",
-  "entityTypes": ["501c3", "nonprofit-corp"],
-  "cadence": { "type": "annual", "anchor": "formation-month", "dayOfMonth": "last" },
-  "fee": { "amountMinorUnits": 5000, "currency": "USD" },
+  "entityTypes": [
+    "501c3",
+    "nonprofit-corp"
+  ],
+  "cadence": {
+    "type": "annual",
+    "anchor": "formation-month",
+    "dayOfMonth": "last"
+  },
+  "fee": {
+    "amountMinorUnits": 5000,
+    "currency": "USD"
+  },
   "citation": "ORS 65.787",
   "citationUrl": "https://www.oregonlegislature.gov/bills_laws/ors/ors065.html",
   "lastVerified": "2026-08-01",
   "status": "draft",
   "effectiveFrom": "2020-01-01",
-  "notes": "Oregon anniversary-based annual report. Verify whether the deadline is the anniversary DATE rather than the end of the anniversary month — this rule currently assumes end of month, which would be wrong by up to 30 days if Oregon uses the exact date."
+  "notes": "DEADLINE CONFIRMED WRONG 2026-08-05 — the exact worry the previous note raised. ORS 65.787(1) says the report is due \"by the corporation's anniversary\", VERBATIM: the anniversary DATE, not the end of the anniversary month. Oregon's SOS says the same: \"Your renewal is due on the anniversary date of the original filing.\" So this rule is currently up to 30 days LATE — the unsafe direction. NOT FIXED HERE because the schema cannot express it: anchor \"formation-month\" takes a literal dayOfMonth, and the anniversary day varies per entity. It needs a new cadence anchor that reads the day from the entity's own formation date. Tracked separately; the rule stays draft and excluded meanwhile. Oregon also defines the anniversary as 28 February when it would otherwise fall on 29 February. FEE VERIFIED: $50 — read directly from the SOS Business Registry Fee Schedule PDF, \"DOMESTIC CORPORATIONS > Nonprofit > Renewal (Annually) $50.00\"."
 }

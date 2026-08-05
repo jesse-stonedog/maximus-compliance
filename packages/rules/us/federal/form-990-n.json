@@ -4,16 +4,28 @@
   "jurisdiction": "US",
   "title": "Form 990-N (e-Postcard)",
   "agency": "Internal Revenue Service",
-  "entityTypes": ["501c3"],
-  "cadence": { "type": "annual", "anchor": "fiscal-year-end", "offsetMonths": 5, "dayOfMonth": 15 },
+  "entityTypes": [
+    "501c3"
+  ],
+  "cadence": {
+    "type": "annual",
+    "anchor": "fiscal-year-end",
+    "offsetMonths": 5,
+    "dayOfMonth": 15
+  },
   "form": "990-N",
   "conditions": [
-    { "fact": "grossRevenueMinorUnits", "op": "lte", "value": 5000000 }
+    {
+      "fact": "grossRevenueMinorUnits",
+      "op": "lte",
+      "value": 5000000
+    }
   ],
   "citation": "26 U.S.C. 6033(i); IRS Annual Electronic Filing Requirement for Small Exempt Organizations",
   "citationUrl": "https://www.irs.gov/charities-non-profits/annual-electronic-filing-requirement-for-small-exempt-organizations-form-990-n-e-postcard",
   "lastVerified": "2026-08-01",
   "status": "draft",
   "effectiveFrom": "2020-01-01",
-  "notes": "Failing to file for three consecutive years revokes exempt status automatically. Worth surfacing prominently in the UI — it is the single most consequential missed deadline for a small nonprofit."
+  "notes": "DUE DATE VERIFIED 2026-08-05 against irs.gov: the annual return is due the 15th day of the 5th month after the tax year ends — 15 May for a calendar-year filer, which this cadence produces. WEEKEND RULE ADDED: the IRS states \"If a due date falls on a Saturday, Sunday, or legal holiday, the due date is delayed until the next business day.\" This is opted into explicitly because the agency says it, not assumed. It matters concretely: 15 May 2027 is a Saturday, so without it a calendar-year filer is shown a date two days before the real deadline. Federal legal holidays are not modelled, so a deadline landing on one is still off. THRESHOLD VERIFIED, verbatim from the IRS: \"Gross receipts normally <= $50,000\". Note \"normally\" — the IRS applies an averaging test across years that this pack evaluates as a single-year figure, so an organisation just over the line in one year may still qualify. Failing to file for three consecutive years revokes exempt status automatically — the single most consequential missed deadline for a small nonprofit, and worth surfacing prominently in any UI.",
+  "weekendRule": "roll-forward"
 }
