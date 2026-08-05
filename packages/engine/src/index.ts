@@ -69,3 +69,8 @@ export {
   rollForwardOffWeekend,
 } from "./calendar.js";
 export type { DateParts } from "./calendar.js";
+export {
+  STALE_AFTER_MONTHS,
+  isStale,
+  monthsSinceVerified,
+} from "./staleness.js";

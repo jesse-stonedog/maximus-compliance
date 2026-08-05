@@ -12,6 +12,7 @@ import {
   jurisdictionLabel,
   relativeDue,
   urgency,
+  verificationNote,
 } from "@/lib/format";
 
 const URGENCY_COLOR = {
@@ -39,6 +40,44 @@ function DueCell({ asOf, obligation }: { asOf: string; obligation: Obligation })
         ) : null}{" "}
         {relativeDue(asOf, obligation.dueOn)}
       </div>
+    </div>
+  );
+}
+
+/**
+ * How long since a human checked this rule against its primary source.
+ *
+ * The CI staleness report has existed for a while, but it is visible to a
+ * maintainer and invisible to the person actually relying on the deadline —
+ * which is the wrong way round. The maintainer already knows the data is
+ * crowdsourced; the user is the one making a filing decision on it.
+ *
+ * Rendered for every obligation rather than only the stale ones. "Checked 2
+ * months ago" is a claim worth making, and showing the note only on failure
+ * would leave a reader unable to tell a fresh rule from one whose indicator
+ * simply had not been built yet.
+ */
+function VerificationCell({
+  asOf,
+  obligation,
+}: {
+  asOf: string;
+  obligation: Obligation;
+}) {
+  const { text, stale } = verificationNote(asOf, obligation.lastVerified);
+  return (
+    <div
+      className={css({ fontSize: "xs", marginTop: "1" })}
+      style={
+        stale ? { color: "var(--optima-text-warning-text)" } : undefined
+      }
+    >
+      {stale ? (
+        <>
+          <StyledUnverified title="Not recently checked" />{" "}
+        </>
+      ) : null}
+      {text}
     </div>
   );
 }
@@ -131,6 +170,14 @@ export function ObligationTable({
                         obligation.citation
                       )}
                     </div>
+                    {/*
+                      Sits directly under the citation because the two answer
+                      one question together: here is the source, and here is
+                      when a human last read it. A citation alone implies a
+                      currency it cannot promise — regulatory data stays
+                      schema-valid long after the fee it names has changed.
+                    */}
+                    <VerificationCell asOf={asOf} obligation={obligation} />
                   </td>
                   <td className={css({ padding: "3", verticalAlign: "top" })}>
                     {jurisdictionLabel(obligation.jurisdiction)}
