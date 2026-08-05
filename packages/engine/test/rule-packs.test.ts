@@ -18,7 +18,9 @@ import type { Rule } from "../src/rule.js";
 import {
   DE_CORP,
   ENDOWED_NON_SOLICITING_CHARITY,
+  OR_CORP_LEAP_DAY,
   OR_LLC,
+  OR_NONPROFIT_MID_MONTH,
   WA_LARGE_CHARITY,
   WA_SMALL_CHARITY,
 } from "./fixtures/entities.js";
@@ -332,6 +334,157 @@ describe("what the primary sources actually say", () => {
     // claim about five agencies that none of them made.
     for (const rule of RULES.filter((r) => r.jurisdiction !== "US")) {
       expect(rule.weekendRule).toBeUndefined();
+    }
+  });
+});
+
+/**
+ * Oregon is due on the ANNIVERSARY DATE, not the end of the anniversary month.
+ *
+ * ORS 65.787(1), 60.787(1) and 63.787(1) all use the same phrase — "by the
+ * corporation's anniversary" — and the Oregon SOS says the same in its own
+ * words: "Your renewal is due on the anniversary date of the original filing."
+ *
+ * The rules used to say end-of-month, which is up to 30 days LATE. Late is the
+ * direction that costs someone a penalty, so this is the failure mode worth
+ * pinning hardest.
+ *
+ * These cases are all mid-month or leap-day on purpose. `OR_LLC` is formed on
+ * the 31st, where month-end and anniversary coincide — which is exactly why the
+ * bug survived a full fixture suite (NEH-400).
+ */
+describe("an Oregon nonprofit formed mid-month", () => {
+  const result = evaluate(OR_NONPROFIT_MID_MONTH, RULES, {
+    asOf: "2026-01-01",
+    horizonMonths: 12,
+    includeDraft: true,
+  });
+
+  it("owes the annual report on its anniversary, not at month end", () => {
+    // Formed 2019-06-14. The old rule said 30 June — sixteen days late.
+    const report = result.obligations.find(
+      (o) => o.ruleId === "us-or-sos-nonprofit-annual-report",
+    );
+    expect(report?.dueOn).toBe("2026-06-14");
+    expect(report?.feeMinorUnits).toBe(5000);
+  });
+
+  it("is not quietly rounded to the end of the month", () => {
+    // Stated separately from the assertion above so a regression names itself:
+    // if this is the one that fails, the cadence anchor moved back.
+    const report = result.obligations.find(
+      (o) => o.ruleId === "us-or-sos-nonprofit-annual-report",
+    );
+    expect(report?.dueOn).not.toBe("2026-06-30");
+  });
+});
+
+/**
+ * These two pass under BOTH cadences and always did.
+ *
+ * February's month end is the 28th or 29th, which is exactly where a leap-day
+ * anniversary clamps to — so `formation-month` and `formation-anniversary`
+ * agree here. Kept anyway, because what they actually guard is the clamp
+ * matching ORS 65.001 in both directions, which is a separate claim from which
+ * anchor is used.
+ *
+ * Said out loud so nobody later reads them as the NEH-400 regression test and
+ * deletes the mid-month case as redundant. It is the only one that can fail.
+ */
+describe("an Oregon corporation formed on a leap day", () => {
+  it("is due 28 February in a common year, per ORS", () => {
+    // ORS defines the anniversary as 28 February where it would otherwise fall
+    // on 29 February. 2026 is not a leap year.
+    const result = evaluate(OR_CORP_LEAP_DAY, RULES, {
+      asOf: "2026-01-01",
+      horizonMonths: 12,
+      includeDraft: true,
+    });
+    const report = result.obligations.find(
+      (o) => o.ruleId === "us-or-sos-corporation-annual-report",
+    );
+    expect(report?.dueOn).toBe("2026-02-28");
+  });
+
+  it("is due 29 February in a leap year", () => {
+    // The other half. Clamping to the 28th every year would be just as wrong,
+    // and a suite that only tested common years would not notice.
+    const result = evaluate(OR_CORP_LEAP_DAY, RULES, {
+      asOf: "2028-01-01",
+      horizonMonths: 12,
+      includeDraft: true,
+    });
+    const report = result.obligations.find(
+      (o) => o.ruleId === "us-or-sos-corporation-annual-report",
+    );
+    expect(report?.dueOn).toBe("2028-02-29");
+  });
+});
+
+describe("the Oregon LLC formed on a month end", () => {
+  it("still lands on the 31st, where both readings agree", () => {
+    // Kept deliberately. It is the case that CANNOT distinguish the two
+    // cadences, and its job now is to prove the anniversary anchor did not
+    // break the coincidence — not to prove the anchor is right, which is what
+    // the mid-month case above is for.
+    const result = evaluate(OR_LLC, RULES, {
+      asOf: "2026-01-01",
+      horizonMonths: 12,
+      includeDraft: true,
+    });
+    expect(result.obligations[0]?.dueOn).toBe("2026-01-31");
+  });
+});
+
+/**
+ * The two formation anchors are one keystroke apart and mean different things.
+ *
+ * `formation-month` takes the day from the RULE; `formation-anniversary` takes
+ * it from the ENTITY. They produce the same date only when an entity was formed
+ * on a month end — common enough that the Oregon rules shipped wrong and the
+ * whole fixture suite agreed with them.
+ *
+ * So the choice is asserted per jurisdiction rather than left to a reviewer
+ * noticing a word. Anything that changes one of these should have read a
+ * statute first, and should be changing this test in the same commit.
+ */
+describe("each jurisdiction uses the anchor its statute actually specifies", () => {
+  it("Oregon reports are anchored to the anniversary DATE", () => {
+    // ORS 65.787(1) / 60.787(1) / 63.787(1): "by the corporation's anniversary".
+    for (const rule of RULES.filter((r) => r.jurisdiction === "US-OR")) {
+      expect(rule.cadence).toEqual({
+        type: "annual",
+        anchor: "formation-anniversary",
+      });
+    }
+  });
+
+  it("Washington reports are anchored to the formation MONTH", () => {
+    // A different shape, not an oversight: no Washington statute sets the date
+    // at all (RCW 23.95.255(4) delegates it to the secretary of state), and the
+    // agency's published practice is the end of the formation month — the same
+    // day for every entity. NEH-402 tracks getting that a citation of its own.
+    const waAnnualReports = RULES.filter(
+      (r) => r.jurisdiction === "US-WA" && r.id.includes("annual-report"),
+    );
+    expect(waAnnualReports.length).toBeGreaterThan(0);
+    for (const rule of waAnnualReports) {
+      expect(rule.cadence).toEqual({
+        type: "annual",
+        anchor: "formation-month",
+        dayOfMonth: "last",
+      });
+    }
+  });
+
+  it("no rule uses formation-anniversary with a dayOfMonth", () => {
+    // The schema forbids it (`additionalProperties: false`), and this says why
+    // in words a rule author reads: the day is a fact about the entity, so a
+    // rule naming one would be asserting something it cannot know.
+    for (const rule of RULES) {
+      if (rule.cadence.anchor === "formation-anniversary") {
+        expect("dayOfMonth" in rule.cadence).toBe(false);
+      }
     }
   });
 });

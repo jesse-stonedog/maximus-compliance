@@ -7,7 +7,11 @@
     "condition": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["fact", "op", "value"],
+      "required": [
+        "fact",
+        "op",
+        "value"
+      ],
       "properties": {
         "fact": {
           "enum": [
@@ -18,8 +22,21 @@
             "solicitsCharitableContributions"
           ]
         },
-        "op": { "enum": ["lt", "lte", "gt", "gte", "eq"] },
-        "value": { "type": ["integer", "boolean"] }
+        "op": {
+          "enum": [
+            "lt",
+            "lte",
+            "gt",
+            "gte",
+            "eq"
+          ]
+        },
+        "value": {
+          "type": [
+            "integer",
+            "boolean"
+          ]
+        }
       }
     }
   },
@@ -67,7 +84,14 @@
       "minItems": 1,
       "uniqueItems": true,
       "items": {
-        "enum": ["501c3", "nonprofit-corp", "llc", "s-corp", "c-corp", "b-corp"]
+        "enum": [
+          "501c3",
+          "nonprofit-corp",
+          "llc",
+          "s-corp",
+          "c-corp",
+          "b-corp"
+        ]
       },
       "description": "Every legal form this rule applies to. A rule applies if the entity holds ANY of them."
     },
@@ -77,14 +101,31 @@
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["type", "anchor", "dayOfMonth"],
+          "required": [
+            "type",
+            "anchor",
+            "dayOfMonth"
+          ],
           "properties": {
-            "type": { "enum": ["annual", "biennial"] },
-            "anchor": { "const": "formation-month" },
+            "type": {
+              "enum": [
+                "annual",
+                "biennial"
+              ]
+            },
+            "anchor": {
+              "const": "formation-month"
+            },
             "dayOfMonth": {
               "oneOf": [
-                { "type": "integer", "minimum": 1, "maximum": 31 },
-                { "const": "last" }
+                {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 31
+                },
+                {
+                  "const": "last"
+                }
               ],
               "description": "A day past the end of the month clamps to the last day; it does not roll into the next one."
             }
@@ -93,26 +134,85 @@
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["type", "anchor", "month", "day"],
+          "required": [
+            "type",
+            "anchor"
+          ],
+          "description": "Due on the anniversary of formation — month AND day come from the ENTITY, so every entity has a different due date. Oregon (ORS 65.787(1), 60.787(1), 63.787(1): \"by the corporation's anniversary\"). There is deliberately no dayOfMonth: that is the whole distinction from formation-month, where the RULE names the day. The two agree only when an entity was formed on a month end, which is why picking the wrong one is a silent up-to-30-day error.",
           "properties": {
-            "type": { "enum": ["annual", "biennial"] },
-            "anchor": { "const": "calendar" },
-            "month": { "type": "integer", "minimum": 1, "maximum": 12 },
-            "day": { "type": "integer", "minimum": 1, "maximum": 31 }
+            "type": {
+              "enum": [
+                "annual",
+                "biennial"
+              ]
+            },
+            "anchor": {
+              "const": "formation-anniversary"
+            }
           }
         },
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["type", "anchor", "offsetMonths", "dayOfMonth"],
+          "required": [
+            "type",
+            "anchor",
+            "month",
+            "day"
+          ],
           "properties": {
-            "type": { "const": "annual" },
-            "anchor": { "const": "fiscal-year-end" },
-            "offsetMonths": { "type": "integer", "minimum": 0, "maximum": 24 },
+            "type": {
+              "enum": [
+                "annual",
+                "biennial"
+              ]
+            },
+            "anchor": {
+              "const": "calendar"
+            },
+            "month": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12
+            },
+            "day": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 31
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "anchor",
+            "offsetMonths",
+            "dayOfMonth"
+          ],
+          "properties": {
+            "type": {
+              "const": "annual"
+            },
+            "anchor": {
+              "const": "fiscal-year-end"
+            },
+            "offsetMonths": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 24
+            },
             "dayOfMonth": {
               "oneOf": [
-                { "type": "integer", "minimum": 1, "maximum": 31 },
-                { "const": "last" }
+                {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 31
+                },
+                {
+                  "const": "last"
+                }
               ]
             }
           }
@@ -120,11 +220,22 @@
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["type", "anchor", "offsetDays"],
+          "required": [
+            "type",
+            "anchor",
+            "offsetDays"
+          ],
           "properties": {
-            "type": { "const": "one-time" },
-            "anchor": { "const": "formation" },
-            "offsetDays": { "type": "integer", "minimum": 0 }
+            "type": {
+              "const": "one-time"
+            },
+            "anchor": {
+              "const": "formation"
+            },
+            "offsetDays": {
+              "type": "integer",
+              "minimum": 0
+            }
           }
         }
       ]
@@ -132,14 +243,19 @@
     "fee": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["amountMinorUnits", "currency"],
+      "required": [
+        "amountMinorUnits",
+        "currency"
+      ],
       "properties": {
         "amountMinorUnits": {
           "type": "integer",
           "minimum": 0,
           "description": "INTEGER MINOR UNITS. 6000 is $60.00. Never a float — a rounding error in a fee is a support ticket and a credibility hit."
         },
-        "currency": { "const": "USD" }
+        "currency": {
+          "const": "USD"
+        }
       }
     },
     "conditions": {
@@ -148,17 +264,23 @@
       "description": "The rule applies only when ALL entries hold. An entry is either a single test, or an {\"anyOf\": [...]} group that holds when ANY of its members does — for a threshold the statute writes as 'X or Y', such as Form 990's receipts-or-assets test. A condition may only test a fact the entity fact model defines; rules:validate enforces that.",
       "items": {
         "oneOf": [
-          { "$ref": "#/definitions/condition" },
+          {
+            "$ref": "#/definitions/condition"
+          },
           {
             "type": "object",
             "additionalProperties": false,
-            "required": ["anyOf"],
+            "required": [
+              "anyOf"
+            ],
             "properties": {
               "anyOf": {
                 "type": "array",
                 "minItems": 2,
                 "description": "Holds when any member holds. One level deep only — a group may not contain another group. Nesting would make rules markedly harder for a non-developer to author and for a reviewer to check against a statute, which is the point of the format.",
-                "items": { "$ref": "#/definitions/condition" }
+                "items": {
+                  "$ref": "#/definitions/condition"
+                }
               }
             }
           }
@@ -185,7 +307,10 @@
       "description": "The date a human last read the primary source and confirmed this rule. Bumping it without re-reading is worse than leaving it stale — it converts an honest 'unknown' into a false 'checked'."
     },
     "status": {
-      "enum": ["draft", "active"],
+      "enum": [
+        "draft",
+        "active"
+      ],
       "description": "'draft' means written but NOT yet checked against the primary source by a human. It is the honest state for a rule you are unsure about, not a lesser form of 'active' — contribute a draft rather than asserting something you have not verified. Promotion to 'active' means someone read the statute."
     },
     "effectiveFrom": {

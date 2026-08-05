@@ -139,12 +139,38 @@ a directory per entity type would have to pick one or duplicate the rule.
   "entityTypes": ["501c3", "nonprofit-corp"],
   "cadence": { "type": "annual", "anchor": "formation-month", "dayOfMonth": "last" },
   "fee": { "amountMinorUnits": 6000, "currency": "USD" },
-  "citation": "RCW 24.03A.1010",
+  "citation": "RCW 24.03A.070; RCW 23.95.255(2)",
   "lastVerified": "2026-08-01",
   "status": "draft",
   "effectiveFrom": "2022-01-01"
 }
 ```
+
+### The two formation anchors are different, and confusing them is silent
+
+`formation-month` takes the day from the **rule** — Washington's "last day of
+your formation month" is the same day for every entity in the state.
+`formation-anniversary` takes the month *and day* from the **entity** — Oregon's
+"by the corporation's anniversary" is a different date for everyone.
+
+They produce identical dates when an entity was formed on a month end, and that
+is exactly how the wrong one shipped: all three Oregon rules used
+`formation-month` and were up to **30 days late**, while the entire fixture
+suite agreed with them because the only Oregon fixture was formed on the 31st
+(NEH-400).
+
+- **Pick the anchor from the statute's wording, not from what looks similar.**
+  "By the anniversary" and "in the anniversary month" are different rules.
+- **A leap-day fixture does not catch this** — February's month end is where a
+  leap-day anniversary clamps to. Only a **mid-month** formation distinguishes
+  them.
+- More generally: **a fixture that coincides under both the right and the wrong
+  implementation tests nothing, and looks exactly like one that does.** When
+  adding a boundary case, name the wrong implementation it would catch. If there
+  isn't one, it is documentation.
+- `formation-anniversary` deliberately has **no `dayOfMonth`**. The day is a
+  fact about the entity, so a rule naming one would assert something it cannot
+  know.
 
 `src/generated.ts` inlines every rule into a TypeScript module, because the
 engine is pure and must run in a browser — a consumer that had to read a file

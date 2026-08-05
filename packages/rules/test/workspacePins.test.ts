@@ -43,21 +43,44 @@ const repoRoot = resolve(__dirname, "..", "..", "..");
 const readJson = (...segments: string[]): Record<string, never> =>
   JSON.parse(readFileSync(join(repoRoot, ...segments), "utf8"));
 
-const packVersion: string = readJson("packages", "rules", "package.json")["version"];
+/**
+ * Both published packages, not just the rule pack.
+ *
+ * `engine` was added after NEH-400 moved it to 0.2.0 for a new cadence anchor
+ * and hit the identical trap the rule pack had — the guard covered one of the
+ * two things that can drift, which is the shape of guard that reassures without
+ * protecting.
+ */
+const PACKAGES = [
+  { name: "@optima-compliance/rules", dir: "rules", pattern: /^\d{4}\.\d{1,2}\.\d+$/ },
+  { name: "@optima-compliance/engine", dir: "engine", pattern: /^\d+\.\d+\.\d+$/ },
+] as const;
 
-/** Every workspace that depends on the rule pack. */
+/** Every workspace that depends on them. */
 const CONSUMERS = ["apps/web", "apps/cli"] as const;
 
-describe("consumers pin the rule pack at the workspace version", () => {
-  it("reads a version to compare against", () => {
-    // Guards the guard: a bad path here would make every assertion below
-    // compare `undefined` to `undefined` and pass.
-    expect(packVersion).toMatch(/^\d{4}\.\d{1,2}\.\d+$/);
-  });
+const CASES = PACKAGES.flatMap((pkg) =>
+  CONSUMERS.map((dir) => ({ ...pkg, consumer: dir })),
+);
 
-  it.each(CONSUMERS)("%s pins the version the workspace actually builds", (dir) => {
-    const pinned = readJson(...dir.split("/"), "package.json")["dependencies"][
-      "@optima-compliance/rules"
+describe("consumers pin the rule pack at the workspace version", () => {
+  it.each(PACKAGES.map((p) => [p.dir, p] as const))(
+    "reads a version for %s to compare against",
+    (_label, pkg) => {
+      // Guards the guard: a bad path here would make every assertion below
+      // compare `undefined` to `undefined` and pass.
+      expect(readJson("packages", pkg.dir, "package.json")["version"]).toMatch(
+        pkg.pattern,
+      );
+    },
+  );
+
+  it.each(CASES.map((c) => [`${c.consumer} -> ${c.name}`, c] as const))(
+    "%s pins the version the workspace actually builds",
+    (_label, c) => {
+    const packVersion: string = readJson("packages", c.dir, "package.json")["version"];
+    const pinned = readJson(...c.consumer.split("/"), "package.json")["dependencies"][
+      c.name
     ];
 
     // Exact, not a range — a caret would let two builds of identical code
@@ -66,18 +89,37 @@ describe("consumers pin the rule pack at the workspace version", () => {
     expect(pinned).not.toMatch(/^[\^~><=]/);
 
     // …and exactly the workspace's version, so npm resolves it to
-    // `packages/rules` rather than fetching the published tarball.
+    // `packages/<dir>` rather than fetching the published tarball.
     expect(pinned).toBe(packVersion);
+  },
+  );
+
+  it("keeps the rule pack's engine pin on the workspace engine", () => {
+    // The pack pins the engine EXACTLY, and a pack can require an engine
+    // feature — NEH-400's `formation-anniversary` anchor is the first. An old
+    // engine hits an unhandled switch case and the Oregon rules produce
+    // NOTHING, which is a false negative: a clean calendar hiding three
+    // filings. So the two versions move together or not at all.
+    const engineVersion = readJson("packages", "engine", "package.json")["version"];
+    const pinned = readJson("packages", "rules", "package.json")["dependencies"][
+      "@optima-compliance/engine"
+    ];
+    expect(pinned).toBe(engineVersion);
   });
 
-  it.each(CONSUMERS)("%s has no shadow copy installed under it", (dir) => {
+  it.each(CASES.map((c) => [`${c.consumer} -> ${c.name}`, c] as const))(
+    "%s has no shadow copy installed under it",
+    (_label, c) => {
+    const dir = c.consumer;
+    const pkgName = c.name.split("/")[1]!;
     // The direct observation, not an inference from the manifests. npm installs
     // a nested real directory only when the hoisted workspace link cannot
     // satisfy the pin — so its presence IS the bug, whatever the manifests say.
     //
     // Absent `node_modules` (a fresh clone before install) is not a failure:
     // this asserts nothing is shadowed, not that anything is installed.
-    const shadow = join(repoRoot, dir, "node_modules", "@optima-compliance", "rules");
+    const shadow = join(repoRoot, dir, "node_modules", "@optima-compliance", pkgName);
     expect(existsSync(shadow)).toBe(false);
-  });
+  },
+  );
 });
