@@ -4,7 +4,13 @@
  */
 import Link from "next/link";
 import { css } from "styled-system/css";
-import { StyledCalendar, StyledEntity, StyledForm } from "@optima/ui";
+import {
+  StyledCalendar,
+  StyledCalendarAdd,
+  StyledDownload,
+  StyledEntity,
+  StyledForm,
+} from "@optima/ui";
 import { getStore, includeDraft, today } from "@/lib/server";
 import { mergedCalendar } from "@/lib/calendar";
 import { WindowList } from "@/components/window-list";
@@ -13,11 +19,83 @@ import { DraftBanner } from "@/components/draft-banner";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Getting the deadlines out of the tool.
+ *
+ * `/api/export` has worked since NEH-211 and **nothing linked to it** — so a
+ * user who did not read the source could not find it, and the issue that built
+ * it ("Deadlines cannot leave the tool, so nobody will actually see them") was
+ * closed with its user-facing half missing. Found by the E2E suite, which went
+ * looking for a control to click and found none (NEH-378).
+ *
+ * ## Why this is a section and not another entry in the header nav
+ *
+ * The nav is already four links of roughly equal weight, and this one needs a
+ * sentence: "export" alone does not tell a person that the point is to get
+ * these dates into the calendar they already look at. That sentence is the
+ * feature — a compliance calendar nobody is reminded by is a spreadsheet.
+ *
+ * ## Why the wording leads with the outcome
+ *
+ * "Add to your calendar", not ".ics". The people this product is for know they
+ * want the dates in Outlook or Google Calendar; almost none of them know that
+ * is called iCalendar, and a link labelled by its file extension is one they
+ * will not press. The extension is still shown, in parentheses, for the person
+ * who does care.
+ *
+ * Plain anchors, so this works with no JavaScript and is keyboard-reachable
+ * without anything further — the self-hosted tier cannot assume either.
+ */
+function ExportSection({ hasAnything }: { hasAnything: boolean }) {
+  // Nothing to export is not worth offering. An empty .ics file downloads
+  // successfully and teaches the user the feature is broken.
+  if (!hasAnything) return null;
+
+  return (
+    <section className={css({ marginTop: "8" })}>
+      <h2 className={css({ fontSize: "lg", marginBottom: "1" })}>
+        Take these dates with you
+      </h2>
+      <p className={css({ fontSize: "sm", color: "boxTextSecondary", marginTop: "0" })}>
+        A calendar you never look at is a calendar you will miss. Subscribe or
+        import these deadlines wherever you already keep your dates.
+      </p>
+      <p className={css({ marginTop: "2" })}>
+        {/*
+          `download` so the browser saves rather than navigates. The route
+          already sets `content-disposition: attachment`, but a server header
+          and a client hint disagreeing is exactly the kind of thing that
+          behaves differently in one browser.
+        */}
+        <a href="/api/export?format=ics" download>
+          <StyledCalendarAdd /> Add to your calendar (.ics)
+        </a>{" "}
+        ·{" "}
+        <a href="/api/export?format=csv" download>
+          <StyledDownload /> Download as a spreadsheet (.csv)
+        </a>
+      </p>
+    </section>
+  );
+}
+
 export default function HomePage() {
   const asOf = today();
   const { bucketed, indeterminate } = mergedCalendar(asOf);
   const store = getStore();
   const entityCount = store.list().length;
+  // Whether the export would contain anything. Derived from the same bucketed
+  // calendar the list renders, so the link cannot appear when the page is empty
+  // or disappear when it is not.
+  //
+  // All three branches, explicitly. `windows` is a Record of arrays rather than
+  // an array, so a flat `Object.values(bucketed).some(...)` silently skips it —
+  // which would hide the link in the most common case of all, an entity whose
+  // deadlines are simply upcoming.
+  const hasDatedItems =
+    bucketed.overdue.length > 0 ||
+    bucketed.later.length > 0 ||
+    Object.values(bucketed.windows).some((items) => items.length > 0);
   const documentCount = store.documents.listDocuments().length;
 
   return (
@@ -46,6 +124,8 @@ export default function HomePage() {
       {includeDraft() && <DraftBanner />}
 
       <WindowList bucketed={bucketed} asOf={asOf} />
+
+      <ExportSection hasAnything={hasDatedItems} />
 
       {indeterminate.length > 0 && (
         <section
