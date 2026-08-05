@@ -24,7 +24,10 @@
     "rules:staleness": "node packages/rules/scripts/staleness.mjs",
     "//gate": "The merge bar. rules:validate and the barrel check run BEFORE typecheck and tests on purpose: a schema-invalid or unregenerated rule produces confusing downstream failures, and these two name the actual problem.",
     "gate": "npm run rules:validate && npm run rules:barrel:check && npm run type-check && npm run lint && npm run test",
-    "test:e2e": "playwright test --config apps/web/playwright.config.ts"
+    "test:e2e": "playwright test --config apps/web/playwright.config.ts",
+    "//publish": "Publish the two PUBLIC packages. Run from a terminal, interactively \u2014 npm prompts for the 2FA one-time password and the login flow needs a browser. Engine first: rules pins it exactly, and the script refuses to publish rules until engine is resolvable on the registry. Each run verifies the result by installing the package from npm into a temp directory, because a publish that printed no error has already turned out not to have published anything.",
+    "publish-engine": "bash scripts/publish-package.sh engine",
+    "publish-rules": "bash scripts/publish-package.sh rules"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
