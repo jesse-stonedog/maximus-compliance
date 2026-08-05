@@ -35,3 +35,34 @@ a { color: var(--optima-text-pop-text); }
   outline: 3px solid var(--optima-box-accent-border);
   outline-offset: 2px;
 }
+
+/* The skip link — WCAG 2.2 §2.4.1, and it must be INVISIBLE UNTIL FOCUSED.
+   Positioned off-screen rather than `display: none` or `visibility: hidden`:
+   both of those remove it from the accessible tree entirely, so the link stops
+   existing for exactly the users it is for. Off-screen keeps it focusable and
+   announced, and the `:focus` rule brings it back into view for a sighted
+   keyboard user who needs to see where they are.
+
+   Same treatment and the same tokens as the hosted app, so the two products
+   read alike. The accent pair is a real contrast pair after NEH-275 —
+   #0b4f78 text on #dbeafe in light mode. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  padding: 0.75rem 1rem;
+  background: var(--optima-box-accent-bg);
+  color: var(--optima-box-accent-text);
+  z-index: 100;
+}
+
+.skip-link:focus {
+  left: 0;
+}
+
+/* The jump target takes focus programmatically, so it would otherwise draw the
+   global focus ring around the whole page — alarming, and it points at nothing
+   the user chose. The ring stays for anything genuinely focusable. */
+#main:focus {
+  outline: none;
+}
