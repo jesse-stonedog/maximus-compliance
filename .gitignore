@@ -21,3 +21,8 @@ styled-system/
 *.sqlite
 *.sqlite3
 data/
+
+# Playwright output.
+apps/web/e2e/.artifacts/
+playwright-report/
+test-results/

@@ -230,6 +230,35 @@ Every bug fix starts with a failing fixture that reproduces it (per
 `npm run gate` — rule validation, barrel freshness, typecheck, lint, tests — is
 the merge bar.
 
+### The E2E tier — `npm run test:e2e` (NEH-373)
+
+Playwright, in `apps/web/e2e`, at **two viewports** (desktop and a 375px
+mobile), covering the Milestone 1 journey: add an entity → obligations render
+with real dates → citations present → the disclaimer is visible → draft rules
+are marked unverified → both exports work.
+
+Four things about it that are decisions rather than accidents:
+
+- **It runs the PRODUCTION build** (`next build && next start`), not `next dev`.
+  The hosted tier's harness cannot — its verification-email link is only printed
+  outside production — but nothing here needs email, so this suite exercises the
+  artefact rather than a dev server that resembles it.
+- **It gates the merge.** A separate `e2e` job in `gate.yml`, blocking. This repo
+  is public so branch protection works; the hosted repo's cannot block at all
+  (NEH-351), which is why only this one is wired in.
+- **Drafts are switched ON** (`OPTIMA_INCLUDE_DRAFT=true`). The whole seed set is
+  `draft` and `evaluate()` excludes drafts by default, so a stock launch shows an
+  empty calendar — correct, and untestable. Opting in also makes the draft banner
+  and the per-row "unverified" badge assertable.
+- **A throwaway SQLite file per run**, never the default `/data/optima.sqlite`,
+  which is where a self-hoster's volume is mounted.
+
+**`test.fixme` marks a real defect, not a flaky test.** Two are pinned that way
+today — no skip link (NEH-379) and a 21px button against WCAG 2.2's 24px floor
+(NEH-380). Both assertions are correct and start passing the moment the fix
+lands; deleting them instead is how a known defect becomes an unknown one. Both
+were found by this tier on its first run, which is the argument for having it.
+
 ### In a worktree, run a real `npm install`
 
 **Do not symlink `node_modules` to the canonical checkout here.** That works for

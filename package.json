@@ -23,7 +23,8 @@
     "rules:validate": "node packages/rules/scripts/validate.mjs",
     "rules:staleness": "node packages/rules/scripts/staleness.mjs",
     "//gate": "The merge bar. rules:validate and the barrel check run BEFORE typecheck and tests on purpose: a schema-invalid or unregenerated rule produces confusing downstream failures, and these two name the actual problem.",
-    "gate": "npm run rules:validate && npm run rules:barrel:check && npm run type-check && npm run lint && npm run test"
+    "gate": "npm run rules:validate && npm run rules:barrel:check && npm run type-check && npm run lint && npm run test",
+    "test:e2e": "playwright test --config apps/web/playwright.config.ts"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
