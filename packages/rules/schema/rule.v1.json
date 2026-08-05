@@ -301,6 +301,11 @@
       "format": "uri",
       "description": "Direct link to the statute or agency page, where one exists."
     },
+    "agencyUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "The agency's OWN page for this filing — where a filer goes to file it and to read the current fee, form and deadline. Distinct from citationUrl, which is the legal source a reviewer checks the rule against. Both are needed because the statute frequently does not carry the operative detail: RCW 23.95.255(4) hands the due date to the secretary of state, and 8 Del. C. 502 sets no fee at all. Required in practice for every shipped rule; optional in the schema only because a filing with no agency page on the public web is conceivable."
+    },
     "lastVerified": {
       "type": "string",
       "format": "date",

@@ -39,6 +39,17 @@ export interface Obligation {
   citation: string;
   citationUrl?: string;
   /**
+   * The agency's own page for this filing — where a filer goes to file it and
+   * read the current fee, form and deadline.
+   *
+   * Separate from `citationUrl` because the statute frequently does not carry
+   * the operative detail: RCW 23.95.255(4) hands the due date to the secretary
+   * of state, and 8 Del. C. 502 sets no fee. A consumer showing only the
+   * citation sends someone to a page that cannot answer the question they came
+   * with.
+   */
+  agencyUrl?: string;
+  /**
    * Carried through from the rule so a consumer can label it. The engine
    * reports; it does not decide how an unverified rule should be presented.
    */
@@ -136,6 +147,7 @@ export function evaluate(
         ...(rule.form ? { form: rule.form } : {}),
         citation: rule.citation,
         ...(rule.citationUrl ? { citationUrl: rule.citationUrl } : {}),
+        ...(rule.agencyUrl ? { agencyUrl: rule.agencyUrl } : {}),
         status: rule.status,
         lastVerified: rule.lastVerified,
       });

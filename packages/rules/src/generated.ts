@@ -31,6 +31,7 @@ export const ALL_RULES: readonly Rule[] = [
     },
     "citation": "8 Del. C. 502",
     "citationUrl": "https://delcode.delaware.gov/title8/c001/sc15/index.html",
+    "agencyUrl": "https://corp.delaware.gov/paytaxes/",
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
@@ -57,6 +58,7 @@ export const ALL_RULES: readonly Rule[] = [
     },
     "citation": "6 Del. C. 18-1107",
     "citationUrl": "https://delcode.delaware.gov/title6/c018/sc11/index.html",
+    "agencyUrl": "https://corp.delaware.gov/paytaxes/",
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
@@ -95,11 +97,12 @@ export const ALL_RULES: readonly Rule[] = [
       }
     ],
     "citation": "26 U.S.C. 6033; IRS Instructions for Form 990",
-    "citationUrl": "https://www.irs.gov/forms-pubs/about-form-990",
+    "citationUrl": "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section6033",
+    "agencyUrl": "https://www.irs.gov/forms-pubs/about-form-990",
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "DUE DATE VERIFIED 2026-08-05 against irs.gov: the annual return is due the 15th day of the 5th month after the tax year ends — 15 May for a calendar-year filer, which this cadence produces. WEEKEND RULE ADDED: the IRS states \"If a due date falls on a Saturday, Sunday, or legal holiday, the due date is delayed until the next business day.\" This is opted into explicitly because the agency says it, not assumed. It matters concretely: 15 May 2027 is a Saturday, so without it a calendar-year filer is shown a date two days before the real deadline. Federal legal holidays are not modelled, so a deadline landing on one is still off. THRESHOLDS VERIFIED, verbatim from the IRS filing-thresholds table: \"Gross receipts >= $200,000, or Total assets >= $500,000\". The anyOf and both gte operators match exactly.",
+    "notes": "DUE DATE VERIFIED 2026-08-05 against irs.gov: the annual return is due the 15th day of the 5th month after the tax year ends — 15 May for a calendar-year filer, which this cadence produces. WEEKEND RULE ADDED: the IRS states \"If a due date falls on a Saturday, Sunday, or legal holiday, the due date is delayed until the next business day.\" This is opted into explicitly because the agency says it, not assumed. It matters concretely: 15 May 2027 is a Saturday, so without it a calendar-year filer is shown a date two days before the real deadline. Federal legal holidays are not modelled, so a deadline landing on one is still off. THRESHOLDS VERIFIED, verbatim from the IRS filing-thresholds table: \"Gross receipts >= $200,000, or Total assets >= $500,000\". The anyOf and both gte operators match exactly. CITATION URL RETARGETED 2026-08-05: it pointed at the same IRS page as agencyUrl, which made the two fields one field wearing two names. The citation is 26 U.S.C. 6033, so it now links the STATUTE (uscode.house.gov, official) while agencyUrl keeps the IRS page a filer actually uses. The distinction matters most here: the IRS page is where the current thresholds live, and the statute is what a reviewer checks the rule against.",
     "weekendRule": "roll-forward"
   },
   // us/federal/form-990-ez.json
@@ -136,11 +139,12 @@ export const ALL_RULES: readonly Rule[] = [
       }
     ],
     "citation": "26 U.S.C. 6033; IRS Instructions for Form 990-EZ",
-    "citationUrl": "https://www.irs.gov/forms-pubs/about-form-990-ez",
+    "citationUrl": "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section6033",
+    "agencyUrl": "https://www.irs.gov/forms-pubs/about-form-990-ez",
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "DUE DATE VERIFIED 2026-08-05 against irs.gov: the annual return is due the 15th day of the 5th month after the tax year ends — 15 May for a calendar-year filer, which this cadence produces. WEEKEND RULE ADDED: the IRS states \"If a due date falls on a Saturday, Sunday, or legal holiday, the due date is delayed until the next business day.\" This is opted into explicitly because the agency says it, not assumed. It matters concretely: 15 May 2027 is a Saturday, so without it a calendar-year filer is shown a date two days before the real deadline. Federal legal holidays are not modelled, so a deadline landing on one is still off. THRESHOLDS VERIFIED: the IRS states \"Gross receipts < $200,000, and Total assets < $500,000\", which the upper bounds match. The >$50,000 LOWER bound is this pack's own modelling choice, not an IRS rule — the IRS lets a small organisation ELECT to file 990-EZ instead of 990-N. It is there so 990-N and 990-EZ are mutually exclusive and a small charity is not told it owes both. Deliberate; revisit only with the election in mind.",
+    "notes": "DUE DATE VERIFIED 2026-08-05 against irs.gov: the annual return is due the 15th day of the 5th month after the tax year ends — 15 May for a calendar-year filer, which this cadence produces. WEEKEND RULE ADDED: the IRS states \"If a due date falls on a Saturday, Sunday, or legal holiday, the due date is delayed until the next business day.\" This is opted into explicitly because the agency says it, not assumed. It matters concretely: 15 May 2027 is a Saturday, so without it a calendar-year filer is shown a date two days before the real deadline. Federal legal holidays are not modelled, so a deadline landing on one is still off. THRESHOLDS VERIFIED: the IRS states \"Gross receipts < $200,000, and Total assets < $500,000\", which the upper bounds match. The >$50,000 LOWER bound is this pack's own modelling choice, not an IRS rule — the IRS lets a small organisation ELECT to file 990-EZ instead of 990-N. It is there so 990-N and 990-EZ are mutually exclusive and a small charity is not told it owes both. Deliberate; revisit only with the election in mind. CITATION URL RETARGETED 2026-08-05: it pointed at the same IRS page as agencyUrl, which made the two fields one field wearing two names. The citation is 26 U.S.C. 6033, so it now links the STATUTE (uscode.house.gov, official) while agencyUrl keeps the IRS page a filer actually uses. The distinction matters most here: the IRS page is where the current thresholds live, and the statute is what a reviewer checks the rule against.",
     "weekendRule": "roll-forward"
   },
   // us/federal/form-990-n.json
@@ -167,11 +171,12 @@ export const ALL_RULES: readonly Rule[] = [
       }
     ],
     "citation": "26 U.S.C. 6033(i); IRS Annual Electronic Filing Requirement for Small Exempt Organizations",
-    "citationUrl": "https://www.irs.gov/charities-non-profits/annual-electronic-filing-requirement-for-small-exempt-organizations-form-990-n-e-postcard",
+    "citationUrl": "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section6033",
+    "agencyUrl": "https://www.irs.gov/charities-non-profits/annual-electronic-filing-requirement-for-small-exempt-organizations-form-990-n-e-postcard",
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "DUE DATE VERIFIED 2026-08-05 against irs.gov: the annual return is due the 15th day of the 5th month after the tax year ends — 15 May for a calendar-year filer, which this cadence produces. WEEKEND RULE ADDED: the IRS states \"If a due date falls on a Saturday, Sunday, or legal holiday, the due date is delayed until the next business day.\" This is opted into explicitly because the agency says it, not assumed. It matters concretely: 15 May 2027 is a Saturday, so without it a calendar-year filer is shown a date two days before the real deadline. Federal legal holidays are not modelled, so a deadline landing on one is still off. THRESHOLD VERIFIED, verbatim from the IRS: \"Gross receipts normally <= $50,000\". Note \"normally\" — the IRS applies an averaging test across years that this pack evaluates as a single-year figure, so an organisation just over the line in one year may still qualify. Failing to file for three consecutive years revokes exempt status automatically — the single most consequential missed deadline for a small nonprofit, and worth surfacing prominently in any UI.",
+    "notes": "DUE DATE VERIFIED 2026-08-05 against irs.gov: the annual return is due the 15th day of the 5th month after the tax year ends — 15 May for a calendar-year filer, which this cadence produces. WEEKEND RULE ADDED: the IRS states \"If a due date falls on a Saturday, Sunday, or legal holiday, the due date is delayed until the next business day.\" This is opted into explicitly because the agency says it, not assumed. It matters concretely: 15 May 2027 is a Saturday, so without it a calendar-year filer is shown a date two days before the real deadline. Federal legal holidays are not modelled, so a deadline landing on one is still off. THRESHOLD VERIFIED, verbatim from the IRS: \"Gross receipts normally <= $50,000\". Note \"normally\" — the IRS applies an averaging test across years that this pack evaluates as a single-year figure, so an organisation just over the line in one year may still qualify. Failing to file for three consecutive years revokes exempt status automatically — the single most consequential missed deadline for a small nonprofit, and worth surfacing prominently in any UI. CITATION URL RETARGETED 2026-08-05: it pointed at the same IRS page as agencyUrl, which made the two fields one field wearing two names. The citation is 26 U.S.C. 6033, so it now links the STATUTE (uscode.house.gov, official) while agencyUrl keeps the IRS page a filer actually uses. The distinction matters most here: the IRS page is where the current thresholds live, and the statute is what a reviewer checks the rule against.",
     "weekendRule": "roll-forward"
   },
   // us/or/corporation-annual-report.json
@@ -195,6 +200,7 @@ export const ALL_RULES: readonly Rule[] = [
     },
     "citation": "ORS 60.787",
     "citationUrl": "https://www.oregonlegislature.gov/bills_laws/ors/ors060.html",
+    "agencyUrl": "https://sos.oregon.gov/business/Pages/obr-annual-report-renewal.aspx",
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
@@ -219,6 +225,7 @@ export const ALL_RULES: readonly Rule[] = [
     },
     "citation": "ORS 63.787",
     "citationUrl": "https://www.oregonlegislature.gov/bills_laws/ors/ors063.html",
+    "agencyUrl": "https://sos.oregon.gov/business/Pages/obr-annual-report-renewal.aspx",
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
@@ -244,6 +251,7 @@ export const ALL_RULES: readonly Rule[] = [
     },
     "citation": "ORS 65.787",
     "citationUrl": "https://www.oregonlegislature.gov/bills_laws/ors/ors065.html",
+    "agencyUrl": "https://sos.oregon.gov/business/Pages/obr-annual-report-renewal.aspx",
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
@@ -278,10 +286,11 @@ export const ALL_RULES: readonly Rule[] = [
     ],
     "citation": "RCW 19.09.075; RCW 19.09.085; WAC 434-120-140(2)(a); WAC 434-120-042",
     "citationUrl": "https://app.leg.wa.gov/wac/default.aspx?cite=434-120-140",
+    "agencyUrl": "https://www.sos.wa.gov/corporations-charities/charities",
     "lastVerified": "2026-08-05",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "NARROWED 2026-08-05 (NEH-401): this rule used to ALSO trigger on holding $250,000+ in charitable assets, which is a different registration entirely — RCW 11.110 charitable TRUST registration, now us-wa-charitable-trust-registration. The deadlines coincide (both are the last business day of the eleventh month after the accounting year, WAC 434-120-025), which is why merging them looked harmless; the forms and the fees do not. An endowed non-soliciting charity was being sent to the wrong form at $40 instead of $25. FEE VERIFIED TWICE, independently: RCW 19.09.062(2) and WAC 434-120-042 both give $40 for a charitable organization ANNUAL RENEWAL against $60 for an initial registration. This rule is the renewal. DEADLINE VERIFIED, WAC 434-120-140(2)(a) VERBATIM: 'The completed form and fee shall be received no later than the last business day of the eleventh month after the end of the organization's accounting year.' The statute does NOT set this — RCW 19.09.085(2) delegates it to the secretary by rule — so the WAC is the citation that matters. KNOWN FALSE POSITIVE, NOT EXPRESSIBLE YET: RCW 19.09.081 EXEMPTS an organisation 'raising less than fifty thousand dollars in any accounting year when all the activities of the organization, including all fund-raising activities, are carried on by persons who are unpaid'. This rule cannot express that. It needs two facts the model does not have — contributions RAISED (grossRevenueMinorUnits is a different quantity: a nonprofit can have program revenue that is not contributions) and whether all fundraising is unpaid. So a small all-volunteer charity is told to register when it need not, which costs it $60 and an afternoon. Tracked separately; expressing it wrong would be worse than leaving it. KNOWN WRONG, NOT FIXABLE IN THIS SCHEMA: last BUSINESS day vs last calendar day — see NEH-404."
+    "notes": "NARROWED 2026-08-05 (NEH-401): this rule used to ALSO trigger on holding $250,000+ in charitable assets, which is a different registration entirely — RCW 11.110 charitable TRUST registration, now us-wa-charitable-trust-registration. The deadlines coincide (both are the last business day of the eleventh month after the accounting year, WAC 434-120-025), which is why merging them looked harmless; the forms and the fees do not. An endowed non-soliciting charity was being sent to the wrong form at $40 instead of $25. FEE VERIFIED TWICE, independently: RCW 19.09.062(2) and WAC 434-120-042 both give $40 for a charitable organization ANNUAL RENEWAL against $60 for an initial registration. This rule is the renewal. DEADLINE VERIFIED, WAC 434-120-140(2)(a) VERBATIM: 'The completed form and fee shall be received no later than the last business day of the eleventh month after the end of the organization's accounting year.' The statute does NOT set this — RCW 19.09.085(2) delegates it to the secretary by rule — so the WAC is the citation that matters. KNOWN FALSE POSITIVE, NOT EXPRESSIBLE YET: RCW 19.09.081 EXEMPTS an organisation 'raising less than fifty thousand dollars in any accounting year when all the activities of the organization, including all fund-raising activities, are carried on by persons who are unpaid'. This rule cannot express that. It needs two facts the model does not have — contributions RAISED (grossRevenueMinorUnits is a different quantity: a nonprofit can have program revenue that is not contributions) and whether all fundraising is unpaid. So a small all-volunteer charity is told to register when it need not, which costs it $60 and an afternoon. Tracked separately; expressing it wrong would be worse than leaving it. KNOWN WRONG, NOT FIXABLE IN THIS SCHEMA: last BUSINESS day vs last calendar day — see NEH-404. AGENCY URL NOT CLICKABLE FROM CI: sos.wa.gov returns 403 to every automated request — including its own root and a path that does not exist, so the status carries no information about whether a URL is real. This one is the agency's own published page (search engines have crawled it) but nobody here has opened it. A person must, once. See NEH-402."
   },
   // us/wa/charitable-trust-registration.json
   {
@@ -312,10 +321,11 @@ export const ALL_RULES: readonly Rule[] = [
     ],
     "citation": "RCW 11.110.051; WAC 434-120-305; WAC 434-120-025; WAC 434-120-042",
     "citationUrl": "https://app.leg.wa.gov/wac/default.aspx?cite=434-120-305",
+    "agencyUrl": "https://www.sos.wa.gov/corporations-charities/charities",
     "lastVerified": "2026-08-05",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "SPLIT OUT OF us-wa-charitable-solicitation-registration on 2026-08-05 (NEH-401). That rule triggered on soliciting OR holding $250,000+ in charitable assets, but those are TWO DIFFERENT REGISTRATIONS under two different chapters, with their own forms, fees and deadlines. An endowed non-soliciting charity was being told to file the solicitation renewal — wrong form at nearly twice the price. THRESHOLD VERIFIED, WAC 434-120-305 VERBATIM: a trustee must register if 'the trustee holds assets, invested for income-producing purposes, exceeding a value of two hundred fifty thousand dollars'. Note 'EXCEEDING' — hence gt, not gte. A trust holding exactly $250,000 does not register, and the previous gte was off by one at precisely the boundary. Note also 'invested for income-producing purposes': charitableAssetsMinorUnits is the closest fact the model has and is not exactly that, so an entity holding $250k of non-income-producing charitable property (a building in program use) may be caught here when the statute would not catch it. DEADLINE VERIFIED, WAC 434-120-025 VERBATIM: 'Renewal date for charitable organizations, commercial fund-raisers, and charitable trusts means the last business day of the eleventh month after the close of the organization's accounting year.' The same date as the solicitation renewal, which is why merging them looked harmless — the deadlines coincide and only the form and the fee differ. FEE VERIFIED, WAC 434-120-042: charitable trusts pay $25.00 initial and $25.00 annual renewal, against $60/$40 for a charitable organization. KNOWN WRONG, NOT FIXABLE IN THIS SCHEMA: the WAC says last BUSINESS day; dayOfMonth 'last' gives the last calendar day, so a month ending at a weekend shows a deadline up to 2 days LATE. weekendRule offers only roll-forward and this needs backward — see NEH-404. STILL DRAFT: every value here was read from a primary source, but promotion means a PERSON read it. See docs/rule-verification/."
+    "notes": "SPLIT OUT OF us-wa-charitable-solicitation-registration on 2026-08-05 (NEH-401). That rule triggered on soliciting OR holding $250,000+ in charitable assets, but those are TWO DIFFERENT REGISTRATIONS under two different chapters, with their own forms, fees and deadlines. An endowed non-soliciting charity was being told to file the solicitation renewal — wrong form at nearly twice the price. THRESHOLD VERIFIED, WAC 434-120-305 VERBATIM: a trustee must register if 'the trustee holds assets, invested for income-producing purposes, exceeding a value of two hundred fifty thousand dollars'. Note 'EXCEEDING' — hence gt, not gte. A trust holding exactly $250,000 does not register, and the previous gte was off by one at precisely the boundary. Note also 'invested for income-producing purposes': charitableAssetsMinorUnits is the closest fact the model has and is not exactly that, so an entity holding $250k of non-income-producing charitable property (a building in program use) may be caught here when the statute would not catch it. DEADLINE VERIFIED, WAC 434-120-025 VERBATIM: 'Renewal date for charitable organizations, commercial fund-raisers, and charitable trusts means the last business day of the eleventh month after the close of the organization's accounting year.' The same date as the solicitation renewal, which is why merging them looked harmless — the deadlines coincide and only the form and the fee differ. FEE VERIFIED, WAC 434-120-042: charitable trusts pay $25.00 initial and $25.00 annual renewal, against $60/$40 for a charitable organization. KNOWN WRONG, NOT FIXABLE IN THIS SCHEMA: the WAC says last BUSINESS day; dayOfMonth 'last' gives the last calendar day, so a month ending at a weekend shows a deadline up to 2 days LATE. weekendRule offers only roll-forward and this needs backward — see NEH-404. STILL DRAFT: every value here was read from a primary source, but promotion means a PERSON read it. See docs/rule-verification/. AGENCY URL NOT CLICKABLE FROM CI: sos.wa.gov returns 403 to every automated request — including its own root and a path that does not exist, so the status carries no information about whether a URL is real. This one is the agency's own published page (search engines have crawled it) but nobody here has opened it. A person must, once. See NEH-402."
   },
   // us/wa/corporation-annual-report.json
   {
@@ -339,10 +349,11 @@ export const ALL_RULES: readonly Rule[] = [
     },
     "citation": "RCW 23.95.255",
     "citationUrl": "https://app.leg.wa.gov/rcw/default.aspx?cite=23.95",
+    "agencyUrl": "https://www.sos.wa.gov/corporations-charities/business-entities/maintain-business-compliance/annual-reports",
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "VERIFIED 2026-08-05 (requirement only): RCW 23.95.255(2) requires every domestic entity and registered foreign entity to deliver an annual report, and a profit corporation is such an entity, so this is the right authority. DUE DATE NOT SETTLEABLE FROM STATUTE: RCW 23.95.255(4) says annual reports are due \"on a date determined by the secretary of state\", so no statute fixes it. The end-of-formation-month cadence here rests on the SOS's published practice, which needs a human to confirm. FEE UNVERIFIED and PROBABLY WRONG: search results attributed to sos.wa.gov give $70 for profit business entity types including LLCs, not the $60 recorded here. sos.wa.gov returns 403 to automated retrieval, so this could not be read from the agency page directly and the value is left unchanged rather than swapped for a second unverified number. A person must open the SOS fee schedule."
+    "notes": "VERIFIED 2026-08-05 (requirement only): RCW 23.95.255(2) requires every domestic entity and registered foreign entity to deliver an annual report, and a profit corporation is such an entity, so this is the right authority. DUE DATE NOT SETTLEABLE FROM STATUTE: RCW 23.95.255(4) says annual reports are due \"on a date determined by the secretary of state\", so no statute fixes it. The end-of-formation-month cadence here rests on the SOS's published practice, which needs a human to confirm. FEE UNVERIFIED and PROBABLY WRONG: search results attributed to sos.wa.gov give $70 for profit business entity types including LLCs, not the $60 recorded here. sos.wa.gov returns 403 to automated retrieval, so this could not be read from the agency page directly and the value is left unchanged rather than swapped for a second unverified number. A person must open the SOS fee schedule. AGENCY URL NOT CLICKABLE FROM CI: sos.wa.gov returns 403 to every automated request — including its own root and a path that does not exist, so the status carries no information about whether a URL is real. This one is the agency's own published page (search engines have crawled it) but nobody here has opened it. A person must, once. See NEH-402."
   },
   // us/wa/llc-annual-report.json
   {
@@ -364,10 +375,11 @@ export const ALL_RULES: readonly Rule[] = [
     },
     "citation": "RCW 25.15.106; RCW 23.95.255",
     "citationUrl": "https://app.leg.wa.gov/rcw/default.aspx?cite=25.15",
+    "agencyUrl": "https://www.sos.wa.gov/corporations-charities/business-entities/maintain-business-compliance/annual-reports",
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2020-01-01",
-    "notes": "VERIFIED 2026-08-05 (requirement only): RCW 25.15.106 reads \"Each domestic limited liability company, and each foreign limited liability company authorized to transact business in this state, must deliver to the secretary of state for filing initial and annual reports in accordance with RCW 23.95.255.\" Both sections read; the section number in this rule was correct. DUE DATE NOT SETTLEABLE FROM STATUTE: RCW 23.95.255(4) says annual reports are due \"on a date determined by the secretary of state\", so no statute fixes it. The end-of-formation-month cadence here rests on the SOS's published practice, which needs a human to confirm. FEE UNVERIFIED and PROBABLY WRONG: search results attributed to sos.wa.gov give $70 for profit business entity types including LLCs, not the $60 recorded here. sos.wa.gov returns 403 to automated retrieval, so this could not be read from the agency page directly and the value is left unchanged rather than swapped for a second unverified number. A person must open the SOS fee schedule."
+    "notes": "VERIFIED 2026-08-05 (requirement only): RCW 25.15.106 reads \"Each domestic limited liability company, and each foreign limited liability company authorized to transact business in this state, must deliver to the secretary of state for filing initial and annual reports in accordance with RCW 23.95.255.\" Both sections read; the section number in this rule was correct. DUE DATE NOT SETTLEABLE FROM STATUTE: RCW 23.95.255(4) says annual reports are due \"on a date determined by the secretary of state\", so no statute fixes it. The end-of-formation-month cadence here rests on the SOS's published practice, which needs a human to confirm. FEE UNVERIFIED and PROBABLY WRONG: search results attributed to sos.wa.gov give $70 for profit business entity types including LLCs, not the $60 recorded here. sos.wa.gov returns 403 to automated retrieval, so this could not be read from the agency page directly and the value is left unchanged rather than swapped for a second unverified number. A person must open the SOS fee schedule. AGENCY URL NOT CLICKABLE FROM CI: sos.wa.gov returns 403 to every automated request — including its own root and a path that does not exist, so the status carries no information about whether a URL is real. This one is the agency's own published page (search engines have crawled it) but nobody here has opened it. A person must, once. See NEH-402."
   },
   // us/wa/nonprofit-annual-report.json
   {
@@ -390,9 +402,10 @@ export const ALL_RULES: readonly Rule[] = [
     },
     "citation": "RCW 24.03A.070; RCW 23.95.255(2)",
     "citationUrl": "https://app.leg.wa.gov/rcw/default.aspx?cite=24.03A",
+    "agencyUrl": "https://www.sos.wa.gov/corporations-charities/business-entities/maintain-business-compliance/annual-reports",
     "lastVerified": "2026-08-01",
     "status": "draft",
     "effectiveFrom": "2022-01-01",
-    "notes": "CITATION CORRECTED 2026-08-05: this rule cited RCW 24.03A.1010, which DOES NOT EXIST (app.leg.wa.gov returns \"The Citation you requested cannot be found\"). The real authority is RCW 24.03A.070 — \"Each domestic nonprofit corporation ... shall deliver to the secretary of state for filing an annual report as required under RCW 23.95.255(2)\" — which delegates to the general UBOC provision. VERIFIED: the requirement exists and both sections were read. NOT VERIFIED and NOT SETTLEABLE FROM STATUTE: the due date. RCW 23.95.255(4) says annual reports are due \"on a date determined by the secretary of state\", so no statute sets it and the end-of-formation-month cadence here rests on the SOS's published practice, which blocks automated retrieval and needs a human to open. FEE UNVERIFIED: search results attributed to sos.wa.gov give $60 for an RCW 24.03A nonprofit, reduced to $20 if gross revenue was under $500,000 in the most recent fiscal year — a conditional the schema cannot express. Do not promote until a person has read the SOS fee schedule."
+    "notes": "CITATION CORRECTED 2026-08-05: this rule cited RCW 24.03A.1010, which DOES NOT EXIST (app.leg.wa.gov returns \"The Citation you requested cannot be found\"). The real authority is RCW 24.03A.070 — \"Each domestic nonprofit corporation ... shall deliver to the secretary of state for filing an annual report as required under RCW 23.95.255(2)\" — which delegates to the general UBOC provision. VERIFIED: the requirement exists and both sections were read. NOT VERIFIED and NOT SETTLEABLE FROM STATUTE: the due date. RCW 23.95.255(4) says annual reports are due \"on a date determined by the secretary of state\", so no statute sets it and the end-of-formation-month cadence here rests on the SOS's published practice, which blocks automated retrieval and needs a human to open. FEE UNVERIFIED: search results attributed to sos.wa.gov give $60 for an RCW 24.03A nonprofit, reduced to $20 if gross revenue was under $500,000 in the most recent fiscal year — a conditional the schema cannot express. Do not promote until a person has read the SOS fee schedule. AGENCY URL NOT CLICKABLE FROM CI: sos.wa.gov returns 403 to every automated request — including its own root and a path that does not exist, so the status carries no information about whether a URL is real. This one is the agency's own published page (search engines have crawled it) but nobody here has opened it. A person must, once. See NEH-402."
   },
 ] as const;

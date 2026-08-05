@@ -571,3 +571,61 @@ describe("each jurisdiction uses the anchor its statute actually specifies", () 
     }
   });
 });
+
+/**
+ * Every rule points a filer at the agency's own page.
+ *
+ * `citation` and `citationUrl` answer *"is this rule faithful to the law"* —
+ * a reviewer's question. `agencyUrl` answers *"what is true today, and where do
+ * I file it"* — the question the person with a deadline actually has.
+ *
+ * They are separate fields because the statute frequently **cannot** answer the
+ * second one. RCW 23.95.255(4) hands the annual-report due date to the
+ * secretary of state and names no date. 8 Del. C. 502 sets the 1 March deadline
+ * and no fee at all. A product that linked only the citation would send a
+ * customer to a page that does not contain the number they came for.
+ *
+ * Required here rather than in the schema: the schema leaves it optional
+ * because a filing with no agency page on the public web is conceivable, but no
+ * rule in this pack is one, and a rule shipping without it should fail.
+ */
+describe("every rule links to the agency, not only to the statute", () => {
+  it.each(RULES.map((r) => r.id))("%s has an agency URL", (id) => {
+    const rule = byId(id);
+    expect(rule.agencyUrl).toBeDefined();
+    expect(rule.agencyUrl).toMatch(/^https:\/\//);
+  });
+
+  it.each(RULES.map((r) => r.id))("%s links somewhere official", (id) => {
+    // A `.gov` host, or the agency itself. This is the assertion that stops a
+    // well-meaning contributor linking a compliance vendor's summary page —
+    // which is the single thing the rule-authoring guide forbids, because
+    // copying a vendor imports their errors and their liability.
+    const { agencyUrl } = byId(id);
+    const host = new URL(agencyUrl!).hostname;
+    expect(host.endsWith(".gov")).toBe(true);
+  });
+
+  it.each(RULES.map((r) => r.id))("%s does not reuse the citation URL", (id) => {
+    // If the two are identical the field is decoration: it adds a second link
+    // to the same page and quietly implies a currency the statute cannot
+    // promise. The federal rules are the interesting case — the IRS publishes
+    // the form and the instructions together, so the two ARE close, but the
+    // 990-N's citation points at the electronic-filing requirement while its
+    // agency URL points at the filing page.
+    const rule = byId(id);
+    if (!rule.citationUrl) return;
+    expect(rule.agencyUrl).not.toBe(rule.citationUrl);
+  });
+
+  it("uses the agency's own host, not a statute repository, for state rules", () => {
+    // The distinction that makes the field worth having. `app.leg.wa.gov` and
+    // `oregonlegislature.gov` publish law; `sos.wa.gov` and `sos.oregon.gov`
+    // publish what you owe. Linking the legislature as an "agency page" would
+    // pass the .gov check above while being exactly the mistake this guards.
+    const LEGISLATURE = /leg\.wa\.gov|oregonlegislature\.gov|delcode\.delaware\.gov/;
+    for (const rule of RULES.filter((r) => r.jurisdiction !== "US")) {
+      expect(rule.agencyUrl).not.toMatch(LEGISLATURE);
+    }
+  });
+});
