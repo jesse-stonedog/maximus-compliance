@@ -237,14 +237,38 @@ describe("an endowed Washington charity that does not solicit", () => {
     includeDraft: true,
   });
 
-  it("must still register with the Charities Program", () => {
-    // THE REGRESSION (NEH-228). The trigger is soliciting donations OR holding
-    // $250k+ in charitable assets. With only the soliciting half expressed,
-    // this organisation was told it owed nothing — a false negative, where a
-    // clean calendar hides a filing.
-    expect(result.obligations.map((o) => o.ruleId)).toContain(
-      "us-wa-charitable-solicitation-registration",
+  it("must still be told it owes SOMETHING", () => {
+    // THE REGRESSION (NEH-228), preserved through the NEH-401 split. Its point
+    // was never which rule fired — it was that an endowed non-soliciting
+    // charity had been told it owed NOTHING. A false negative, where a clean
+    // calendar hides a filing, is the failure this product can least afford.
+    //
+    // Asserted as "not empty" rather than by rule id, so the guarantee survives
+    // the next time these obligations are reorganised. The specific filing is
+    // pinned separately below.
+    expect(result.obligations.length).toBeGreaterThan(0);
+  });
+
+  it("owes the TRUST registration, not the solicitation one", () => {
+    // What the split corrected. The $250k trigger is RCW 11.110 charitable
+    // TRUST registration (WAC 434-120-305), not RCW 19.09 solicitation
+    // registration — a different form at a different price ($25 against $40).
+    //
+    // The two deadlines are identical (WAC 434-120-025 defines one renewal date
+    // for both), which is exactly why merging them looked harmless and went
+    // unnoticed: the date was right and only the form and fee were wrong.
+    const owed = result.obligations.map((o) => o.ruleId);
+    expect(owed).toContain("us-wa-charitable-trust-registration");
+    expect(owed).not.toContain("us-wa-charitable-solicitation-registration");
+  });
+
+  it("is charged the trust fee, not the charitable-organization fee", () => {
+    // The visible consequence of the split, and the reason it is worth doing
+    // even though both filings fall on the same day.
+    const trust = result.obligations.find(
+      (o) => o.ruleId === "us-wa-charitable-trust-registration",
     );
+    expect(trust?.feeMinorUnits).toBe(2_500);
   });
 
   it("is not caught merely by having large TOTAL assets", () => {
@@ -261,8 +285,67 @@ describe("an endowed Washington charity that does not solicit", () => {
       includeDraft: true,
     });
     expect(narrow.obligations.map((o) => o.ruleId)).not.toContain(
-      "us-wa-charitable-solicitation-registration",
+      "us-wa-charitable-trust-registration",
     );
+  });
+
+  it("is not caught at EXACTLY $250,000, because the WAC says 'exceeding'", () => {
+    // The off-by-one the split also fixed: the old rule used `gte`. WAC
+    // 434-120-305 requires registration where the trustee holds assets
+    // "exceeding a value of two hundred fifty thousand dollars", so a trust
+    // holding precisely that much does not register.
+    //
+    // A boundary nobody would notice by reading either the rule or the
+    // regulation casually, and the only entity it is ever wrong for is the one
+    // sitting exactly on the line.
+    const exactly = {
+      ...ENDOWED_NON_SOLICITING_CHARITY,
+      charitableAssetsMinorUnits: 250_000_00,
+    };
+    const atLine = evaluate(exactly, RULES, {
+      asOf: "2026-01-01",
+      horizonMonths: 12,
+      includeDraft: true,
+    });
+    expect(atLine.obligations.map((o) => o.ruleId)).not.toContain(
+      "us-wa-charitable-trust-registration",
+    );
+  });
+
+  it("IS caught one cent over", () => {
+    // The other side of the same boundary — without this, a rule that never
+    // fired at all would pass the assertion above.
+    const overLine = {
+      ...ENDOWED_NON_SOLICITING_CHARITY,
+      charitableAssetsMinorUnits: 250_000_00 + 1,
+    };
+    const over = evaluate(overLine, RULES, {
+      asOf: "2026-01-01",
+      horizonMonths: 12,
+      includeDraft: true,
+    });
+    expect(over.obligations.map((o) => o.ruleId)).toContain(
+      "us-wa-charitable-trust-registration",
+    );
+  });
+
+  it("a SOLICITING charity owes the solicitation registration instead", () => {
+    // The mirror of the split. Narrowing the solicitation rule must not have
+    // broken the case it was actually written for.
+    const soliciting = {
+      ...ENDOWED_NON_SOLICITING_CHARITY,
+      solicitsCharitableContributions: true,
+    };
+    const asks = evaluate(soliciting, RULES, {
+      asOf: "2026-01-01",
+      horizonMonths: 12,
+      includeDraft: true,
+    });
+    const owed = asks.obligations.map((o) => o.ruleId);
+    expect(owed).toContain("us-wa-charitable-solicitation-registration");
+    // …and it owes BOTH, because it both solicits and holds the assets. Two
+    // registrations, two forms, two fees, one deadline.
+    expect(owed).toContain("us-wa-charitable-trust-registration");
   });
 });
 

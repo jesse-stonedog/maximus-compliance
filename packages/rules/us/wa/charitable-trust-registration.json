@@ -1,0 +1,34 @@
+{
+  "$schema": "../../schema/rule.v1.json",
+  "id": "us-wa-charitable-trust-registration",
+  "jurisdiction": "US-WA",
+  "title": "Charitable Trust Registration Renewal",
+  "agency": "Washington Secretary of State, Charities Program",
+  "entityTypes": [
+    "501c3",
+    "nonprofit-corp"
+  ],
+  "cadence": {
+    "type": "annual",
+    "anchor": "fiscal-year-end",
+    "offsetMonths": 11,
+    "dayOfMonth": "last"
+  },
+  "fee": {
+    "amountMinorUnits": 2500,
+    "currency": "USD"
+  },
+  "conditions": [
+    {
+      "fact": "charitableAssetsMinorUnits",
+      "op": "gt",
+      "value": 25000000
+    }
+  ],
+  "citation": "RCW 11.110.051; WAC 434-120-305; WAC 434-120-025; WAC 434-120-042",
+  "citationUrl": "https://app.leg.wa.gov/wac/default.aspx?cite=434-120-305",
+  "lastVerified": "2026-08-05",
+  "status": "draft",
+  "effectiveFrom": "2020-01-01",
+  "notes": "SPLIT OUT OF us-wa-charitable-solicitation-registration on 2026-08-05 (NEH-401). That rule triggered on soliciting OR holding $250,000+ in charitable assets, but those are TWO DIFFERENT REGISTRATIONS under two different chapters, with their own forms, fees and deadlines. An endowed non-soliciting charity was being told to file the solicitation renewal — wrong form at nearly twice the price. THRESHOLD VERIFIED, WAC 434-120-305 VERBATIM: a trustee must register if 'the trustee holds assets, invested for income-producing purposes, exceeding a value of two hundred fifty thousand dollars'. Note 'EXCEEDING' — hence gt, not gte. A trust holding exactly $250,000 does not register, and the previous gte was off by one at precisely the boundary. Note also 'invested for income-producing purposes': charitableAssetsMinorUnits is the closest fact the model has and is not exactly that, so an entity holding $250k of non-income-producing charitable property (a building in program use) may be caught here when the statute would not catch it. DEADLINE VERIFIED, WAC 434-120-025 VERBATIM: 'Renewal date for charitable organizations, commercial fund-raisers, and charitable trusts means the last business day of the eleventh month after the close of the organization's accounting year.' The same date as the solicitation renewal, which is why merging them looked harmless — the deadlines coincide and only the form and the fee differ. FEE VERIFIED, WAC 434-120-042: charitable trusts pay $25.00 initial and $25.00 annual renewal, against $60/$40 for a charitable organization. KNOWN WRONG, NOT FIXABLE IN THIS SCHEMA: the WAC says last BUSINESS day; dayOfMonth 'last' gives the last calendar day, so a month ending at a weekend shows a deadline up to 2 days LATE. weekendRule offers only roll-forward and this needs backward — see NEH-404. STILL DRAFT: every value here was read from a primary source, but promotion means a PERSON read it. See docs/rule-verification/."
+}
