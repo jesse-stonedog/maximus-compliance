@@ -83,3 +83,5 @@ Questions about any of this are welcome before you sign — open a discussion or
 raise them in your pull request.
 
 Copyright © 2026 StoneDogCode L.L.C.
+
+<!-- CLA gate verification, NEH-189. This PR is not for merging. -->
