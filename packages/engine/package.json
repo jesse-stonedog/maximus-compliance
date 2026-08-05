@@ -24,6 +24,10 @@
     "dist",
     "README.md"
   ],
+  "//publishConfig": "A scoped package defaults to RESTRICTED, which fails on a free account with a misleading 402. Set here rather than relying on `--access public` at the command line, so the flag cannot be forgotten by whoever publishes next.",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc --build",
     "type-check": "tsc --noEmit",
