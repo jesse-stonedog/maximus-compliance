@@ -4,13 +4,23 @@
   "jurisdiction": "US-WA",
   "title": "Nonprofit Corporation Annual Report",
   "agency": "Washington Secretary of State",
-  "entityTypes": ["501c3", "nonprofit-corp"],
-  "cadence": { "type": "annual", "anchor": "formation-month", "dayOfMonth": "last" },
-  "fee": { "amountMinorUnits": 6000, "currency": "USD" },
-  "citation": "RCW 24.03A.1010",
+  "entityTypes": [
+    "501c3",
+    "nonprofit-corp"
+  ],
+  "cadence": {
+    "type": "annual",
+    "anchor": "formation-month",
+    "dayOfMonth": "last"
+  },
+  "fee": {
+    "amountMinorUnits": 6000,
+    "currency": "USD"
+  },
+  "citation": "RCW 24.03A.070; RCW 23.95.255(2)",
   "citationUrl": "https://app.leg.wa.gov/rcw/default.aspx?cite=24.03A",
   "lastVerified": "2026-08-01",
   "status": "draft",
   "effectiveFrom": "2022-01-01",
-  "notes": "Washington replaced the old Nonprofit Corporation Act with RCW 24.03A effective 1 Jan 2022. Verify BOTH the exact RCW section and the current fee against the SOS fee schedule before promoting to active."
+  "notes": "CITATION CORRECTED 2026-08-05: this rule cited RCW 24.03A.1010, which DOES NOT EXIST (app.leg.wa.gov returns \"The Citation you requested cannot be found\"). The real authority is RCW 24.03A.070 — \"Each domestic nonprofit corporation ... shall deliver to the secretary of state for filing an annual report as required under RCW 23.95.255(2)\" — which delegates to the general UBOC provision. VERIFIED: the requirement exists and both sections were read. NOT VERIFIED and NOT SETTLEABLE FROM STATUTE: the due date. RCW 23.95.255(4) says annual reports are due \"on a date determined by the secretary of state\", so no statute sets it and the end-of-formation-month cadence here rests on the SOS's published practice, which blocks automated retrieval and needs a human to open. FEE UNVERIFIED: search results attributed to sos.wa.gov give $60 for an RCW 24.03A nonprofit, reduced to $20 if gross revenue was under $500,000 in the most recent fiscal year — a conditional the schema cannot express. Do not promote until a person has read the SOS fee schedule."
 }

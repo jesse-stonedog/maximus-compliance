@@ -15,7 +15,7 @@
     "dayOfMonth": "last"
   },
   "fee": {
-    "amountMinorUnits": 6000,
+    "amountMinorUnits": 4000,
     "currency": "USD"
   },
   "conditions": [
@@ -34,10 +34,10 @@
       ]
     }
   ],
-  "citation": "RCW 19.09.075; RCW 19.09.097",
-  "citationUrl": "https://app.leg.wa.gov/rcw/default.aspx?cite=19.09",
+  "citation": "RCW 19.09.075; RCW 19.09.085; RCW 19.09.062(2); WAC 434-120-140(2)(a)",
+  "citationUrl": "https://app.leg.wa.gov/wac/default.aspx?cite=434-120-140",
   "lastVerified": "2026-08-01",
   "status": "draft",
   "effectiveFrom": "2020-01-01",
-  "notes": "SEPARATE from the corporate annual report, and the one most often missed \u2014 an organisation can be in good standing as a corporation while unregistered to solicit. The trigger is soliciting donations OR holding $250,000+ in charitable assets, per the WA SOS formation letter; an endowed nonprofit that does not actively solicit is caught by the second half. Still draft: the letter is a form letter, not the statute, so the exact threshold, the renewal deadline (the fiscal-year-end offset here is a guess) and the fee all need checking against RCW 19.09 and the Charities Program directly."
+  "notes": "FEE CORRECTED 2026-08-05: was $60, now $40. RCW 19.09.062 sets $60 for an APPLICATION and $40 for a RENEWAL, and this rule is the renewal — the $60 was the initial-registration fee. VERBATIM: \"a fee of forty dollars. Ten dollars of this fee must be deposited in the state general fund...\". CITATION CORRECTED: RCW 19.09.097 was dropped — it governs contracts with COMMERCIAL FUND-RAISERS and has nothing to do with a charity's own renewal. DEADLINE VERIFIED: the 11-month offset was a guess and turns out to be right. WAC 434-120-140(2)(a): \"The completed form and fee shall be received no later than the last business day of the eleventh month after the end of the organization's accounting year.\" Note the statute does NOT set this — RCW 19.09.085(2) delegates it to the secretary by rule — so the WAC is the citation that matters. KNOWN WRONG, NOT FIXABLE IN THIS SCHEMA (1): the WAC says last BUSINESS day; dayOfMonth \"last\" gives the last calendar day, so a month ending at a weekend shows a deadline up to 2 days LATE. weekendRule only offers \"roll-forward\" and this needs backward. KNOWN WRONG (2): this rule CONFLATES TWO SEPARATE REGISTRATIONS. The $250,000 trigger is not in RCW 19.09 at all — it is WAC 434-120-305, the CHARITABLE TRUST registration under RCW 11.110, a different filing with its own form and deadline. And it reads \"exceeding\", so gte is off by one. Meanwhile RCW 19.09.081 exempts an all-volunteer organisation raising under $50,000, which this rule does not express. Splitting it needs the trust renewal deadline, which WAC 434-120-310 does not state — so the split waits rather than inventing one."
 }

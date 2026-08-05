@@ -4,13 +4,24 @@
   "jurisdiction": "US-WA",
   "title": "Profit Corporation Annual Report",
   "agency": "Washington Secretary of State",
-  "entityTypes": ["s-corp", "c-corp", "b-corp"],
-  "cadence": { "type": "annual", "anchor": "formation-month", "dayOfMonth": "last" },
-  "fee": { "amountMinorUnits": 6000, "currency": "USD" },
+  "entityTypes": [
+    "s-corp",
+    "c-corp",
+    "b-corp"
+  ],
+  "cadence": {
+    "type": "annual",
+    "anchor": "formation-month",
+    "dayOfMonth": "last"
+  },
+  "fee": {
+    "amountMinorUnits": 6000,
+    "currency": "USD"
+  },
   "citation": "RCW 23.95.255",
   "citationUrl": "https://app.leg.wa.gov/rcw/default.aspx?cite=23.95",
   "lastVerified": "2026-08-01",
   "status": "draft",
   "effectiveFrom": "2020-01-01",
-  "notes": "RCW 23.95 is the Washington Uniform Business Organizations Code, which carries the annual report requirement for several entity forms. Verify the section and fee."
+  "notes": "VERIFIED 2026-08-05 (requirement only): RCW 23.95.255(2) requires every domestic entity and registered foreign entity to deliver an annual report, and a profit corporation is such an entity, so this is the right authority. DUE DATE NOT SETTLEABLE FROM STATUTE: RCW 23.95.255(4) says annual reports are due \"on a date determined by the secretary of state\", so no statute fixes it. The end-of-formation-month cadence here rests on the SOS's published practice, which needs a human to confirm. FEE UNVERIFIED and PROBABLY WRONG: search results attributed to sos.wa.gov give $70 for profit business entity types including LLCs, not the $60 recorded here. sos.wa.gov returns 403 to automated retrieval, so this could not be read from the agency page directly and the value is left unchanged rather than swapped for a second unverified number. A person must open the SOS fee schedule."
 }
