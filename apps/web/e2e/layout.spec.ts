@@ -57,30 +57,53 @@ test("the first tab reaches an interactive control", async ({ page }) => {
   expect(["A", "BUTTON", "INPUT", "SELECT"]).toContain(tag);
 });
 
-test.fixme(
-  "a skip link is the first thing keyboard focus reaches",
-  async ({ page }) => {
-    // FAILS TODAY, and the failure is the point — this is NEH-379.
-    //
-    // The self-host app has no skip link at all. The hosted app does
-    // (`apps/web/src/app/layout.tsx`, "Skip to content"), so the two products
-    // differ on a WCAG 2.4.1 basic. A keyboard user here tabs through the whole
-    // navigation on every page load to reach the calendar.
-    //
-    // `fixme` rather than deletion: the assertion is correct and should start
-    // passing the moment the link lands, and a deleted test is one nobody
-    // re-adds. It shows in the report as expected-to-fail rather than silently
-    // green.
-    await page.goto("/");
-    await page.keyboard.press("Tab");
-    const focused = await page.evaluate(() => {
-      const el = document.activeElement;
-      return { tag: el?.tagName ?? "", text: el?.textContent?.trim() ?? "" };
-    });
-    expect(focused.tag).toBe("A");
-    expect(focused.text).toMatch(/skip/i);
-  },
-);
+test("a skip link is the first thing keyboard focus reaches", async ({
+  page,
+}) => {
+  // Was `test.fixme` when this suite landed — the app had no skip link at all
+  // (NEH-379). The assertion is UNCHANGED; only the pin came off, which is the
+  // property `fixme` was chosen for: a correct test that starts passing on its
+  // own when the fix arrives, rather than one nobody re-adds.
+  await page.goto("/");
+  await page.keyboard.press("Tab");
+  const focused = await page.evaluate(() => {
+    const el = document.activeElement;
+    return { tag: el?.tagName ?? "", text: el?.textContent?.trim() ?? "" };
+  });
+  expect(focused.tag).toBe("A");
+  expect(focused.text).toMatch(/skip/i);
+});
+
+test("the skip link becomes visible when focused", async ({ page }) => {
+  // Off-screen until focused, then on-screen. `display:none` would also hide it
+  // and would remove it from the accessible tree entirely — so the link would
+  // stop existing for exactly the users it is for. The difference is
+  // unobservable without a layout engine.
+  await page.goto("/");
+  const link = page.getByRole("link", { name: /skip to content/i });
+
+  const offScreen = await link.boundingBox();
+  expect(offScreen!.x).toBeLessThan(0);
+
+  await page.keyboard.press("Tab");
+  await expect(link).toBeInViewport();
+});
+
+test("following the skip link moves focus, not just the scroll position", async ({
+  page,
+}) => {
+  // The half that is easy to get wrong and impossible to notice with a mouse.
+  // A browser will not focus a non-focusable target, so without `tabindex="-1"`
+  // on the destination the page scrolls, focus stays in the header, and the
+  // next Tab continues through the navigation the user just asked to skip —
+  // the link appears to work and does nothing.
+  await page.goto("/");
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Enter");
+
+  const focusedId = await page.evaluate(() => document.activeElement?.id ?? "");
+  expect(focusedId).toBe("main");
+});
 
 test("the entity form can be completed with the keyboard alone", async ({
   page,
