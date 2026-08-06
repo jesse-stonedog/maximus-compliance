@@ -114,6 +114,14 @@ When that happens:
 
 **[→ Open a "A deadline or fee changed" issue](https://github.com/stonedog-code/optima-filings/issues/new?template=rule-change.yml)**
 
+You do not have to come here to do it. **Every rule-derived deadline in the
+dashboard carries a "Report this as wrong" link**, right under the agency link,
+and it opens that same form with the jurisdiction, the rule id and the filing
+already filled in. That link is the only thing in this software that talks to
+anything outside your own machine, and it carries facts about the *rule* —
+every one of which is already published in this repository. Nothing about your
+entity goes with it.
+
 It is a form: which jurisdiction, what is wrong, and where you saw it. **No pull
 request, no JSON, no git.** Converting a filled-in form into a rule change takes
 us about five minutes, and it is the single most valuable thing an outside

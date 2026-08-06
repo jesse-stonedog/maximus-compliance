@@ -38,6 +38,16 @@ export function allDatedItems(asOf: string = today()): DatedItem[] {
       ...(o.citationUrl === undefined ? {} : { citationUrl: o.citationUrl }),
       ...(o.agencyUrl === undefined ? {} : { agencyUrl: o.agencyUrl }),
       status: o.status,
+      // `ruleId` and `jurisdiction` travel for the same reason the two URLs do,
+      // and they were dropped here for the same reason: the projection is
+      // written field by field, so a field nobody names is silently absent and
+      // nothing fails. `citationUrl` made exactly this trip and the only
+      // symptom was plain text where a link belonged.
+      //
+      // Without these the UI cannot say which rule a row came from, which makes
+      // a report about it a description rather than an identifier.
+      ruleId: o.ruleId,
+      jurisdiction: o.jurisdiction,
       entityId: entity.id,
     })),
   );
