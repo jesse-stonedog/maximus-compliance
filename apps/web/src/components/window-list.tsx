@@ -8,6 +8,7 @@ import { WINDOW_DEFINITIONS } from "@optima-compliance/reminders";
 import { StyledCheck, StyledStatute, StyledUnverified, StyledWarning } from "@optima-compliance/ui";
 import Link from "next/link";
 import { formatDate, relativeDue } from "@/lib/format";
+import { reportRuleUrl } from "@/lib/report-rule";
 import { toggleActionCompleted } from "@/app/actions/actions";
 
 function Item({ item, asOf }: { item: DatedItem; asOf: string }) {
@@ -115,6 +116,43 @@ function Item({ item, asOf }: { item: DatedItem; asOf: string }) {
                   </a>
                 </span>
               )}
+              {/*
+                Directly beneath the agency link, and the order is the point. We
+                have just told them to go and check us. If they check and we are
+                wrong, THIS is the moment they need somewhere to say so — a link
+                on a contributing page they would have to go looking for is a
+                link that catches nobody.
+
+                The audience is a CPA or an attorney who knows the statute and
+                does not know git, so it goes to the issue FORM, prefilled with
+                the jurisdiction, the rule id and the filing. Everything between
+                noticing and reporting is attrition, and those three are
+                questions this screen can already answer.
+
+                `target="_blank"`: they are mid-task on their own calendar and
+                sending them away from it is how a report becomes an intention.
+
+                Nothing about the entity is in that URL — see report-rule.ts.
+                This link is the only path in the self-hosted product that sends
+                anything to a third party at all, and it carries facts about the
+                RULE, every one of which is already published in the rule pack.
+              */}
+              <span className={css({ display: "block" })}>
+                <a
+                  href={reportRuleUrl({
+                    ...(item.ruleId === undefined ? {} : { ruleId: item.ruleId }),
+                    ...(item.jurisdiction === undefined
+                      ? {}
+                      : { jurisdiction: item.jurisdiction }),
+                    title: item.title,
+                    ...(item.agencyUrl === undefined ? {} : { agencyUrl: item.agencyUrl }),
+                  })}
+                  rel="noreferrer noopener"
+                  target="_blank"
+                >
+                  Report this as wrong
+                </a>
+              </span>
             </>
           ) : (
             <>

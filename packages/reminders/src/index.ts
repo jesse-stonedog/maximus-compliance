@@ -49,6 +49,18 @@ export interface DatedItem {
    * that DID link it sat unused three files away.
    */
   agencyUrl?: string;
+  /**
+   * The rule this came from — `us-wa-sos-nonprofit-annual-report`.
+   *
+   * A stable, permanent public identifier. It is what makes a report about this
+   * row actionable: "the Washington fee is wrong" leaves somebody to work out
+   * which of several Washington rules is meant, and a rule id does not.
+   *
+   * Rule-derived items only — a user-authored action came from no rule.
+   */
+  ruleId?: string;
+  /** `US-WA`, `US-WA/seattle`, `US`. Rule-derived items only. */
+  jurisdiction?: string;
   /** `draft` on an unverified rule. Absent for user items — they are neither. */
   status?: "draft" | "active";
   /** User items only. Completing a rule obligation is not modelled yet. */

@@ -13,6 +13,11 @@ body:
 
         The one thing we genuinely cannot do without is the **source**. A
         deadline nobody can check is a rumour, and we will not publish it.
+
+        **This issue is public and permanent.** Please do not paste an EIN, an
+        account number, or anything from one of your own filings — the
+        jurisdiction, the entity type and the rule are all we need, and none of
+        those identify you.
   - type: input
     id: jurisdiction
     attributes:
@@ -28,6 +33,18 @@ body:
       placeholder: Nonprofit Corporation Annual Report
     validations:
       required: true
+  - type: input
+    id: rule-id
+    attributes:
+      label: Rule id, if the screen showed you one
+      description: |
+        Something like `us-wa-sos-nonprofit-annual-report`. If you came here
+        from a "Report this as wrong" link it is already filled in.
+
+        Leave it blank if you did not see one — it saves us a minute, it is not
+        a requirement, and a report without it is just as welcome.
+      placeholder: us-wa-sos-nonprofit-annual-report
+
   - type: dropdown
     id: entity-types
     attributes:

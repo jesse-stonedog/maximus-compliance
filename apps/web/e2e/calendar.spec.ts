@@ -113,6 +113,63 @@ test.describe("the self-host journey", () => {
     expect(new URL(href!).hostname.endsWith(".gov")).toBe(true);
   });
 
+  test("every deadline offers a way to say it is wrong", async ({ page }) => {
+    // The self-hosted tier exists for people who would rather confirm a date
+    // than take ours on trust. The agency link above is what lets them check —
+    // this is what they need the moment the check disagrees, and without it the
+    // report path exists only for somebody who reads the repository, which is
+    // precisely the audience it is NOT for.
+    await page.goto("/");
+    const report = page.getByRole("link", { name: /Report this as wrong/i }).first();
+    await expect(report).toBeVisible();
+
+    const href = await report.getAttribute("href");
+    const url = new URL(href!);
+    // The issue FORM, not a blank issue. A blank issue from a non-developer is
+    // prose with no jurisdiction and no source, and the project will not publish
+    // a deadline nobody can check.
+    expect(url.pathname).toBe("/stonedog-code/optima-filings/issues/new");
+    expect(url.searchParams.get("template")).toBe("rule-change.yml");
+  });
+
+  test("the report link is prefilled from the row it sits on", async ({ page }) => {
+    // Rendered, not unit-tested: the projection is where this breaks. `ruleId`
+    // and `jurisdiction` are populated field by field in `allDatedItems`, so a
+    // field nobody names is silently absent — exactly how `citationUrl` came to
+    // render as unclickable text for as long as that screen existed.
+    //
+    // A unit test of the URL builder passes either way, because it is handed
+    // the values directly. Only the browser sees what the row actually carried.
+    await page.goto("/");
+    const href = await page
+      .getByRole("link", { name: /Report this as wrong/i })
+      .first()
+      .getAttribute("href");
+    const params = new URL(href!).searchParams;
+
+    expect(params.get("rule-id")).toMatch(/^us-/);
+    expect(params.get("jurisdiction")).toBeTruthy();
+    expect(params.get("filing")).toBeTruthy();
+  });
+
+  test("the report link carries nothing about the entity", async ({ page }) => {
+    // The tracker is public and permanent, and this link is the ONLY path in
+    // the self-hosted product that sends anything to a third party at all.
+    // Everything else runs against the user's own SQLite file, which is the
+    // tier's whole proposition.
+    //
+    // Asserted against the entity name this suite actually seeded, so it fails
+    // on a real leak rather than on a placeholder nobody uses.
+    await page.goto("/");
+    const href = await page
+      .getByRole("link", { name: /Report this as wrong/i })
+      .first()
+      .getAttribute("href");
+
+    expect(href).not.toMatch(/entity/i);
+    expect(decodeURIComponent(href!)).not.toMatch(new RegExp(ENTITY.name, "i"));
+  });
+
   test("the disclaimer is visible next to the deadlines", async ({ page }) => {
     // Not a footer afterthought — this software tells people when to file with
     // the government, and the project file is explicit that the disclaimer is
