@@ -10,7 +10,7 @@
  * text on a deep-blue surface, which is exactly what this file found in light
  * mode and what NEH-275 then fixed.
  *
- * The pairs come from `RECIPE_CONTRAST_PAIRS` in stonedog-theme, which encodes
+ * The pairs come from `RECIPE_CONTRAST_PAIRS` in @stonedogcode/theme, which encodes
  * which foreground a recipe actually paints on which surface — **including
  * cross-group pairs**. That matters: comparing each token's own `bg` to its own
  * `text` looks like the obvious check and is the wrong one. It reports failures
@@ -18,7 +18,7 @@
  * `textPrimary` landing on `boxBgAccent` — which was the pair that actually
  * failed, and is the one a regression here would land on again.
  *
- * stonedog-theme is an Apache-2.0, zero-runtime-dependency package and enters
+ * @stonedogcode/theme is an Apache-2.0, zero-runtime-dependency package and enters
  * only as a devDependency, so nothing it brings reaches the published image.
  */
 
@@ -26,7 +26,7 @@ import {
   RECIPE_CONTRAST_PAIRS,
   getContrastRatio,
   semanticTokenToCssVar,
-} from "stonedog-theme";
+} from "@stonedogcode/theme";
 
 import { CSS_VAR_PREFIX, DARK_THEME, LIGHT_THEME } from "../src/theme.js";
 

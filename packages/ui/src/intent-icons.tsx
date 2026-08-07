@@ -4,7 +4,7 @@
  * Copyright (C) 2026 StoneDogCode L.L.C.
  * SPDX-License-Identifier: AGPL-3.0-only
  *
- * `stonedog-style` ships the intent buttons — Save, Delete, Edit and the rest —
+ * `@stonedogcode/style` ships the intent buttons — Save, Delete, Edit and the rest —
  * but no artwork. That is what lets it stay Apache-2.0 and public while
  * HopperGuard uses a per-seat licensed icon set: the buttons are shared, the
  * glyphs are not.
@@ -21,7 +21,7 @@
  * No size is named here: every glyph inherits the app-wide `iconSize` from the
  * provider, so the whole set retunes from one place.
  */
-import type { IntentIcons } from "stonedog-style";
+import type { IntentIcons } from "@stonedogcode/style";
 import {
   ArrowLeft,
   ArrowRight,

@@ -37,7 +37,7 @@ obligations come out. That purity is what makes it testable against thousands of
 fixture cases, embeddable in a browser, and safe to expose as the B2B API.
 
 Dependency direction is one-way: `web`/`cli` → `db` → `engine` ← `rules`, and
-`web` → `ui` → `stonedog-style`. **`engine` imports nothing from the others.**
+`web` → `ui` → `@stonedogcode/style`. **`engine` imports nothing from the others.**
 
 `packages/stonedog-style` is a submodule, so a change to it is a PR in *that* repo
 followed by a pointer bump here — never an edit in place. It has three consumers;
@@ -45,8 +45,8 @@ see the project file.
 
 ## Design system & icons
 
-Primitives come from `stonedog-style`. Wiring is four steps and two of them get
-missed — read stonedog-style's CLAUDE.md, but the short version: add
+Primitives come from `@stonedogcode/style`. Wiring is four steps and two of them get
+missed — read @stonedogcode/style's CLAUDE.md, but the short version: add
 `stonedogStylePreset()` to `presets` **alongside** `@pandacss/preset-base` and
 `@pandacss/preset-panda` (listing `presets` replaces Panda's defaults rather than
 extending them, and the loss is silent), add
@@ -56,7 +56,7 @@ the `--optima-*` custom properties — this repo passes `cssVarPrefix: "optima"`
 
 **No Font Awesome. Ever.** `stonedog-icons` vendors licensed Pro artwork and this
 repo is public and ships a public Docker image — see the project file. Icons here
-are Lucide, wrapped one line each through stonedog-style's seam in
+are Lucide, wrapped one line each through @stonedogcode/style's seam in
 `packages/ui/src/icons/`:
 
 ```tsx
@@ -74,7 +74,7 @@ the repos without icon edits.
 ```
 
 plus a standard `--font-sizes-*` scale (`md` = 1rem) in the theme CSS, which
-overrides stonedog-style's elder-audience fallbacks. Never pass `size` at an icon
+overrides @stonedogcode/style's elder-audience fallbacks. Never pass `size` at an icon
 call site to compensate — that's how an app ends up with three icon scales and
 no way to retune any of them.
 

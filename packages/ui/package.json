@@ -6,7 +6,7 @@
   "author": "StoneDogCode L.L.C.",
   "type": "module",
   "sideEffects": false,
-  "//exports": "Ships TypeScript SOURCE, like stonedog-style and for the same reason: Panda extracts styles by statically parsing source, so a consumer's codegen must be able to read our .tsx. A pre-bundled dist would emit class names Panda never wrote CSS for.",
+  "//exports": "Ships TypeScript SOURCE, like @stonedogcode/style and for the same reason: Panda extracts styles by statically parsing source, so a consumer's codegen must be able to read our .tsx. A pre-bundled dist would emit class names Panda never wrote CSS for.",
   "exports": {
     ".": "./src/index.ts",
     "./package.json": "./package.json"
@@ -24,12 +24,12 @@
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18",
-    "stonedog-style": "*"
+    "@stonedogcode/style": "*"
   },
   "engines": {
     "node": ">=22"
   },
   "devDependencies": {
-    "stonedog-theme": "0.1.0"
+    "@stonedogcode/theme": "^0.3.0"
   }
 }

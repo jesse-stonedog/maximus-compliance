@@ -16,7 +16,7 @@
  * licence problem in an artifact already downloaded by strangers, which no
  * later commit can recall.
  *
- * So: assert it. The icons here come from Lucide through stonedog-style's
+ * So: assert it. The icons here come from Lucide through @stonedogcode/style's
  * `createIconFromComponent` seam, which lands them in the same sized, themed,
  * accessible box.
  */
@@ -77,9 +77,9 @@ describe("no Font Awesome in a public, redistributed repo", () => {
   });
 
   it("declares no forbidden submodule", () => {
-    // stonedog-style is a submodule here and is Apache-2.0, so it is fine.
+    // @stonedogcode/style is a submodule here and is Apache-2.0, so it is fine.
     // stonedog-icons never may be — and a submodule is the most likely way it
-    // would arrive, since that is how stonedog-style got here.
+    // would arrive, since that is how @stonedogcode/style got here.
     let gitmodules = "";
     try {
       gitmodules = readFileSync(join(REPO_ROOT, ".gitmodules"), "utf8");
@@ -126,11 +126,11 @@ describe("icons come from the permissive seam instead", () => {
     expect(icons).toContain("lucide-react");
   });
 
-  it("routes them through stonedog-style rather than rendering raw SVG", () => {
+  it("routes them through @stonedogcode/style rather than rendering raw SVG", () => {
     // The seam is what makes a Lucide glyph land in the same sized, themed,
     // accessible box as the Pro set does in the SaaS. A raw <svg> here would
     // render, look approximately right, and silently opt out of all of it.
     expect(icons).toMatch(/createIcon(FromComponent)?/);
-    expect(icons).toContain("stonedog-style");
+    expect(icons).toContain("@stonedogcode/style");
   });
 });

@@ -1,14 +1,14 @@
 /**
- * @optima-compliance/ui — Optima presentation layer over stonedog-style.
+ * @optima-compliance/ui — Optima presentation layer over @stonedogcode/style.
  *
  * Copyright (C) 2026 StoneDogCode L.L.C.
  * SPDX-License-Identifier: AGPL-3.0-only
  *
- * Holds the three things stonedog-style deliberately does not: the colours, the
+ * Holds the three things @stonedogcode/style deliberately does not: the colours, the
  * artwork, and the app-wide sizing choice. Everything else comes from the
  * design system itself.
  *
- * Imports here are EXTENSIONLESS, matching stonedog-style. This package ships
+ * Imports here are EXTENSIONLESS, matching @stonedogcode/style. This package ships
  * TypeScript source for Panda to parse, so the consumer's bundler resolves
  * these — and webpack will not map a ".js" specifier back onto a ".tsx" file.
  */
@@ -27,7 +27,7 @@ export type { ThemeTokens } from "./theme";
 export * from "./icons";
 
 /**
- * Form controls, re-exported from stonedog-style.
+ * Form controls, re-exported from @stonedogcode/style.
  *
  * Through this package rather than imported directly, for the same reason the
  * icons are: `@optima-compliance/ui` is the one door the app knocks on, so swapping an
@@ -46,7 +46,7 @@ export {
   StyledInputTextArea,
   StyledInputBool,
   StyledInputSelect,
-} from "stonedog-style";
+} from "@stonedogcode/style";
 export type {
   StyledFormLabelProps,
   StyledInputTextProps,
@@ -54,4 +54,4 @@ export type {
   StyledInputBoolProps,
   StyledInputSelectProps,
   SelectOption,
-} from "stonedog-style";
+} from "@stonedogcode/style";

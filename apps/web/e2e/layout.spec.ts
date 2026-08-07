@@ -127,7 +127,7 @@ test.fixme("interactive controls are large enough to tap", async ({ page }) => {
   //
   // Three pixels is not a rounding error on a phone. It is also a shared
   // design-system question rather than a page one — the button comes from
-  // `stonedog-style`, so the fix belongs upstream and affects HopperGuard too,
+  // `@stonedogcode/style`, so the fix belongs upstream and affects HopperGuard too,
   // which is exactly why this is filed rather than patched here.
   await page.goto("/entities/new");
   const submit = page.getByRole("button", { name: /add|save|create/i }).first();
