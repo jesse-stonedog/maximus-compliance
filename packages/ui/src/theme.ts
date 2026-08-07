@@ -4,7 +4,7 @@
  * Copyright (C) 2026 StoneDogCode L.L.C.
  * SPDX-License-Identifier: AGPL-3.0-only
  *
- * stonedog-style ships **no colours**: every one of its tokens resolves to a bare
+ * @stonedogcode/style ships **no colours**: every one of its tokens resolves to a bare
  * CSS custom property that the host defines. This file is that definition for
  * Optima, under our own `--optima-*` namespace (NEH-170) rather than the
  * default `--hopper-*`.
@@ -43,7 +43,7 @@ export const LIGHT_THEME: ThemeTokens = {
   "box-accent-text": "#0b4f78",
 
   // Surfaces. **Every light surface is light, including the accent one.**
-  // `box-accent-bg` was #0b4f78, a deep blue, and stonedog-style's `inputText`
+  // `box-accent-bg` was #0b4f78, a deep blue, and @stonedogcode/style's `inputText`
   // and `form` recipes paint the ordinary body colour (`textPrimary`, #161b22)
   // onto it — 1.98:1, well under AA. A dark surface in a light theme cannot
   // satisfy both its own text and the body text that lands on it from a
@@ -157,7 +157,7 @@ export const DARK_THEME: ThemeTokens = {
 /**
  * A standard web type scale.
  *
- * stonedog-style's own fallbacks are deliberately large — it came from a product
+ * @stonedogcode/style's own fallbacks are deliberately large — it came from a product
  * for an often-elderly, sometimes cognitively-impaired audience, where `md` is
  * 1.375rem (~22px). Optima is a business tool for a general audience, so it
  * supplies a conventional scale here. **rem throughout, never px**, so the

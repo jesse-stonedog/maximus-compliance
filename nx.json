@@ -7,7 +7,7 @@
     "cli": "apps/cli",
     "export": "packages/export",
     "ui": "packages/ui",
-    "stonedog-style": "packages/stonedog-style",
+    "@stonedogcode/style": "packages/stonedog-style",
     "db": "packages/db",
     "web": "apps/web",
     "reminders": "packages/reminders"

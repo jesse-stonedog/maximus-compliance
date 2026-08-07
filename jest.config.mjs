@@ -32,11 +32,11 @@ export default {
     "^server-only$": "<rootDir>/test-support/server-only.cjs",
     "^@optima-compliance/reminders$": "<rootDir>/packages/reminders/src/index.ts",
     "^@optima-compliance/export$": "<rootDir>/packages/export/src/index.ts",
-    // stonedog-style is a SUBMODULE shipping TypeScript source, so both entry
+    // @stonedogcode/style is a SUBMODULE shipping TypeScript source, so both entry
     // points map to source too. Its `preset` entry runs in Node at build time
     // and is what the theme-completeness test reads.
-    "^stonedog-style/preset$": "<rootDir>/packages/stonedog-style/src/preset/index.ts",
-    "^stonedog-style$": "<rootDir>/packages/stonedog-style/src/index.ts",
+    "^@stonedogcode/style/preset$": "<rootDir>/packages/stonedog-style/src/preset/index.ts",
+    "^@stonedogcode/style$": "<rootDir>/packages/stonedog-style/src/index.ts",
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
   transform: {

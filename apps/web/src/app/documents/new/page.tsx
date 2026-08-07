@@ -107,7 +107,7 @@ export default async function NewDocumentPage({
           <StyledFormLabel htmlFor="doc-file" required>
             File
           </StyledFormLabel>
-          {/* A native file input, deliberately. stonedog-style has no file
+          {/* A native file input, deliberately. @stonedogcode/style has no file
               control, and styling one to look like a text field is how you get
               a picker that does not behave like either. */}
           <input

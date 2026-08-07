@@ -1,13 +1,13 @@
 "use client";
 /**
- * The one place Optima configures stonedog-style.
+ * The one place Optima configures @stonedogcode/style.
  *
  * Copyright (C) 2026 StoneDogCode L.L.C.
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 import React from "react";
-import { StonedogStyleProvider } from "stonedog-style";
+import { StonedogStyleProvider } from "@stonedogcode/style";
 import { OPTIMA_INTENT_ICONS } from "./intent-icons";
 
 export interface OptimaStyleProviderProps {
@@ -34,7 +34,7 @@ export function OptimaStyleProvider({ children }: OptimaStyleProviderProps) {
       iconSize="md"
       variant="solid"
       // The only place this product decides what a delete button looks like.
-      // stonedog-style ships the buttons and no artwork; these are the Lucide
+      // @stonedogcode/style ships the buttons and no artwork; these are the Lucide
       // glyphs. HopperGuard registers Font Awesome against the same keys.
       icons={OPTIMA_INTENT_ICONS}
     >

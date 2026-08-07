@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 import { defineConfig } from "@pandacss/dev";
-import { stonedogStylePreset } from "stonedog-style/preset";
+import { stonedogStylePreset } from "@stonedogcode/style/preset";
 
 export default defineConfig({
   preflight: true,
@@ -22,7 +22,7 @@ export default defineConfig({
     stonedogStylePreset({ cssVarPrefix: "optima" }),
   ],
   /**
-   * stonedog-style and @optima-compliance/ui ship TypeScript SOURCE, and Panda finds styles
+   * @stonedogcode/style and @optima-compliance/ui ship TypeScript SOURCE, and Panda finds styles
    * by statically parsing files. A package it never parses contributes no CSS,
    * and its components then render with class names that have no rules behind
    * them — which looks like a broken stylesheet, not a missing glob.
