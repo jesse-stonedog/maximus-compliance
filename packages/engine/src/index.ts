@@ -28,6 +28,7 @@ export type {
   EvaluationResult,
   Obligation,
   IndeterminateRule,
+  RuleProvenance,
 } from "./evaluate.js";
 
 export { ENTITY_TYPES, CONDITIONABLE_FACTS, isEntityType } from "./facts.js";

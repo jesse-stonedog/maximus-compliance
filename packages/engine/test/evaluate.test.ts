@@ -123,7 +123,14 @@ describe("conditions", () => {
       {
         ruleId: "us-wa-test-rule",
         title: "Test Filing",
+        // Provenance, as of NEH-518. An indeterminate rule now carries
+        // everything an obligation does except the date, so a consumer can name
+        // the agency and link the statute for a rule it cannot yet date.
+        agency: revenueRule.agency,
         jurisdiction: "US-WA",
+        citation: revenueRule.citation,
+        status: revenueRule.status,
+        lastVerified: revenueRule.lastVerified,
         missingFacts: ["grossRevenueMinorUnits"],
       },
     ]);
@@ -512,5 +519,70 @@ describe("determinism", () => {
     evaluate(entity, rules, { asOf: "2026-01-01" });
     expect(entity).toEqual(WA_SMALL_CHARITY);
     expect(rules).toEqual(rulesBefore);
+  });
+});
+
+describe("provenance reaches both kinds of report (NEH-518)", () => {
+  const provenanceRule = rule({
+    citationUrl: "https://example.test/statute",
+    agencyUrl: "https://example.test/agency",
+    form: "Form T",
+    fee: { amountMinorUnits: 6000, currency: "USD" },
+    conditions: [
+      { fact: "grossRevenueMinorUnits", op: "lte", value: 5_000_000 },
+    ],
+  });
+
+  /**
+   * The asymmetry this closes was invisible for as long as consumers only
+   * rendered obligations. `Obligation` grew agency, citation, citationUrl,
+   * agencyUrl, status and lastVerified; `IndeterminateRule` got none of them —
+   * so the moment a screen listed undecidable rules as rows, the MAJORITY of
+   * rows had no statute to link. An entity that has not supplied its financials
+   * has far more undecidable rules than decided ones.
+   */
+  it("gives an indeterminate rule the same provenance as an obligation", () => {
+    const undecided = evaluate(CHARITY_WITHOUT_REVENUE, [provenanceRule], {
+      asOf: "2026-01-01",
+    }).indeterminate[0];
+    const decided = evaluate(WA_SMALL_CHARITY, [provenanceRule], {
+      asOf: "2026-01-01",
+    }).obligations[0];
+
+    expect(undecided).toBeDefined();
+    expect(decided).toBeDefined();
+
+    // Compared field-by-field against the obligation rather than against a
+    // literal, so a field added to one and not the other fails here — which is
+    // the drift that caused this issue.
+    const { dueOn: _dueOn, ...provenanceOfObligation } = decided!;
+    const { missingFacts: _missing, ...provenanceOfIndeterminate } = undecided!;
+    expect(provenanceOfIndeterminate).toEqual(provenanceOfObligation);
+  });
+
+  it("still says which facts are missing", () => {
+    // The field that is NOT shared, and the reason this type exists at all.
+    const undecided = evaluate(CHARITY_WITHOUT_REVENUE, [provenanceRule], {
+      asOf: "2026-01-01",
+    }).indeterminate[0];
+    expect(undecided?.missingFacts).toEqual(["grossRevenueMinorUnits"]);
+  });
+
+  it("omits optional provenance the rule does not carry", () => {
+    // Absent, not present-and-undefined: a consumer checking `in` must see the
+    // same shape it would for an obligation from the same rule.
+    const bare = rule({
+      conditions: [
+        { fact: "grossRevenueMinorUnits", op: "lte", value: 5_000_000 },
+      ],
+    });
+    const undecided = evaluate(CHARITY_WITHOUT_REVENUE, [bare], {
+      asOf: "2026-01-01",
+    }).indeterminate[0]!;
+
+    expect("citationUrl" in undecided).toBe(false);
+    expect("agencyUrl" in undecided).toBe(false);
+    expect("form" in undecided).toBe(false);
+    expect("feeMinorUnits" in undecided).toBe(false);
   });
 });

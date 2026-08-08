@@ -18,8 +18,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@optima-compliance/engine": "0.3.0",
-    "@optima-compliance/rules": "2026.8.4",
+    "@optima-compliance/engine": "0.4.0",
+    "@optima-compliance/rules": "2026.8.5",
     "@optima-compliance/export": "0.1.0"
   },
   "engines": {
