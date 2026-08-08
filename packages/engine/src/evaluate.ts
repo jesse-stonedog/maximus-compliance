@@ -26,13 +26,26 @@ import type {
   RuleStatus,
 } from "./rule.js";
 
-/** One thing the entity owes, on one date. */
-export interface Obligation {
+/**
+ * Where a reported rule came from — everything a consumer needs to show it and
+ * to let a reader check it against the source.
+ *
+ * **Shared by `Obligation` and `IndeterminateRule` on purpose (NEH-518).** They
+ * carried this independently and drifted: the obligation grew `agency`,
+ * `citation`, `citationUrl`, `agencyUrl`, `status` and `lastVerified`, and the
+ * indeterminate rule got none of them. That asymmetry is invisible until a
+ * consumer renders indeterminate rules as first-class rows — and then it is the
+ * *majority* of rows that cannot link their statute, because an entity that has
+ * not supplied its financials has far more undecidable rules than decided ones.
+ *
+ * A shared base rather than two matching field lists, so the next field added
+ * reaches both. The alternative had already failed once, quietly.
+ */
+export interface RuleProvenance {
   ruleId: string;
   title: string;
   agency: string;
   jurisdiction: string;
-  dueOn: CalendarDate;
   feeMinorUnits?: number;
   currency?: "USD";
   form?: string;
@@ -57,6 +70,11 @@ export interface Obligation {
   lastVerified: CalendarDate;
 }
 
+/** One thing the entity owes, on one date. */
+export interface Obligation extends RuleProvenance {
+  dueOn: CalendarDate;
+}
+
 /**
  * A rule that might apply but cannot be decided, because the entity has not
  * supplied a fact the rule tests.
@@ -64,13 +82,43 @@ export interface Obligation {
  * Reported rather than silently dropped. "You may owe a Form 990 — tell us your
  * gross revenue" is useful; an incomplete calendar presented as complete is
  * exactly the failure this product cannot afford.
+ *
+ * It carries the same provenance as an obligation, so a consumer can name the
+ * agency and link the statute for a rule it cannot yet date. A row that says
+ * "this may apply to you" with nothing to check is the weakest form of the
+ * promise this project makes.
  */
-export interface IndeterminateRule {
-  ruleId: string;
-  title: string;
-  jurisdiction: string;
+export interface IndeterminateRule extends RuleProvenance {
   /** Facts the entity would need to supply to decide it. */
   missingFacts: string[];
+}
+
+/**
+ * Project a rule onto its provenance.
+ *
+ * The single place these fields are copied, which is what makes the shared base
+ * a guarantee rather than a convention — two independent copies is exactly how
+ * they drifted apart in the first place.
+ */
+function provenanceOf(rule: Rule): RuleProvenance {
+  return {
+    ruleId: rule.id,
+    title: rule.title,
+    agency: rule.agency,
+    jurisdiction: rule.jurisdiction,
+    ...(rule.fee
+      ? {
+          feeMinorUnits: rule.fee.amountMinorUnits,
+          currency: rule.fee.currency,
+        }
+      : {}),
+    ...(rule.form ? { form: rule.form } : {}),
+    citation: rule.citation,
+    ...(rule.citationUrl ? { citationUrl: rule.citationUrl } : {}),
+    ...(rule.agencyUrl ? { agencyUrl: rule.agencyUrl } : {}),
+    status: rule.status,
+    lastVerified: rule.lastVerified,
+  };
 }
 
 export interface EvaluateOptions {
@@ -118,9 +166,7 @@ export function evaluate(
     if (conditions.truth === "false") continue;
     if (conditions.truth === "unknown") {
       indeterminate.push({
-        ruleId: rule.id,
-        title: rule.title,
-        jurisdiction: rule.jurisdiction,
+        ...provenanceOf(rule),
         missingFacts: conditions.missing,
       });
       continue;
@@ -132,25 +178,7 @@ export function evaluate(
       // was due in March, which is what makes historical questions answerable.
       if (!ruleInForceOn(rule, dueOn)) continue;
 
-      obligations.push({
-        ruleId: rule.id,
-        title: rule.title,
-        agency: rule.agency,
-        jurisdiction: rule.jurisdiction,
-        dueOn,
-        ...(rule.fee
-          ? {
-              feeMinorUnits: rule.fee.amountMinorUnits,
-              currency: rule.fee.currency,
-            }
-          : {}),
-        ...(rule.form ? { form: rule.form } : {}),
-        citation: rule.citation,
-        ...(rule.citationUrl ? { citationUrl: rule.citationUrl } : {}),
-        ...(rule.agencyUrl ? { agencyUrl: rule.agencyUrl } : {}),
-        status: rule.status,
-        lastVerified: rule.lastVerified,
-      });
+      obligations.push({ ...provenanceOf(rule), dueOn });
     }
   }
 
